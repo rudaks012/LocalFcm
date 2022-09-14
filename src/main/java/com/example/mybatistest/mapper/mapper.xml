@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatistest.mybatisinsert.MybatisInserDao">
+
+    <insert id="insert" parameterType="java.util.List">
+        insert into
+            fcmtest(
+                    idx, content, link_addr, member_id, org_code, notice_code, title, service_key
+                    )
+        values
+            <foreach collection="list" item="receiver" separator=",">
+                (
+                    #{receiver.idx},
+                    #{receiver.content},
+                    #{receiver.member_id},
+                    #{receiver.link_addr},
+                    #{receiver.org_code},
+                    #{receiver.notice_code},
+                    #{receiver.title},
+                    #{receiver.service_key}
+                )
+            </foreach>
+    </insert>
+
+    <delete id="delete" >
+        delete from fcmtest
+    </delete>
+
+    <select id="select" resultType="com.example.mybatistest.mybatisinsert.Allim">
+        SELECT
+                notice_code, org_code, title, content,
+                add_date, receive_agree
+        FROM
+                notice
+    </select>
+
+    <select id="findMembers" resultType="com.example.mybatistest.mybatisinsert.Allim" parameterType="com.example.mybatistest.mybatisinsert.Allim">
+      SELECT
+            a.title, a.content, a.add_date, a.receive_agree,
+            b.member_id, b.device_code, b.token, b.member_name, b.link_addr, b.org_code, b.notice_code
+        FROM
+            notice a INNER JOIN member b
+        WHERE
+            a.org_code = b.org_code
+          AND b.org_code = #{org_code}
+          <if test="notice_code != null">
+          AND b.notice_code = #{notice_code}
+          </if>
+    </select>
+
+  <select id="listToJson" resultType="com.example.mybatistest.mybatisinsert.Member" parameterType="com.example.mybatistest.mybatisinsert.Allim">
+    select
+        *
+    from testtable
+  </select>
+
+  <insert id="fcmJsonInsertGubun" parameterType="map">
+        insert into TAP_MN_PUSH_GUBUN(
+                mbr_id, push_seq, sys_nm, sys_id, bbs_id, push_yn, creat_dt
+                )
+        values
+            (
+                #{mbr_id},
+                #{push_seq},
+                #{sys_nm},
+                #{sys_id},
+                #{bbs_id},
+                'N',
+                sysdate
+            )
+
+  </insert>
+
+  <insert id="fcmJsonInsertUser" parameterType="map">
+    insert into TAP_MN_PUSH_USER(
+      mbr_id, mbr_nm, mbr_tocken, creat_dt
+    )
+    values
+      (
+        #{mbr_id},
+        #{mbr_nm},
+        #{mbr_tocken},
+        sysdate
+      )
+
+  </insert>
+
+</mapper>
