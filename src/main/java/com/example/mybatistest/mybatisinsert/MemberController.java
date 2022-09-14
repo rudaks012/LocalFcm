@@ -30,7 +30,8 @@ public class MemberController {
         List<Member> listToJson = mybatisInsertService.listToJson(member);
         String json = gson.toJson(listToJson);
 
-        Type type = new TypeToken<List<Map<String, String>>>() {}.getType();
+        Type type = new TypeToken<List<Map<String, String>>>() {
+        }.getType();
         List<Map<String, String>> deserialize = gson.fromJson(json, type);
         for (Map<String, String> stringStringMap : deserialize) {
             if (!stringStringMap.containsKey("mbr_tocken")) {
@@ -43,17 +44,24 @@ public class MemberController {
         return listToJson;
     }
 
-    @RequestMapping(value = "/token.*", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, BindingResult result, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = {"/token"}, method = {RequestMethod.POST})
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, BindingResult result, HttpServletRequest request) throws Exception {
         JsonResponse res = new JsonResponse(request);
-
+        System.out.println("check");
         if (!result.hasErrors()) {
             String mbr_id = param.get("mbr_id");
-            String mbr_nm = param.get("mbr_nm");
-            String mbr_tocken = param.get("mbr_tocken");
-            String old_tocken = param.get("old_tocken");
+            System.out.println("mbr_id = " + mbr_id);
 
-            res.setUrl(mbr_tocken);
+            String mbr_nm = param.get("mbr_nm");
+            System.out.println("mbr_nm = " + mbr_nm);
+
+            String mbr_token = param.get("mbr_token");
+            System.out.println("mbr_token = " + mbr_token);
+
+            String old_token = param.get("old_token");
+            System.out.println("old_token = " + old_token);
+
+            res.setUrl(mbr_token);
             res.setValid(true);
             res.setMessage("OK");
 
@@ -63,5 +71,11 @@ public class MemberController {
             res.setResult(result.getAllErrors());
         }
         return res;
+    }
+
+    @RequestMapping("/token1")
+    @ResponseBody
+    public String test() {
+        return "test";
     }
 }

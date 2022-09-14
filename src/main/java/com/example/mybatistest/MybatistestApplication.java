@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication()
-@MapperScan(basePackages = "com.example.mybatistest.mapper*")
+@MapperScan(basePackages = "com.example.mybatistest*")
 public class MybatistestApplication {
 
     public static void main(String[] args) {
