@@ -45,23 +45,16 @@ public class MemberController {
     }
 
     @RequestMapping(value = {"/token"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, BindingResult result, HttpServletRequest request) throws Exception {
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member, BindingResult result, HttpServletRequest request) throws Exception {
         JsonResponse res = new JsonResponse(request);
         System.out.println("check");
         if (!result.hasErrors()) {
-            String mbr_id = param.get("mbr_id");
-            System.out.println("mbr_id = " + mbr_id);
+            member.setMbr_id(param.get("mbr_id"));
+            member.setMbr_nm(param.get("mbr_nm"));
+            member.setMbr_token(param.get("mbr_token"));
+            member.setOld_token(param.get("old_token"));
 
-            String mbr_nm = param.get("mbr_nm");
-            System.out.println("mbr_nm = " + mbr_nm);
-
-            String mbr_token = param.get("mbr_token");
-            System.out.println("mbr_token = " + mbr_token);
-
-            String old_token = param.get("old_token");
-            System.out.println("old_token = " + old_token);
-
-            res.setUrl(mbr_token);
+            res.setUrl(member.getMbr_token());
             res.setValid(true);
             res.setMessage("OK");
 

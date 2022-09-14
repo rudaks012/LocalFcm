@@ -6,7 +6,9 @@ public class Member {
 
     private String mbr_id; // 회원아이디
     private String mbr_nm; //회원명
-    private String mbr_tocken; //단말 토큰
+    private String mbr_token; //단말 토큰
+
+    private String old_token; //오래된 토큰
     private LocalDateTime creat_dt; // 등록일시
 
     private int push_seq; //알람 순번
@@ -60,12 +62,12 @@ public class Member {
         this.mbr_nm = mbr_nm;
     }
 
-    public String getMbr_tocken() {
-        return mbr_tocken;
+    public String getMbr_token() {
+        return mbr_token;
     }
 
-    public void setMbr_tocken(String mbr_tocken) {
-        this.mbr_tocken = mbr_tocken;
+    public void setMbr_token(String mbr_token) {
+        this.mbr_token = mbr_token;
     }
 
     public LocalDateTime getCreat_dt() {
@@ -98,5 +100,13 @@ public class Member {
 
     public void setBbs_id(String bbs_id) {
         this.bbs_id = bbs_id;
+    }
+
+    public String getOld_token() {
+        return old_token;
+    }
+
+    public void setOld_token(String old_token) {
+        this.old_token = old_token;
     }
 }
