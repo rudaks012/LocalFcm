@@ -1,13 +1,20 @@
 package com.example.mybatistest.mybatisinsert;
 
+import com.example.mybatistest.mybatisinsert.util.JsonResponse;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MemberController {
@@ -34,5 +41,27 @@ public class MemberController {
             }
         }
         return listToJson;
+    }
+
+    @RequestMapping(value = "/token.*", method = {RequestMethod.POST})
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, BindingResult result, HttpServletRequest request) throws Exception{
+        JsonResponse res = new JsonResponse(request);
+
+        if (!result.hasErrors()) {
+            String mbr_id = param.get("mbr_id");
+            String mbr_nm = param.get("mbr_nm");
+            String mbr_tocken = param.get("mbr_tocken");
+            String old_tocken = param.get("old_tocken");
+
+            res.setUrl(mbr_tocken);
+            res.setValid(true);
+            res.setMessage("OK");
+
+        } else {
+            res.setValid(false);
+            res.setMessage("Fault");
+            res.setResult(result.getAllErrors());
+        }
+        return res;
     }
 }
