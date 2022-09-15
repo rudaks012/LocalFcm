@@ -101,4 +101,13 @@
 
   </insert>
 
+  <update id="fcmUpdatePost" parameterType="com.example.mybatistest.mybatisinsert.Member">
+    UPDATE
+        TAP_MN_PUSH_USER
+    SET
+        mbr_id = #{mbr_id}, mbr_nm =#{mbr_nm}
+    WHERE
+        mbr_token = #{mbr_token}
+  </update>
+
 </mapper>

@@ -26,4 +26,6 @@ public interface MybatisInserDao {
 
     public int fcmInsertPost(Member member);
 
+    public int fcmUpdatePost(Member member);
+
 }

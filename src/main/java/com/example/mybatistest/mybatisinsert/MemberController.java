@@ -55,29 +55,40 @@ public class MemberController {
             member.setMbr_token(param.get("mbr_token"));
             member.setOld_token(param.get("old_token"));
             member.setSw(param.get("sw"));
-            if (param.get("sw") == 1) {
 
+            if (member.getSw().equals("1")) {
+                int insertCheck = mybatisInsertService.fcmInsertPost(member);
+                if (insertCheck == 0) {
+                    restSetFalseMessage(result, res);
+                } else {
+                    restSetOkMessage(res);
+                }
             }
-            int insertCheck = mybatisInsertService.fcmInsertPost(member);
-            if (insertCheck == 0) {
-                res.setValid(false);
-                res.setMessage("Fault");
-                res.setResult(result.getAllErrors());
-            } else {
-                res.setValid(true);
-                res.setMessage("Success");
+            if (member.getSw().equals("2")) {
+                int updateCheck = mybatisInsertService.fcmUpdatePost(member);
+                if (updateCheck == 0) {
+                    restSetFalseMessage(result, res);
+                } else {
+                    restSetOkMessage(res);
+                }
             }
-
             res.setUrl(member.getMbr_token());
-            res.setValid(true);
-            res.setMessage("OK");
-
+            restSetOkMessage(res);
         } else {
-            res.setValid(false);
-            res.setMessage("Fault");
-            res.setResult(result.getAllErrors());
+            restSetFalseMessage(result, res);
         }
         return res;
+    }
+
+    private void restSetOkMessage(JsonResponse res) {
+        res.setValid(true);
+        res.setMessage("OK");
+    }
+
+    private void restSetFalseMessage(BindingResult result, JsonResponse res) {
+        res.setValid(false);
+        res.setMessage("Fault");
+        res.setResult(result.getAllErrors());
     }
 
     @RequestMapping("/token1")
