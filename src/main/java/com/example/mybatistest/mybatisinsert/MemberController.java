@@ -37,7 +37,7 @@ public class MemberController {
             if (!stringStringMap.containsKey("mbr_tocken")) {
                 mybatisInsertService.fcmJsonInsertGubun(stringStringMap);
             } else {
-                mybatisInsertService.fcmJsonInsertUser(stringStringMap);
+                mybatisInsertService.fcmInsertUser(stringStringMap);
 
             }
         }

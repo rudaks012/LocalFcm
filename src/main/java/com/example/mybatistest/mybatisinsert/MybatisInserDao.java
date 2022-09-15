@@ -22,6 +22,6 @@ public interface MybatisInserDao {
 
     public int fcmJsonInsertGubun(Map<String, String> stringStringMap);
 
-    public int fcmJsonInsertUser(Map<String, String> stringStringMap);
+    public int fcmInsertUser(Map<String, String> stringStringMap);
 
 }

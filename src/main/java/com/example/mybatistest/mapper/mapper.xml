@@ -71,15 +71,15 @@
 
   </insert>
 
-  <insert id="fcmJsonInsertUser" parameterType="map">
+  <insert id="fcmInsertUser" parameterType="map">
     insert into TAP_MN_PUSH_USER(
-      mbr_id, mbr_nm, mbr_tocken, creat_dt
+      mbr_token, mbr_id, mbr_nm, creat_dt
     )
     values
       (
+        #{mbr_tocken},
         #{mbr_id},
         #{mbr_nm},
-        #{mbr_tocken},
         sysdate
       )
 
