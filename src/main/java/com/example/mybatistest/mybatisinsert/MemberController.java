@@ -54,13 +54,18 @@ public class MemberController {
             member.setMbr_nm(param.get("mbr_nm"));
             member.setMbr_token(param.get("mbr_token"));
             member.setOld_token(param.get("old_token"));
+            member.setSw(param.get("sw"));
+            if (param.get("sw") == 1) {
 
-//            int insertCheck = mybatisInsertService.fcmInsertUser(param);
+            }
             int insertCheck = mybatisInsertService.fcmInsertPost(member);
-            if (insertCheck != 0) {
-                System.out.println("1");
+            if (insertCheck == 0) {
+                res.setValid(false);
+                res.setMessage("Fault");
+                res.setResult(result.getAllErrors());
             } else {
-                System.out.println("0");
+                res.setValid(true);
+                res.setMessage("Success");
             }
 
             res.setUrl(member.getMbr_token());

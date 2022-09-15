@@ -8,6 +8,8 @@ public class Member {
     private String mbr_nm; //회원명
     private String mbr_token; //단말 토큰
 
+    private String sw; // 멤버 상태 구분 기호 1: 신규 , 2: 업데이트 , 3: 업데이트된 상태
+
     private String old_token; //오래된 토큰
     private LocalDateTime creat_dt; // 등록일시
 
@@ -97,5 +99,13 @@ public class Member {
 
     public void setSys_nm(String sys_nm) {
         this.sys_nm = sys_nm;
+    }
+
+    public String getSw() {
+        return sw;
+    }
+
+    public void setSw(String sw) {
+        this.sw = sw;
     }
 }

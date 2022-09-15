@@ -89,13 +89,15 @@
     insert into TAP_MN_PUSH_USER(
       mbr_token, mbr_id, mbr_nm, creat_dt
     )
-    values
+    VALUES
       (
         #{mbr_token},
         #{mbr_id},
         #{mbr_nm},
         sysdate()
       )
+    ON DUPLICATE KEY
+    UPDATE mbr_token = VALUES(mbr_token), creat_dt = VALUES(creat_dt)
 
   </insert>
 
