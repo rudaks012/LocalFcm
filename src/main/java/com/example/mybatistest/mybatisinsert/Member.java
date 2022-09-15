@@ -13,6 +13,8 @@ public class Member {
     private String old_token; //오래된 토큰
     private LocalDateTime creat_dt; // 등록일시
 
+    private String push; // 해당 기관 코드 묶음
+
     private int push_seq; //알람 순번
     private String sys_id; //시스템아이디
     private String bbs_id; //게시판 아이디
@@ -107,5 +109,13 @@ public class Member {
 
     public void setSw(String sw) {
         this.sw = sw;
+    }
+
+    public String getPush() {
+        return push;
+    }
+
+    public void setPush(String push) {
+        this.push = push;
     }
 }

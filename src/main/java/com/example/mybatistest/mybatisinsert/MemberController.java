@@ -4,6 +4,7 @@ import com.example.mybatistest.mybatisinsert.util.JsonResponse;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -71,29 +72,28 @@ public class MemberController {
     }
 
 
-    @RequestMapping(value = {"/gubun"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member,
-        BindingResult result, HttpServletRequest request) {
+    @RequestMapping(value = "/gubun", method = {RequestMethod.POST})
+    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param,Member member, BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
-            setMemberStatus(param, member);
+            member.setMbr_token(param.get("mbr_token"));
+            member.setPush(param.get("push"));
+            member.setSw(param.get("sw"));
+            System.out.println("member = " + member.getPush());
 
-            if ("1".equals(member.getSw())) {
-                int worksNormally = mybatisInsertService.fcmInsertPost(member);
-                checkWorksStatus(result, res, worksNormally);
-            } else if ("2".equals(member.getSw())) {
-                int worksNormally = mybatisInsertService.fcmUpdatePost(member);
-                checkWorksStatus(result, res, worksNormally);
-            } else if ("3".equals(member.getSw())) {
-                int worksNormally = mybatisInsertService.fcmDuplicatedTokenUpdate(member);
-                int duplicateInsert = mybatisInsertService.fcmInsertPost(member);
-                checkWorksStatus(result, res, worksNormally, duplicateInsert);
-            }
+            String[] check = member.getPush().split("\\|");
+            System.out.println("check = " + check.length);
+            System.out.println("check = " + Arrays.toString(check));
+
             res.setUrl(member.getMbr_token());
-            restSetOkMessage(res);
-        } else {
-            restSetFalseMessage(result, res);
+            res.setValid(true);
+            res.setMessage("OK");
+
+        }else {
+            res.setValid(false);
+            res.setMessage("Fault");
+            res.setResult(result.getAllErrors());
         }
         return res;
     }
@@ -104,6 +104,12 @@ public class MemberController {
         member.setMbr_token(param.get("mbr_token"));
         member.setOld_token(param.get("old_token"));
         member.setSw(param.get("sw"));
+
+        System.out.println("param = " + param.get("mbr_id"));
+        System.out.println("param = " + param.get("mbr_nm"));
+        System.out.println("param = " + param.get("mbr_token"));
+        System.out.println("param = " + param.get("old_token"));
+        System.out.println("param = " + param.get("sw"));
     }
 
     private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally) {
