@@ -51,4 +51,8 @@ public class MybatisInsertService {
     public int fcmUpdatePost(Member member) {
         return mybatisInserDao.fcmUpdatePost(member);
     }
+
+    public int fcmDuplicatedTokenUpdate(Member member) {
+        return mybatisInserDao.fcmDuplicatedTokenUpdate(member);
+    }
 }

@@ -45,20 +45,50 @@ public class MemberController {
     }
 
     @RequestMapping(value = {"/token"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member,
-        BindingResult result, HttpServletRequest request) throws Exception {
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member, BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
-        System.out.println("check");
+
         if (!result.hasErrors()) {
             setMemberStatus(param, member);
 
-            if (member.getSw().equals("1")) {
+            if ("1".equals(member.getSw())) {
                 int worksNormally = mybatisInsertService.fcmInsertPost(member);
                 checkWorksStatus(result, res, worksNormally);
-            }
-            if (member.getSw().equals("2")) {
+            } else if ("2".equals(member.getSw())) {
                 int worksNormally = mybatisInsertService.fcmUpdatePost(member);
                 checkWorksStatus(result, res, worksNormally);
+            } else if ("3".equals(member.getSw()) && isTokenCheck(member)) {
+                int worksNormally = mybatisInsertService.fcmDuplicatedTokenUpdate(member);
+                int duplicateInsert = mybatisInsertService.fcmInsertPost(member);
+                checkWorksStatus(result, res, worksNormally, duplicateInsert);
+            }
+            res.setUrl(member.getMbr_token());
+            restSetOkMessage(res);
+        } else {
+            restSetFalseMessage(result, res);
+        }
+        return res;
+    }
+
+
+    @RequestMapping(value = {"/gubun"}, method = {RequestMethod.POST})
+    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member,
+        BindingResult result, HttpServletRequest request) {
+        JsonResponse res = new JsonResponse(request);
+
+        if (!result.hasErrors()) {
+            setMemberStatus(param, member);
+
+            if ("1".equals(member.getSw())) {
+                int worksNormally = mybatisInsertService.fcmInsertPost(member);
+                checkWorksStatus(result, res, worksNormally);
+            } else if ("2".equals(member.getSw())) {
+                int worksNormally = mybatisInsertService.fcmUpdatePost(member);
+                checkWorksStatus(result, res, worksNormally);
+            } else if ("3".equals(member.getSw())) {
+                int worksNormally = mybatisInsertService.fcmDuplicatedTokenUpdate(member);
+                int duplicateInsert = mybatisInsertService.fcmInsertPost(member);
+                checkWorksStatus(result, res, worksNormally, duplicateInsert);
             }
             res.setUrl(member.getMbr_token());
             restSetOkMessage(res);
@@ -82,6 +112,19 @@ public class MemberController {
         } else {
             restSetOkMessage(res);
         }
+    }
+
+    private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally,
+        int duplicateInsert) {
+        if (worksNormally == 0 && duplicateInsert == 0) {
+            restSetFalseMessage(result, res);
+        } else {
+            restSetOkMessage(res);
+        }
+    }
+
+    private boolean isTokenCheck(Member member) {
+        return member.getOld_token() != null && member.getOld_token() != "";
     }
 
     private void restSetOkMessage(JsonResponse res) {
