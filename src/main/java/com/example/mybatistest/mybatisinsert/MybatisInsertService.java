@@ -37,7 +37,13 @@ public class MybatisInsertService {
     public void fcmJsonInsertGubun(Map<String, String> stringStringMap) {
         mybatisInserDao.fcmJsonInsertGubun(stringStringMap);
     }
-    public void fcmInsertUser(Map<String, String> stringStringMap) {
-        mybatisInserDao.fcmInsertUser(stringStringMap);
+    public int fcmInsertUser(Map<String, String> stringStringMap) {
+
+        return mybatisInserDao.fcmInsertUser(stringStringMap);
+    }
+
+    public int fcmInsertPost(Member member) {
+
+        return mybatisInserDao.fcmInsertPost(member);
     }
 }

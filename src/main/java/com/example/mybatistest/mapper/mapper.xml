@@ -77,10 +77,24 @@
     )
     values
       (
-        #{mbr_tocken},
+        #{mbr_token},
         #{mbr_id},
         #{mbr_nm},
-        sysdate
+        '1'
+      )
+
+  </insert>
+
+  <insert id="fcmInsertPost" parameterType="com.example.mybatistest.mybatisinsert.Member">
+    insert into TAP_MN_PUSH_USER(
+      mbr_token, mbr_id, mbr_nm, creat_dt
+    )
+    values
+      (
+        #{mbr_token},
+        #{mbr_id},
+        #{mbr_nm},
+        sysdate()
       )
 
   </insert>

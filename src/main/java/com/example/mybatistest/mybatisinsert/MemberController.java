@@ -34,7 +34,7 @@ public class MemberController {
         }.getType();
         List<Map<String, String>> deserialize = gson.fromJson(json, type);
         for (Map<String, String> stringStringMap : deserialize) {
-            if (!stringStringMap.containsKey("mbr_tocken")) {
+            if (!stringStringMap.containsKey("mbr_token")) {
                 mybatisInsertService.fcmJsonInsertGubun(stringStringMap);
             } else {
                 mybatisInsertService.fcmInsertUser(stringStringMap);
@@ -45,7 +45,8 @@ public class MemberController {
     }
 
     @RequestMapping(value = {"/token"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member, BindingResult result, HttpServletRequest request) throws Exception {
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member,
+        BindingResult result, HttpServletRequest request) throws Exception {
         JsonResponse res = new JsonResponse(request);
         System.out.println("check");
         if (!result.hasErrors()) {
@@ -53,6 +54,14 @@ public class MemberController {
             member.setMbr_nm(param.get("mbr_nm"));
             member.setMbr_token(param.get("mbr_token"));
             member.setOld_token(param.get("old_token"));
+
+//            int insertCheck = mybatisInsertService.fcmInsertUser(param);
+            int insertCheck = mybatisInsertService.fcmInsertPost(member);
+            if (insertCheck != 0) {
+                System.out.println("1");
+            } else {
+                System.out.println("0");
+            }
 
             res.setUrl(member.getMbr_token());
             res.setValid(true);

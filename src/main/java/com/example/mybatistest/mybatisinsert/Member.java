@@ -17,22 +17,7 @@ public class Member {
 
     //임시테이블
     private String member_id;
-    private String tocken;
-
     private String sys_nm;
-
-
-    public String getSys_nm() {
-        return sys_nm;
-    }
-
-    public void setSys_nm(String sys_nm) {
-        this.sys_nm = sys_nm;
-    }
-
-    public String getMember_id() {
-        return member_id;
-    }
 
     public String getMbr_id() {
         return mbr_id;
@@ -40,18 +25,6 @@ public class Member {
 
     public void setMbr_id(String mbr_id) {
         this.mbr_id = mbr_id;
-    }
-
-    public void setMember_id(String member_id) {
-        this.member_id = member_id;
-    }
-
-    public String getTocken() {
-        return tocken;
-    }
-
-    public void setTocken(String tocken) {
-        this.tocken = tocken;
     }
 
     public String getMbr_nm() {
@@ -68,6 +41,14 @@ public class Member {
 
     public void setMbr_token(String mbr_token) {
         this.mbr_token = mbr_token;
+    }
+
+    public String getOld_token() {
+        return old_token;
+    }
+
+    public void setOld_token(String old_token) {
+        this.old_token = old_token;
     }
 
     public LocalDateTime getCreat_dt() {
@@ -102,11 +83,19 @@ public class Member {
         this.bbs_id = bbs_id;
     }
 
-    public String getOld_token() {
-        return old_token;
+    public String getMember_id() {
+        return member_id;
     }
 
-    public void setOld_token(String old_token) {
-        this.old_token = old_token;
+    public void setMember_id(String member_id) {
+        this.member_id = member_id;
+    }
+
+    public String getSys_nm() {
+        return sys_nm;
+    }
+
+    public void setSys_nm(String sys_nm) {
+        this.sys_nm = sys_nm;
     }
 }

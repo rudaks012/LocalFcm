@@ -24,4 +24,6 @@ public interface MybatisInserDao {
 
     public int fcmInsertUser(Map<String, String> stringStringMap);
 
+    public int fcmInsertPost(Member member);
+
 }
