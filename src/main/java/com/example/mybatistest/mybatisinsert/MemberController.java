@@ -50,27 +50,15 @@ public class MemberController {
         JsonResponse res = new JsonResponse(request);
         System.out.println("check");
         if (!result.hasErrors()) {
-            member.setMbr_id(param.get("mbr_id"));
-            member.setMbr_nm(param.get("mbr_nm"));
-            member.setMbr_token(param.get("mbr_token"));
-            member.setOld_token(param.get("old_token"));
-            member.setSw(param.get("sw"));
+            setMemberStatus(param, member);
 
             if (member.getSw().equals("1")) {
-                int insertCheck = mybatisInsertService.fcmInsertPost(member);
-                if (insertCheck == 0) {
-                    restSetFalseMessage(result, res);
-                } else {
-                    restSetOkMessage(res);
-                }
+                int worksNormally = mybatisInsertService.fcmInsertPost(member);
+                checkWorksStatus(result, res, worksNormally);
             }
             if (member.getSw().equals("2")) {
-                int updateCheck = mybatisInsertService.fcmUpdatePost(member);
-                if (updateCheck == 0) {
-                    restSetFalseMessage(result, res);
-                } else {
-                    restSetOkMessage(res);
-                }
+                int worksNormally = mybatisInsertService.fcmUpdatePost(member);
+                checkWorksStatus(result, res, worksNormally);
             }
             res.setUrl(member.getMbr_token());
             restSetOkMessage(res);
@@ -78,6 +66,22 @@ public class MemberController {
             restSetFalseMessage(result, res);
         }
         return res;
+    }
+
+    private void setMemberStatus(Map<String, String> param, Member member) {
+        member.setMbr_id(param.get("mbr_id"));
+        member.setMbr_nm(param.get("mbr_nm"));
+        member.setMbr_token(param.get("mbr_token"));
+        member.setOld_token(param.get("old_token"));
+        member.setSw(param.get("sw"));
+    }
+
+    private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally) {
+        if (worksNormally == 0) {
+            restSetFalseMessage(result, res);
+        } else {
+            restSetOkMessage(res);
+        }
     }
 
     private void restSetOkMessage(JsonResponse res) {
