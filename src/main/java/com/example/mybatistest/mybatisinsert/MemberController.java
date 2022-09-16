@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ public class MemberController {
     public static final String PARAMETER_SW_TWO = "2";
     public static final String PARAMETER_THREE = "3";
     public static final String REGULAR_EXPRESSION = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
+    public static final String PUSH_EXPRESSION = "\\^";
     public static final int ZERO = 0;
 
     @Autowired
@@ -82,7 +84,7 @@ public class MemberController {
 
         if (!result.hasErrors()) {
             gubunMemberStatus(param, member);
-            String[] splitRegular = member.getPush().split("\\^");
+            String[] splitRegular = member.getPush().split(PUSH_EXPRESSION);
             for (String value : splitRegular) {
                 String[] push = value.split(REGULAR_EXPRESSION);
                 splitGubunMemberStatusInsert(member, result, res, push);
@@ -122,7 +124,7 @@ public class MemberController {
     }
 
     private boolean isTokenCheck(Member member) {
-        return member.getOld_token() != null && member.getOld_token() != "";
+        return member.getOld_token() != null && !Objects.equals(member.getOld_token(), "");
     }
 
     private void splitGubunMemberStatusInsert(Member member, BindingResult result, JsonResponse res, String[] push) {
