@@ -7,19 +7,20 @@ public class Member {
     private String mbr_id; // 회원아이디
     private String mbr_nm; //회원명
     private String mbr_token; //단말 토큰
-
     private String sw; // 멤버 상태 구분 기호 1: 신규 , 2: 업데이트 , 3: 업데이트된 상태
-
     private String old_token; //오래된 토큰
     private LocalDateTime creat_dt; // 등록일시
 
-    private String push; // 해당 기관 코드 묶음
 
+    private String push; // 해당 기관 코드 묶음
     private int push_seq; //알람 순번
     private String sys_id; //시스템아이디
     private String bbs_id; //게시판 아이디
-
     private String push_yn;
+
+    private String push_sj; //알람 제목
+    private String push_nm; //알람 내용
+    private String link; //링크
 
     //임시테이블
     private String member_id;
@@ -111,6 +112,30 @@ public class Member {
 
     public void setPush_yn(String push_yn) {
         this.push_yn = push_yn;
+    }
+
+    public String getPush_sj() {
+        return push_sj;
+    }
+
+    public void setPush_sj(String push_sj) {
+        this.push_sj = push_sj;
+    }
+
+    public String getPush_nm() {
+        return push_nm;
+    }
+
+    public void setPush_nm(String push_nm) {
+        this.push_nm = push_nm;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public String getMember_id() {

@@ -97,6 +97,15 @@ public class MemberController {
         return res;
     }
 
+    @GetMapping(value = "/FCM")
+    public List<Member> fcmSelect(Member member) {
+        List<Member> fcmListMember = mybatisInsertService.fcmListMember(member);
+         int a =  mybatisInsertService.realInsert(fcmListMember);
+        System.out.println("a = " + a);
+
+        return fcmListMember;
+    }
+
 
 
     private void setMemberStatus(Map<String, String> param, Member member) {

@@ -31,4 +31,8 @@ public interface MybatisInserDao {
     int fcmDuplicatedTokenUpdate(Member member);
 
     int fcmGubunInsert(Member member);
+
+    List<Member> fcmListMember(Member member);
+
+    int realInsert(List<Member> fcmListMember);
 }

@@ -59,4 +59,12 @@ public class MybatisInsertService {
     public int fcmGubunInsert(Member member) {
         return mybatisInserDao.fcmGubunInsert(member);
     }
+
+    public List<Member> fcmListMember(Member member) {
+        return mybatisInserDao.fcmListMember(member);
+    }
+
+    public int realInsert(List<Member> fcmListMember) {
+        return mybatisInserDao.realInsert(fcmListMember);
+    }
 }
