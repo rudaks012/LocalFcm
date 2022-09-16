@@ -117,4 +117,26 @@
       mbr_token = #{old_token}
   </update>
 
+  <insert id="fcmGubunInsert" parameterType="com.example.mybatistest.mybatisinsert.Member">
+<!--    <selectKey resultType="Int" keyProperty="push_seq" order="BEFORE">-->
+<!--      SELECT-->
+<!--          MAX(push_seq)+1-->
+<!--      FROM-->
+<!--          tap_mn_push_gubun-->
+<!--    </selectKey>-->
+    insert into
+        TAP_MN_PUSH_GUBUN
+        (mbr_token, push_seq, sys_id, bbs_id, push_yn, creat_dt)
+    VALUES
+      (
+        #{mbr_token},
+        1,
+        #{sys_id},
+        #{bbs_id},
+        #{push_yn},
+        sysdate()
+      )
+
+  </insert>
+
 </mapper>

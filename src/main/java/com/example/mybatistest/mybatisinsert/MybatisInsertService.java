@@ -55,4 +55,8 @@ public class MybatisInsertService {
     public int fcmDuplicatedTokenUpdate(Member member) {
         return mybatisInserDao.fcmDuplicatedTokenUpdate(member);
     }
+
+    public int fcmGubunInsert(Member member) {
+        return mybatisInserDao.fcmGubunInsert(member);
+    }
 }

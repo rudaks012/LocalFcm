@@ -49,6 +49,14 @@ public class Member {
         this.mbr_token = mbr_token;
     }
 
+    public String getSw() {
+        return sw;
+    }
+
+    public void setSw(String sw) {
+        this.sw = sw;
+    }
+
     public String getOld_token() {
         return old_token;
     }
@@ -63,6 +71,14 @@ public class Member {
 
     public void setCreat_dt(LocalDateTime creat_dt) {
         this.creat_dt = creat_dt;
+    }
+
+    public String getPush() {
+        return push;
+    }
+
+    public void setPush(String push) {
+        this.push = push;
     }
 
     public int getPush_seq() {
@@ -89,6 +105,14 @@ public class Member {
         this.bbs_id = bbs_id;
     }
 
+    public String getPush_yn() {
+        return push_yn;
+    }
+
+    public void setPush_yn(String push_yn) {
+        this.push_yn = push_yn;
+    }
+
     public String getMember_id() {
         return member_id;
     }
@@ -103,29 +127,5 @@ public class Member {
 
     public void setSys_nm(String sys_nm) {
         this.sys_nm = sys_nm;
-    }
-
-    public String getSw() {
-        return sw;
-    }
-
-    public void setSw(String sw) {
-        this.sw = sw;
-    }
-
-    public String getPush() {
-        return push;
-    }
-
-    public void setPush(String push) {
-        this.push = push;
-    }
-
-    public String getPush_yn() {
-        return push_yn;
-    }
-
-    public void setPush_yn(String push_yn) {
-        this.push_yn = push_yn;
     }
 }

@@ -83,37 +83,40 @@ public class MemberController {
             member.setPush(param.get("push"));
             member.setSw(param.get("sw"));
             System.out.println("member = " + member.getPush());
-
+            System.out.println("member.getMbr_token() = " + member.getMbr_token());
             String regularExpression = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
             String[] splitRegular = member.getPush().split("\\^");
             System.out.println("splitPush = " + Arrays.toString(splitRegular));
 
-            for (String value : splitRegular) {
+            for (int i = 0; i < splitRegular.length; i++) {
+                String value = splitRegular[i];
                 String[] push = value.split(regularExpression);
                 System.out.println("push = " + Arrays.toString(push));
                 for (int j = 0; j < push.length; j++) {
                     if (j == 0) {
                         System.out.println("0 입니다" + push[j] + "  " + j);
                         member.setSys_id(push[j]);
-                    } else if (j == 1) {
+                    }else if (j == 1) {
                         continue;
                     } else if (j % 2 == 0) {
                         System.out.println("짝수 입니다" + push[j] + "  " + j);
                         member.setBbs_id(push[j]);
-                    } else if (j % 3 == 0) {
+                    } else {
                         System.out.println("홀수 입니다" + push[j] + "  " + j);
                         member.setPush_yn(push[j]);
-                    } else {
-                        res.setValid(false);
-                        res.setMessage("Fault");
-                        res.setResult(result.getAllErrors());
+                        System.out.println("member.getSys_id() = " + member.getSys_id());
+                        System.out.println("member.getBbs_id() = " + member.getBbs_id());
+                        System.out.println("member.getPush_yn() = " + member.getPush_yn());
                     }
-                    //insert 구문 붙인다
+                    if (j % 3 == 0 && j != 0) {
+                        System.out.println("member.getSys_id()123123 = " + member.getSys_id());
+                        System.out.println("member.getBbs_id() 123123= " + member.getBbs_id());
+                        System.out.println("member.getPush_yn()12312312 = " + member.getPush_yn());
+                        System.out.println("member.mbertosdfosdai()12312312 = " + member.getMbr_token());
+                    mybatisInsertService.fcmGubunInsert(member);
+                    }
                 }
             }
-
-            System.out.println("splitPush.length = " + splitRegular.length);
-
             res.setUrl(member.getMbr_token());
             res.setValid(true);
             res.setMessage("OK");
