@@ -118,19 +118,22 @@
   </update>
 
   <insert id="fcmGubunInsert" parameterType="com.example.mybatistest.mybatisinsert.Member">
-<!--    <selectKey resultType="Int" keyProperty="push_seq" order="BEFORE">-->
-<!--      SELECT-->
-<!--          MAX(push_seq)+1-->
-<!--      FROM-->
-<!--          tap_mn_push_gubun-->
-<!--    </selectKey>-->
+
+    <selectKey resultType="int" keyProperty="push_seq" order="BEFORE">
+      SELECT
+         IFNULL(MAX(push_seq),0)+1
+--       Oracle -  NVL(MAX(push_seq),0)+1
+      FROM
+          tap_mn_push_gubun
+      where mbr_token = #{mbr_token}
+    </selectKey>
     insert into
         TAP_MN_PUSH_GUBUN
         (mbr_token, push_seq, sys_id, bbs_id, push_yn, creat_dt)
     VALUES
       (
         #{mbr_token},
-        1,
+        #{push_seq},
         #{sys_id},
         #{bbs_id},
         #{push_yn},
