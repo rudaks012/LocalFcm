@@ -4,7 +4,6 @@ import com.example.mybatistest.mybatisinsert.util.JsonResponse;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -85,32 +84,35 @@ public class MemberController {
             member.setSw(param.get("sw"));
             System.out.println("member = " + member.getPush());
 
-            String match = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
-            String s = member.getPush().replaceAll(match, "");
-            String[] splitPush = member.getPush().split("\\^");
-            System.out.println("splitPush = " + Arrays.toString(splitPush));
+            String regularExpression = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
+            String[] splitRegular = member.getPush().split("\\^");
+            System.out.println("splitPush = " + Arrays.toString(splitRegular));
 
-            for (int i = 0; i < splitPush.length; i++) {
-                String[] push = splitPush[i].split(match);
+            for (String value : splitRegular) {
+                String[] push = value.split(regularExpression);
                 System.out.println("push = " + Arrays.toString(push));
                 for (int j = 0; j < push.length; j++) {
                     if (j == 0) {
-                        System.out.println("0 입니다" + push[j] +"  " + j);
+                        System.out.println("0 입니다" + push[j] + "  " + j);
                         member.setSys_id(push[j]);
                     } else if (j == 1) {
                         continue;
                     } else if (j % 2 == 0) {
-                        System.out.println("짝수 입니다" + push[j] +"  " + j);
+                        System.out.println("짝수 입니다" + push[j] + "  " + j);
                         member.setBbs_id(push[j]);
-                    } else {
-                        System.out.println("홀수 입니다" + push[j] +"  " + j);
+                    } else if (j % 3 == 0) {
+                        System.out.println("홀수 입니다" + push[j] + "  " + j);
                         member.setPush_yn(push[j]);
+                    } else {
+                        res.setValid(false);
+                        res.setMessage("Fault");
+                        res.setResult(result.getAllErrors());
                     }
                     //insert 구문 붙인다
                 }
             }
 
-            System.out.println("splitPush.length = " + splitPush.length);
+            System.out.println("splitPush.length = " + splitRegular.length);
 
             res.setUrl(member.getMbr_token());
             res.setValid(true);
