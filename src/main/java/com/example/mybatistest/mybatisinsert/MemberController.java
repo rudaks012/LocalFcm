@@ -4,7 +4,6 @@ import com.example.mybatistest.mybatisinsert.util.JsonResponse;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class MemberController {
 
+    public static final String PARAMETER_SW_ONE = "1";
+    public static final String PARAMETER_SW_TWO = "2";
+    public static final String PARAMETER_THREE = "3";
+    public static final int ZERO = 0;
+
     @Autowired
     private MybatisInsertService mybatisInsertService;
 
@@ -31,8 +35,7 @@ public class MemberController {
         List<Member> listToJson = mybatisInsertService.listToJson(member);
         String json = gson.toJson(listToJson);
 
-        Type type = new TypeToken<List<Map<String, String>>>() {
-        }.getType();
+        Type type = new TypeToken<List<Map<String, String>>>() {}.getType();
         List<Map<String, String>> deserialize = gson.fromJson(json, type);
         for (Map<String, String> stringStringMap : deserialize) {
             if (!stringStringMap.containsKey("mbr_token")) {
@@ -46,20 +49,19 @@ public class MemberController {
     }
 
     @RequestMapping(value = {"/token"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member,
-        BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member, BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
             setMemberStatus(param, member);
 
-            if ("1".equals(member.getSw())) {
+            if (PARAMETER_SW_ONE.equals(member.getSw())) {
                 int worksNormally = mybatisInsertService.fcmInsertPost(member);
                 checkWorksStatus(result, res, worksNormally);
-            } else if ("2".equals(member.getSw())) {
+            } else if (PARAMETER_SW_TWO.equals(member.getSw())) {
                 int worksNormally = mybatisInsertService.fcmUpdatePost(member);
                 checkWorksStatus(result, res, worksNormally);
-            } else if ("3".equals(member.getSw()) && isTokenCheck(member)) {
+            } else if (PARAMETER_THREE.equals(member.getSw()) && isTokenCheck(member)) {
                 int worksNormally = mybatisInsertService.fcmDuplicatedTokenUpdate(member);
                 int duplicateInsert = mybatisInsertService.fcmInsertPost(member);
                 checkWorksStatus(result, res, worksNormally, duplicateInsert);
@@ -74,54 +76,26 @@ public class MemberController {
 
 
     @RequestMapping(value = "/gubun", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member,
-        BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member, BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
-            member.setMbr_token(param.get("mbr_token"));
-            member.setPush(param.get("push"));
-            member.setSw(param.get("sw"));
+            gubunMemberStatus(param, member);
             String regularExpression = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
             String[] splitRegular = member.getPush().split("\\^");
-
-            System.out.println("member = " + member.getPush());
-            System.out.println("member.getMbr_token() = " + member.getMbr_token());
-            System.out.println("splitPush = " + Arrays.toString(splitRegular));
-
             for (String value : splitRegular) {
                 String[] push = value.split(regularExpression);
-                System.out.println("push = " + Arrays.toString(push));
-                for (int j = 0; j < push.length; j++) {
-                    if (j == 0) {
-                        System.out.println("0 입니다" + push[j] + "  " + j);
-                        member.setSys_id(push[j]);
-                    } else if (j == 1) {
-                        continue;
-                    } else if (j % 2 == 0) {
-                        System.out.println("짝수 입니다" + push[j] + "  " + j);
-                        member.setBbs_id(push[j]);
-                    } else {
-                        System.out.println("홀수 입니다" + push[j] + "  " + j);
-                        member.setPush_yn(push[j]);
-                        System.out.println("member.getSys_id() = " + member.getSys_id());
-                        System.out.println("member.getBbs_id() = " + member.getBbs_id());
-                        System.out.println("member.getPush_yn() = " + member.getPush_yn());
-                        mybatisInsertService.fcmGubunInsert(member);
-                    }
-                }
+                splitGubunMemberStatusInsert(member, result, res, push);
             }
             res.setUrl(member.getMbr_token());
-            res.setValid(true);
-            res.setMessage("OK");
-
+            restSetOkMessage(res);
         } else {
-            res.setValid(false);
-            res.setMessage("Fault");
-            res.setResult(result.getAllErrors());
+            restSetFalseMessage(result, res);
         }
         return res;
     }
+
+
 
     private void setMemberStatus(Map<String, String> param, Member member) {
         member.setMbr_id(param.get("mbr_id"));
@@ -129,12 +103,6 @@ public class MemberController {
         member.setMbr_token(param.get("mbr_token"));
         member.setOld_token(param.get("old_token"));
         member.setSw(param.get("sw"));
-
-        System.out.println("param = " + param.get("mbr_id"));
-        System.out.println("param = " + param.get("mbr_nm"));
-        System.out.println("param = " + param.get("mbr_token"));
-        System.out.println("param = " + param.get("old_token"));
-        System.out.println("param = " + param.get("sw"));
     }
 
     private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally) {
@@ -145,8 +113,7 @@ public class MemberController {
         }
     }
 
-    private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally,
-        int duplicateInsert) {
+    private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally, int duplicateInsert) {
         if (worksNormally == 0 && duplicateInsert == 0) {
             restSetFalseMessage(result, res);
         } else {
@@ -156,6 +123,32 @@ public class MemberController {
 
     private boolean isTokenCheck(Member member) {
         return member.getOld_token() != null && member.getOld_token() != "";
+    }
+
+    private void splitGubunMemberStatusInsert(Member member, BindingResult result, JsonResponse res, String[] push) {
+        for (int j = ZERO; j < push.length; j++) {
+            if (j == ZERO) {
+                member.setSys_id(push[j]);
+            } else if (j == 1) {
+                continue;
+            } else if (isEven(j)) {
+                member.setBbs_id(push[j]);
+            } else {
+                member.setPush_yn(push[j]);
+                int worksNormally = mybatisInsertService.fcmGubunInsert(member);
+                checkWorksStatus(result, res, worksNormally);
+            }
+        }
+    }
+
+    private boolean isEven(int j) {
+        return j % 2 == 0;
+    }
+
+    private void gubunMemberStatus(Map<String, String> param, Member member) {
+        member.setMbr_token(param.get("mbr_token"));
+        member.setPush(param.get("push"));
+        member.setSw(param.get("sw"));
     }
 
     private void restSetOkMessage(JsonResponse res) {
