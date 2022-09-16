@@ -22,6 +22,7 @@ public class MemberController {
     public static final String PARAMETER_SW_ONE = "1";
     public static final String PARAMETER_SW_TWO = "2";
     public static final String PARAMETER_THREE = "3";
+    public static final String REGULAR_EXPRESSION = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
     public static final int ZERO = 0;
 
     @Autowired
@@ -81,10 +82,9 @@ public class MemberController {
 
         if (!result.hasErrors()) {
             gubunMemberStatus(param, member);
-            String regularExpression = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
             String[] splitRegular = member.getPush().split("\\^");
             for (String value : splitRegular) {
-                String[] push = value.split(regularExpression);
+                String[] push = value.split(REGULAR_EXPRESSION);
                 splitGubunMemberStatusInsert(member, result, res, push);
             }
             res.setUrl(member.getMbr_token());

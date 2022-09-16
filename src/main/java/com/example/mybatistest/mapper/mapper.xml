@@ -127,6 +127,7 @@
           tap_mn_push_gubun
       where mbr_token = #{mbr_token}
     </selectKey>
+
     insert into
         TAP_MN_PUSH_GUBUN
         (mbr_token, push_seq, sys_id, bbs_id, push_yn, creat_dt)
@@ -139,7 +140,6 @@
         #{push_yn},
         sysdate()
       )
-
   </insert>
 
 </mapper>
