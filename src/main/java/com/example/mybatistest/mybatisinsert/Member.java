@@ -19,6 +19,8 @@ public class Member {
     private String sys_id; //시스템아이디
     private String bbs_id; //게시판 아이디
 
+    private String push_yn;
+
     //임시테이블
     private String member_id;
     private String sys_nm;
@@ -117,5 +119,13 @@ public class Member {
 
     public void setPush(String push) {
         this.push = push;
+    }
+
+    public String getPush_yn() {
+        return push_yn;
+    }
+
+    public void setPush_yn(String push_yn) {
+        this.push_yn = push_yn;
     }
 }

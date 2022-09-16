@@ -4,6 +4,7 @@ import com.example.mybatistest.mybatisinsert.util.JsonResponse;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,8 @@ public class MemberController {
     }
 
     @RequestMapping(value = {"/token"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member, BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member,
+        BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
@@ -73,7 +75,8 @@ public class MemberController {
 
 
     @RequestMapping(value = "/gubun", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param,Member member, BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member,
+        BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
@@ -82,15 +85,38 @@ public class MemberController {
             member.setSw(param.get("sw"));
             System.out.println("member = " + member.getPush());
 
-            String[] check = member.getPush().split("\\|");
-            System.out.println("check = " + check.length);
-            System.out.println("check = " + Arrays.toString(check));
+            String match = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
+            String s = member.getPush().replaceAll(match, "");
+            String[] splitPush = member.getPush().split("\\^");
+            System.out.println("splitPush = " + Arrays.toString(splitPush));
+
+            for (int i = 0; i < splitPush.length; i++) {
+                String[] push = splitPush[i].split(match);
+                System.out.println("push = " + Arrays.toString(push));
+                for (int j = 0; j < push.length; j++) {
+                    if (j == 0) {
+                        System.out.println("0 입니다" + push[j] +"  " + j);
+                        member.setSys_id(push[j]);
+                    } else if (j == 1) {
+                        continue;
+                    } else if (j % 2 == 0) {
+                        System.out.println("짝수 입니다" + push[j] +"  " + j);
+                        member.setBbs_id(push[j]);
+                    } else {
+                        System.out.println("홀수 입니다" + push[j] +"  " + j);
+                        member.setPush_yn(push[j]);
+                    }
+                    //insert 구문 붙인다
+                }
+            }
+
+            System.out.println("splitPush.length = " + splitPush.length);
 
             res.setUrl(member.getMbr_token());
             res.setValid(true);
             res.setMessage("OK");
 
-        }else {
+        } else {
             res.setValid(false);
             res.setMessage("Fault");
             res.setResult(result.getAllErrors());
