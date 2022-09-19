@@ -22,7 +22,7 @@ public class MemberController {
 
     public static final String PARAMETER_SW_ONE = "1";
     public static final String PARAMETER_SW_TWO = "2";
-    public static final String PARAMETER_THREE = "3";
+    public static final String PARAMETER_SW_THREE = "3";
     public static final String REGULAR_EXPRESSION = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
     public static final String PUSH_EXPRESSION = "\\^";
     public static final int ZERO = 0;
@@ -64,7 +64,7 @@ public class MemberController {
             } else if (PARAMETER_SW_TWO.equals(member.getSw())) {
                 int worksNormally = mybatisInsertService.fcmUpdatePost(member);
                 checkWorksStatus(result, res, worksNormally);
-            } else if (PARAMETER_THREE.equals(member.getSw()) && isTokenCheck(member)) {
+            } else if (PARAMETER_SW_THREE.equals(member.getSw()) && isTokenCheck(member)) {
                 int worksNormally = mybatisInsertService.fcmDuplicatedTokenUpdate(member);
                 int duplicateInsert = mybatisInsertService.fcmInsertPost(member);
                 checkWorksStatus(result, res, worksNormally, duplicateInsert);
