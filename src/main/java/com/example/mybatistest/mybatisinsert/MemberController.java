@@ -40,6 +40,7 @@ public class MemberController {
 
         Type type = new TypeToken<List<Map<String, String>>>() {
         }.getType();
+
         List<Map<String, String>> deserialize = gson.fromJson(json, type);
         for (Map<String, String> stringStringMap : deserialize) {
             if (!stringStringMap.containsKey("mbr_token")) {
@@ -57,26 +58,56 @@ public class MemberController {
         BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
-        if (!result.hasErrors()) {
-            setMemberStatus(param, member);
-
-            if (PARAMETER_SW_ONE.equals(member.getSw())) {
-                int worksNormally = mybatisInsertService.fcmInsertPost(member);
-                checkWorksStatus(result, res, worksNormally);
-            } else if (PARAMETER_SW_TWO.equals(member.getSw())) {
-                int worksNormally = mybatisInsertService.fcmUpdatePost(member);
-                checkWorksStatus(result, res, worksNormally);
-            } else if (PARAMETER_SW_THREE.equals(member.getSw()) && isTokenCheck(member)) {
-                int worksNormally = mybatisInsertService.fcmDuplicatedTokenUpdate(member);
-                int duplicateInsert = mybatisInsertService.fcmInsertPost(member);
-                checkWorksStatus(result, res, worksNormally, duplicateInsert);
+        try {
+            if (!result.hasErrors()) {
+                setMemberStatus(param, member);
+                swForEachFunction(member, result, res);
+                res.setUrl(member.getMbr_token());
+                restSetOkMessage(res);
+            } else {
+                restSetFalseMessage(result, res);
             }
-            res.setUrl(member.getMbr_token());
-            restSetOkMessage(res);
-        } else {
+        } catch (Exception e) {
             restSetFalseMessage(result, res);
         }
+
         return res;
+    }
+
+    private void swForEachFunction(Member member, BindingResult result, JsonResponse res) {
+
+        validate(member, result, res);
+
+        if (PARAMETER_SW_ONE.equals(member.getSw())) {
+            int worksNormally = mybatisInsertService.fcmInsertPost(member);
+            checkWorksStatus(result, res, worksNormally);
+        }
+        if (PARAMETER_SW_TWO.equals(member.getSw())) {
+            int worksNormally = mybatisInsertService.fcmUpdatePost(member);
+            checkWorksStatus(result, res, worksNormally);
+        }
+        if (PARAMETER_SW_THREE.equals(member.getSw()) && isTokenCheck(member)) {
+            int worksNormally = mybatisInsertService.fcmDuplicatedTokenUpdate(member);
+            int duplicateInsert = mybatisInsertService.fcmInsertPost(member);
+            checkWorksStatus(result, res, worksNormally, duplicateInsert);
+        }
+    }
+
+    private void validate(Member member, BindingResult result, JsonResponse res) {
+        if (isSwEmptyAndNull(member)) {
+            restSetFalseMessage(result, res);
+        }
+        if (isTokenEmptyAndNull(member)) {
+            restSetFalseMessage(result, res);
+        }
+    }
+
+    private boolean isTokenEmptyAndNull(Member member) {
+        return Objects.isNull(member.getMbr_token()) || member.getMbr_token().isEmpty();
+    }
+
+    private boolean isSwEmptyAndNull(Member member) {
+        return member.getSw().isEmpty() && member.getSw() == null;
     }
 
 
@@ -102,7 +133,7 @@ public class MemberController {
         return res;
     }
 
-    @GetMapping(value = "/FCM")
+    @GetMapping(value = "/fcm")
     public List<Member> fcmSelect(Member member) {
         List<Member> fcmListMember = mybatisInsertService.fcmListMember(member);
         int a = mybatisInsertService.realInsert(fcmListMember);
@@ -164,8 +195,11 @@ public class MemberController {
 
     private void gubunMemberStatus(Map<String, String> param, Member member) {
         member.setMbr_token(param.get("mbr_token"));
+        System.out.println("member.getMbr_token() = " + member.getMbr_token());
         member.setPush(param.get("push"));
+        System.out.println("member.getPush() = " + member.getPush());
         member.setSw(param.get("sw"));
+        System.out.println("member.getSw() = " + member.getSw());
     }
 
     private void restSetOkMessage(JsonResponse res) {
