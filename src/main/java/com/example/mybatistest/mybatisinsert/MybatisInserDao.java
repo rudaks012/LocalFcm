@@ -35,4 +35,7 @@ public interface MybatisInserDao {
     List<Member> fcmListMember(Member member);
 
     int realInsert(List<Member> fcmListMember);
+
+    int fcmDeleteGubun(Member member);
+
 }

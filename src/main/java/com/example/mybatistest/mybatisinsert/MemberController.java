@@ -38,7 +38,8 @@ public class MemberController {
         List<Member> listToJson = mybatisInsertService.listToJson(member);
         String json = gson.toJson(listToJson);
 
-        Type type = new TypeToken<List<Map<String, String>>>() {}.getType();
+        Type type = new TypeToken<List<Map<String, String>>>() {
+        }.getType();
         List<Map<String, String>> deserialize = gson.fromJson(json, type);
         for (Map<String, String> stringStringMap : deserialize) {
             if (!stringStringMap.containsKey("mbr_token")) {
@@ -52,7 +53,8 @@ public class MemberController {
     }
 
     @RequestMapping(value = {"/token"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member, BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member,
+        BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
@@ -79,11 +81,14 @@ public class MemberController {
 
 
     @RequestMapping(value = "/gubun", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member, BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member,
+        BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
             gubunMemberStatus(param, member);
+            mybatisInsertService.fcmDeleteGubun(member);
+
             String[] splitRegular = member.getPush().split(PUSH_EXPRESSION);
             for (String value : splitRegular) {
                 String[] push = value.split(REGULAR_EXPRESSION);
@@ -100,12 +105,11 @@ public class MemberController {
     @GetMapping(value = "/FCM")
     public List<Member> fcmSelect(Member member) {
         List<Member> fcmListMember = mybatisInsertService.fcmListMember(member);
-         int a =  mybatisInsertService.realInsert(fcmListMember);
+        int a = mybatisInsertService.realInsert(fcmListMember);
         System.out.println("a = " + a);
 
         return fcmListMember;
     }
-
 
 
     private void setMemberStatus(Map<String, String> param, Member member) {
@@ -124,7 +128,8 @@ public class MemberController {
         }
     }
 
-    private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally, int duplicateInsert) {
+    private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally,
+        int duplicateInsert) {
         if (worksNormally == 0 && duplicateInsert == 0) {
             restSetFalseMessage(result, res);
         } else {
@@ -136,7 +141,8 @@ public class MemberController {
         return member.getOld_token() != null && !Objects.equals(member.getOld_token(), "");
     }
 
-    private void splitGubunMemberStatusInsert(Member member, BindingResult result, JsonResponse res, String[] push) {
+    private void splitGubunMemberStatusInsert(Member member, BindingResult result, JsonResponse res,
+        String[] push) {
         for (int j = ZERO; j < push.length; j++) {
             if (j == ZERO) {
                 member.setSys_id(push[j]);

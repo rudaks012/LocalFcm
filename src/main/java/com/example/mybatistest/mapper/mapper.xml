@@ -170,4 +170,11 @@
         </foreach>
   </insert>
 
+  <delete id="fcmDeleteGubun" parameterType="com.example.mybatistest.mybatisinsert.Member">
+    DELETE FROM
+        TAP_MN_PUSH_GUBUN
+    WHERE
+        mbr_token = #{mbr_token}
+  </delete>
+
 </mapper>
