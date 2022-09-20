@@ -71,4 +71,8 @@ public class MybatisInsertService {
     public int fcmDeleteGubun(Member member) {
         return mybatisInserDao.fcmDeleteGubun(member);
     }
+
+    public List<Member> fcmSelectSys(Member member) {
+        return mybatisInserDao.fcmSelectSys(member);
+    }
 }

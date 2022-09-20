@@ -176,5 +176,18 @@
     WHERE
         mbr_token = #{mbr_token}
   </delete>
+  
+  <select id="fcmSelectSys" resultType="com.example.mybatistest.mybatisinsert.Member">
+    SELECT
+        a.sys_id, a.sys_nm, b.bbs_sj, b.bbs_id
+    FROM
+         dgedu_user.tap_sm_sys_manage a, dgedu_user.tap_bm_bbs_manage b
+    WHERE
+        a.sys_ty = 'INSTT'
+      AND a.sys_id = b.sys_id
+      AND a.sys_nm LIKE CONCAT('%',#{sys_nm},'%')
+      AND b.bbs_sj LIKE '알림마당-공지사항%'
+    ORDER BY b.bbs_id
+  </select>
 
 </mapper>

@@ -24,7 +24,10 @@ public class Member {
 
     //임시테이블
     private String member_id;
-    private String sys_nm;
+    private String sys_nm; // 시스템 이름
+    private String bbs_sj; // 게시판 제목
+
+
 
     public String getMbr_id() {
         return mbr_id;
@@ -152,5 +155,13 @@ public class Member {
 
     public void setSys_nm(String sys_nm) {
         this.sys_nm = sys_nm;
+    }
+
+    public String getBbs_sj() {
+        return bbs_sj;
+    }
+
+    public void setBbs_sj(String bbs_sj) {
+        this.bbs_sj = bbs_sj;
     }
 }

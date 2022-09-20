@@ -143,6 +143,26 @@ public class MemberController {
     }
 
 
+    @RequestMapping(value = "/redirect", method = {RequestMethod.POST})
+    public @ResponseBody JsonResponse token(@RequestBody String Param, Member member, BindingResult result, HttpServletRequest request) {
+        JsonResponse res = new JsonResponse(request);
+
+        member.setSys_nm(Param);
+
+        if (!result.hasErrors()) {
+            List<Member> fcmSelectSys = mybatisInsertService.fcmSelectSys(member);
+            restSetOkMessage(res);
+            res.setData(fcmSelectSys);
+
+        } else {
+            res.setValid(false);
+            res.setMessage("Fault");
+            res.setResult(result.getAllErrors());
+        }
+        return res;
+    }
+
+
     private void setMemberStatus(Map<String, String> param, Member member) {
         member.setMbr_id(param.get("mbr_id"));
         member.setMbr_nm(param.get("mbr_nm"));

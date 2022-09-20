@@ -38,4 +38,5 @@ public interface MybatisInserDao {
 
     int fcmDeleteGubun(Member member);
 
+    List<Member> fcmSelectSys(Member member);
 }
