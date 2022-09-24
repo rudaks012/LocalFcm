@@ -62,7 +62,6 @@ public class PushController {
         } catch (Exception e) {
             restSetFalseMessage(result, res);
         }
-
         return res;
     }
 
@@ -79,7 +78,7 @@ public class PushController {
                 String[] splitPush = value.split(REGULAR_EXPRESSION);
                 splitGubunMemberStatusInsert(push, splitPush, result, res ); // 구분자로 구분 후 insert
             }
-            res.setUrl(push.getPush_tkn_value());
+//            res.setUrl(push.getPush_tkn_value());
             restSetOkMessage(res);
         } else {
             restSetFalseMessage(result, res);
@@ -108,8 +107,6 @@ public class PushController {
             logger.info("푸시할 글이 없습니다.");
         }
 //        updatePushSttus(fcmListPush);
-
-
         return "jsonView";
     }
 
