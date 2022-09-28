@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "54942719345",
+    "project_id": "deduapptest",
+    "storage_bucket": "deduapptest.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:54942719345:android:8ec14c9368c70a496aead0",
+        "android_client_info": {
+          "package_name": "kr.go.dge.deduapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "54942719345-lsh909oa6h6cgm1gc844o7rjhs62hkdj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcide_GJF79waXaydDIMQgCE6gMpvwU3Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "54942719345-lsh909oa6h6cgm1gc844o7rjhs62hkdj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

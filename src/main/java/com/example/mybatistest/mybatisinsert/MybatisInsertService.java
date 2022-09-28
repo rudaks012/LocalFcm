@@ -75,4 +75,8 @@ public class MybatisInsertService {
     public List<Member> fcmSelectSys(Member member) {
         return mybatisInserDao.fcmSelectSys(member);
     }
+
+    public List<Member> fcmPushList(Member member) {
+        return mybatisInserDao.fcmPushList(member);
+    }
 }

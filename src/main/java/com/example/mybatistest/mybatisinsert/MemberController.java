@@ -1,15 +1,19 @@
 package com.example.mybatistest.mybatisinsert;
 
 import com.example.mybatistest.mybatisinsert.util.JsonResponse;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import java.lang.reflect.Type;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,28 +34,28 @@ public class MemberController {
     @Autowired
     private MybatisInsertService mybatisInsertService;
 
-    @GetMapping("/member")
-    public List<Member> listToJson() {
-        Member member = new Member();
-        Gson gson = new Gson();
-
-        List<Member> listToJson = mybatisInsertService.listToJson(member);
-        String json = gson.toJson(listToJson);
-
-        Type type = new TypeToken<List<Map<String, String>>>() {
-        }.getType();
-
-        List<Map<String, String>> deserialize = gson.fromJson(json, type);
-        for (Map<String, String> stringStringMap : deserialize) {
-            if (!stringStringMap.containsKey("mbr_token")) {
-                mybatisInsertService.fcmJsonInsertGubun(stringStringMap);
-            } else {
-                mybatisInsertService.fcmInsertUser(stringStringMap);
-
-            }
-        }
-        return listToJson;
-    }
+//    @GetMapping("/member")
+//    public List<Member> listToJson() {
+//        Member member = new Member();
+//        Gson gson = new Gson();
+//
+//        List<Member> listToJson = mybatisInsertService.listToJson(member);
+//        String json = gson.toJson(listToJson);
+//
+//        Type type = new TypeToken<List<Map<String, String>>>() {
+//        }.getType();
+//
+//        List<Map<String, String>> deserialize = gson.fromJson(json, type);
+//        for (Map<String, String> stringStringMap : deserialize) {
+//            if (!stringStringMap.containsKey("mbr_token")) {
+//                mybatisInsertService.fcmJsonInsertGubun(stringStringMap);
+//            } else {
+//                mybatisInsertService.fcmInsertUser(stringStringMap);
+//
+//            }
+//        }
+//        return listToJson;
+//    }
 
     @RequestMapping(value = {"/token"}, method = {RequestMethod.POST})
     public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member,
@@ -61,7 +65,7 @@ public class MemberController {
         try {
             if (!result.hasErrors()) {
                 setMemberStatus(param, member);
-                swForEachFunction(member, result, res);
+                swForEachFunction(member, result, res);// sw값에 따른 분기처리 sw = 1 : 신규, sw = 2 : 업데이트, sw = 3 : 신규(토큰값 있는데 변경된 경우)
                 res.setUrl(member.getMbr_token());
                 restSetOkMessage(res);
             } else {
@@ -73,6 +77,159 @@ public class MemberController {
 
         return res;
     }
+
+
+    @RequestMapping(value = "/gubun", method = {RequestMethod.POST})
+    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member,
+        BindingResult result, HttpServletRequest request) {
+        JsonResponse res = new JsonResponse(request);
+
+        if (!result.hasErrors()) {
+            gubunMemberStatus(param, member);
+            mybatisInsertService.fcmDeleteGubun(member); //등록하기전 삭제 후 등록
+
+            String[] splitRegular = member.getPush().split(PUSH_EXPRESSION);
+            for (String value : splitRegular) {
+                String[] push = value.split(REGULAR_EXPRESSION);
+                splitGubunMemberStatusInsert(member, result, res, push); // 구분자로 구분 후 insert
+            }
+            res.setUrl(member.getMbr_token());
+            restSetOkMessage(res);
+        } else {
+            restSetFalseMessage(result, res);
+        }
+        return res;
+    }
+
+    @GetMapping(value = "/fcmTest")
+    public List<Member> fcmSelect(Member member) {
+        List<Member> fcmListMember = mybatisInsertService.fcmListMember(member); // 여기에서 push를 보낼 글과 인원을 구함
+        System.out.println("fcmListMember = " + fcmListMember);
+        int a = mybatisInsertService.realInsert(fcmListMember);
+        System.out.println("a = " + a);
+
+        return fcmListMember;
+    }
+
+    @RequestMapping(value = "/fcmPush")
+    public String fcmPush(Model model, HttpServletRequest request, HttpSession session, Member member) throws Exception {
+        List<Member> pushList = mybatisInsertService.fcmPushList(member);
+        String pushToken = pushList.get(2).getMbr_token();
+        final String apiKey = "BA4rnPloioiY_DpRWDi4-MafWxSGVM_X5u7YZKGQ1zkwwXnMWV5AutmBD8BvCoqQeXBlNv84ClfeQNvsF7L6aIY";
+        URL url = new URL("https://fcm.googleapis.com/v1/projects/deduapptest/messages:send");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Authorization", "key=" + apiKey);
+
+        conn.setDoOutput(true);
+
+        String input = "{\"notification\":{\"title\":\"FCM Message\",\"body\":\"This is an FCM Message\"},\"to\":\"" + pushToken + "\"}";
+
+        OutputStream os = conn.getOutputStream();
+        os.write(input.getBytes("UTF-8"));
+        os.flush();
+        os.close();
+
+        int responseCode = conn.getResponseCode();
+        System.out.println("\nSending 'POST' request to URL : " + url);
+        System.out.println("Post parameters : " + input);
+        System.out.println("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        System.out.println(response.toString());
+        return "jsonView";
+    }
+
+    @RequestMapping(value="/sendFCM")
+    public String index(Model model, HttpServletRequest request, HttpSession session,Member member)throws Exception{
+
+        List<Member> tokenList = mybatisInsertService.fcmPushList(member);;
+
+        String token = tokenList.get(0).getMbr_token();
+        System.out.println("token = " + token);
+
+        final String apiKey = "f914979500fadd83cd6f64671698435afd6b78af";
+//        final String apiKey = "1";
+        URL url = new URL("https://fcm.googleapis.com/fcm/send");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Authorization", "key=" + apiKey);
+
+        conn.setDoOutput(true);
+
+//        String userId =(String) request.getSession().getAttribute("ssUserId");
+
+        // 이렇게 보내면 주제를 ALL로 지정해놓은 모든 사람들한테 알림을 날려준다.
+//        String input = "{\"notification\" : {\"title\" : \"여기다 제목 넣기 \", \"body\" : \"여기다 내용 넣기\"}, \"to\":\"/topics/ALL\"}";
+
+        // 이걸로 보내면 특정 토큰을 가지고있는 어플에만 알림을 날려준다  위에 둘중에 한개 골라서 날려주자
+        String input = "{\"notification\":{\"title\":\"FCM Message\",\"body\":\"This is an FCM Message\"},\"to\":\"" + token + "\"}";
+
+        OutputStream os = conn.getOutputStream();
+
+        // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
+        os.write(input.getBytes("UTF-8"));
+        os.flush();
+        os.close();
+
+        int responseCode = conn.getResponseCode();
+        System.out.println("\nSending 'POST' request to URL : " + url);
+        System.out.println("Post parameters : " + input);
+        System.out.println("Response Code : " + responseCode);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        // print result
+        System.out.println(response.toString());
+
+
+        return "jsonView";
+    }
+
+
+
+//    @RequestMapping(value = "/redirect", method = {RequestMethod.POST})
+//    public @ResponseBody JsonResponse token(@RequestBody String Param, Member member, BindingResult result, HttpServletRequest request) {
+//        JsonResponse res = new JsonResponse(request);
+//
+//        member.setSys_nm(Param);
+//
+//        if (!result.hasErrors()) {
+//            List<Member> fcmSelectSys = mybatisInsertService.fcmSelectSys(member);
+//            restSetOkMessage(res);
+//            res.setData(fcmSelectSys);
+//
+//        } else {
+//            res.setValid(false);
+//            res.setMessage("Fault");
+//            res.setResult(result.getAllErrors());
+//        }
+//        return res;
+//    }
+
+
+//    @RequestMapping(value = "/sendFCM")
+//    public String index(Model model, HttpServletRequest request, HttpSession session, Member member) {
+//        List<Member> tokenList = my
+//    }
+
 
     private void swForEachFunction(Member member, BindingResult result, JsonResponse res) {
 
@@ -108,58 +265,6 @@ public class MemberController {
 
     private boolean isSwEmptyAndNull(Member member) {
         return member.getSw().isEmpty() && member.getSw() == null;
-    }
-
-
-    @RequestMapping(value = "/gubun", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member,
-        BindingResult result, HttpServletRequest request) {
-        JsonResponse res = new JsonResponse(request);
-
-        if (!result.hasErrors()) {
-            gubunMemberStatus(param, member);
-            mybatisInsertService.fcmDeleteGubun(member);
-
-            String[] splitRegular = member.getPush().split(PUSH_EXPRESSION);
-            for (String value : splitRegular) {
-                String[] push = value.split(REGULAR_EXPRESSION);
-                splitGubunMemberStatusInsert(member, result, res, push);
-            }
-            res.setUrl(member.getMbr_token());
-            restSetOkMessage(res);
-        } else {
-            restSetFalseMessage(result, res);
-        }
-        return res;
-    }
-
-    @GetMapping(value = "/fcm")
-    public List<Member> fcmSelect(Member member) {
-        List<Member> fcmListMember = mybatisInsertService.fcmListMember(member);
-        int a = mybatisInsertService.realInsert(fcmListMember);
-        System.out.println("a = " + a);
-
-        return fcmListMember;
-    }
-
-
-    @RequestMapping(value = "/redirect", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody String Param, Member member, BindingResult result, HttpServletRequest request) {
-        JsonResponse res = new JsonResponse(request);
-
-        member.setSys_nm(Param);
-
-        if (!result.hasErrors()) {
-            List<Member> fcmSelectSys = mybatisInsertService.fcmSelectSys(member);
-            restSetOkMessage(res);
-            res.setData(fcmSelectSys);
-
-        } else {
-            res.setValid(false);
-            res.setMessage("Fault");
-            res.setResult(result.getAllErrors());
-        }
-        return res;
     }
 
 

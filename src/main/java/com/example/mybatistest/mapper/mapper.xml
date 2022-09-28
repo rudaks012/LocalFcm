@@ -157,17 +157,19 @@
 
   <insert id="realInsert" parameterType="java.util.List">
     INSERT INTO
-        TAP_MN_FCM(mbr_token, push_sj, push_nm, link, push_sttus)
-      VALUES
+         TAP_MN_FCM(
+                    mbr_token, push_sj, push_nm, link, push_sttus
+                    )
+    VALUES
         <foreach collection="list" item="item" separator=",">
           (
             #{item.mbr_token},
             #{item.push_sj},
             #{item.push_nm},
             #{item.link},
-            'N'
+           'N'
           )
-        </foreach>
+    </foreach>
   </insert>
 
   <delete id="fcmDeleteGubun" parameterType="com.example.mybatistest.mybatisinsert.Member">
@@ -190,4 +192,10 @@
     ORDER BY b.bbs_id
   </select>
 
+  <select id="fcmPushList" parameterType="com.example.mybatistest.mybatisinsert.Member" resultType="com.example.mybatistest.mybatisinsert.Member">
+  SELECT
+      *
+  FROM
+      tap_mn_fcm
+  </select>
 </mapper>
