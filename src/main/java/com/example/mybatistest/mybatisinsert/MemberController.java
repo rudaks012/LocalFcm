@@ -1,25 +1,22 @@
 package com.example.mybatistest.mybatisinsert;
 
 import com.example.mybatistest.mybatisinsert.util.JsonResponse;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.gson.JsonObject;
+import com.google.common.collect.Lists;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,48 +26,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MemberController {
-    public final static String AUTH_KEY_FCM = "src/main/resources/google/google-services.json";
-
-    public final static String API_URL_FCM = "https://fcm.googleapis.com/fcm/send";
     public static final String PARAMETER_SW_ONE = "1";
     public static final String PARAMETER_SW_TWO = "2";
     public static final String PARAMETER_SW_THREE = "3";
     public static final String REGULAR_EXPRESSION = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
     public static final String PUSH_EXPRESSION = "\\^";
     public static final int ZERO = 0;
-
-    private static final String TITLE = "FCM Notification";
-    private static final String BODY = "Notification from FCM";
-
-    public static final String MESSAGE_KEY = "message";
-
-    private static final String BASE_URL = "https://fcm.googleapis.com";
-    private static final String FCM_SEND_ENDPOINT = "/v1/projects/deduapptest/messages:send";
     @Autowired
     private MybatisInsertService mybatisInsertService;
-
-//    @GetMapping("/member")
-//    public List<Member> listToJson() {
-//        Member member = new Member();
-//        Gson gson = new Gson();
-//
-//        List<Member> listToJson = mybatisInsertService.listToJson(member);
-//        String json = gson.toJson(listToJson);
-//
-//        Type type = new TypeToken<List<Map<String, String>>>() {
-//        }.getType();
-//
-//        List<Map<String, String>> deserialize = gson.fromJson(json, type);
-//        for (Map<String, String> stringStringMap : deserialize) {
-//            if (!stringStringMap.containsKey("mbr_token")) {
-//                mybatisInsertService.fcmJsonInsertGubun(stringStringMap);
-//            } else {
-//                mybatisInsertService.fcmInsertUser(stringStringMap);
-//
-//            }
-//        }
-//        return listToJson;
-//    }
 
     @RequestMapping(value = {"/token"}, method = {RequestMethod.POST})
     public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member,
@@ -126,163 +89,124 @@ public class MemberController {
         return fcmListMember;
     }
 
-    @RequestMapping(value = "/fcmPush")
-    public void fcmPush() throws Exception {
-        sendCommonMessage();
-    }
 
+    @RequestMapping(value = "/sendFCM")
+    public String index(Member member) throws Exception {
+        final ExecutorService executor = Executors.newFixedThreadPool(8);
+        List<Member> tokenList = mybatisInsertService.fcmPushList(member);
+        System.out.println("tokenList.size() = " + tokenList.size());
+        if (tokenList.size() < 8) {
+            for (int i = 0; i < tokenList.size(); i++) {
+                String token = tokenList.get(i).getMbr_token();
+                String push_sj = tokenList.get(i).getPush_sj();
+                String push_nm = tokenList.get(i).getPush_nm();
+                String link = tokenList.get(i).getLink();
 
-    @RequestMapping(value="/sendFCM")
-    public String index(Model model, HttpServletRequest request, HttpSession session,Member member)throws Exception{
+                final String apiKey = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
+                URL url = new URL("https://fcm.googleapis.com/fcm/send");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setDoOutput(true);
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Authorization", "key=" + apiKey);
 
-        List<Member> tokenList = mybatisInsertService.fcmPushList(member);;
+                conn.setDoOutput(true);
 
-        String token = tokenList.get(0).getMbr_token();
-        System.out.println("token = " + token);
+                // 이걸로 보내면 특정 토큰을 가지고있는 어플에만 알림을 날려준다  위에 둘중에 한개 골라서 날려주자
+                String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
 
-        final String apiKey = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
-//        final String apiKey = "1";
-        URL url = new URL("https://fcm.googleapis.com/fcm/send");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json");
-        conn.setRequestProperty("Authorization", "key=" + apiKey);
+                OutputStream os = conn.getOutputStream();
 
-        conn.setDoOutput(true);
+                // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
+                os.write(input.getBytes("UTF-8"));
+                os.flush();
+                os.close();
 
-        // 이걸로 보내면 특정 토큰을 가지고있는 어플에만 알림을 날려준다  위에 둘중에 한개 골라서 날려주자
-        String input = "{\"notification\":{\"title\":\"FCM Message\",\"body\":\"This is an FCM Message\"},\"to\":\"" + token + "\"}";
+                int responseCode = conn.getResponseCode();
+                System.out.println("\nSending 'POST' request to URL : " + url);
+                System.out.println("Post parameters : " + input);
+                System.out.println("Response Code : " + responseCode);
 
-        OutputStream os = conn.getOutputStream();
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
 
-        // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
-        os.write(input.getBytes("UTF-8"));
-        os.flush();
-        os.close();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+                // print result
+                System.out.println(response.toString());
+            }
+        }else {
+            List<List<Member>> listByGuava = Lists.partition(tokenList, tokenList.size() / 8);
+            for (List<Member> list : listByGuava) {
+                executor.execute(() -> {
 
-        int responseCode = conn.getResponseCode();
-        System.out.println("\nSending 'POST' request to URL : " + url);
-        System.out.println("Post parameters : " + input);
-        System.out.println("Response Code : " + responseCode);
+                    try {
+                        pushInsert(list);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+            executor.shutdown();
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String inputLine;
-        StringBuffer response = new StringBuffer();
+            while (!executor.awaitTermination(1, TimeUnit.SECONDS));
 
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
+            executor.shutdownNow();
         }
-        in.close();
-        // print result
-        System.out.println(response.toString());
-
 
         return "jsonView";
     }
 
-    private static HttpURLConnection getConnection() throws IOException {
-        // [START use_access_token]
-        URL url = new URL(BASE_URL + FCM_SEND_ENDPOINT);
-        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-        httpURLConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
-        httpURLConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
-        return httpURLConnection;
-        // [END use_access_token]
-    }
-    private static String getAccessToken() throws IOException {
-        String firebaseConfigPath = "/google/serviceAccountKey.json";
-        GoogleCredentials googleCredentials = GoogleCredentials
-            .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
-            .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
-        googleCredentials.refreshIfExpired();
-        return googleCredentials.getAccessToken().getTokenValue();
-    }
+    private void pushInsert(List<Member> list) throws IOException {
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(i+"번째");
+            String token = list.get(i).getMbr_token();
+            String push_sj = list.get(i).getPush_sj();
+            String push_nm = list.get(i).getPush_nm();
+            String link = list.get(i).getLink();
 
-    private static void sendMessage(JsonObject fcmMessage) throws IOException {
-        HttpURLConnection connection = getConnection();
-        connection.setDoOutput(true);
-        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-        writer.write(fcmMessage.toString());
-        writer.flush();
-        writer.close();
+            final String apiKey = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
+            URL url = new URL("https://fcm.googleapis.com/fcm/send");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Authorization", "key=" + apiKey);
 
-        int responseCode = connection.getResponseCode();
-        if (responseCode == 200) {
-            System.out.println("Message sent to Firebase for delivery, response:");
-        } else {
-            System.out.println("Unable to send message to Firebase:");
+            conn.setDoOutput(true);
+
+            // 이걸로 보내면 특정 토큰을 가지고있는 어플에만 알림을 날려준다  위에 둘중에 한개 골라서 날려주자
+            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
+
+            OutputStream os = conn.getOutputStream();
+
+            // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
+            os.write(input.getBytes("UTF-8"));
+            os.flush();
+            os.close();
+
+            int responseCode = conn.getResponseCode();
+            System.out.println("\nSending 'POST' request to URL : " + url);
+            System.out.println("Post parameters : " + input);
+            System.out.println("Response Code : " + responseCode);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            // print result
+            System.out.println(response.toString());
         }
     }
-    public static void sendCommonMessage() throws IOException {
-        JsonObject notificationMessage = buildNotificationMessage();
-        System.out.println("FCM request body for message using common notification object:");
-        sendMessage(notificationMessage);
-    }
-    private static JsonObject buildNotificationMessage() {
-        MybatisInsertService mybatisInsertService = new MybatisInsertService();
-        Member member = new Member();
-        List<Member> tokenList = mybatisInsertService.fcmPushList(member);
-        JsonObject jNotification = new JsonObject();
-        jNotification.addProperty("title", TITLE);
-        jNotification.addProperty("body", BODY);
 
-        JsonObject jMessage = new JsonObject();
-        jMessage.add("notification", jNotification);
-//        jMessage.addProperty("topic", "news");
 
-        JsonObject jFcm = new JsonObject();
-        jFcm.add(MESSAGE_KEY, jMessage);
-
-        return jFcm;
-    }
-    private static void sendOverrideMessage() throws IOException {
-        JsonObject overrideMessage = buildOverrideMessage();
-        System.out.println("FCM request body for override message:");
-        sendMessage(overrideMessage);
-    }
-    private static JsonObject buildOverrideMessage() {
-        JsonObject jNotificationMessage = buildNotificationMessage();
-
-        JsonObject messagePayload = jNotificationMessage.get(MESSAGE_KEY).getAsJsonObject();
-        messagePayload.add("android", buildAndroidOverridePayload());
-
-        JsonObject apnsPayload = new JsonObject();
-        apnsPayload.add("headers", buildApnsHeadersOverridePayload());
-        apnsPayload.add("payload", buildApsOverridePayload());
-
-        messagePayload.add("apns", apnsPayload);
-
-        jNotificationMessage.add(MESSAGE_KEY, messagePayload);
-
-        return jNotificationMessage;
-    }
-    private static JsonObject buildAndroidOverridePayload() {
-        JsonObject androidNotification = new JsonObject();
-        androidNotification.addProperty("click_action", "android.intent.action.MAIN");
-
-        JsonObject androidNotificationPayload = new JsonObject();
-        androidNotificationPayload.add("notification", androidNotification);
-
-        return androidNotificationPayload;
-    }
-
-    private static JsonObject buildApnsHeadersOverridePayload() {
-        JsonObject apnsHeaders = new JsonObject();
-        apnsHeaders.addProperty("apns-priority", "10");
-
-        return apnsHeaders;
-    }
-
-    private static JsonObject buildApsOverridePayload() {
-        JsonObject badgePayload = new JsonObject();
-        badgePayload.addProperty("badge", 1);
-
-        JsonObject apsPayload = new JsonObject();
-        apsPayload.add("aps", badgePayload);
-
-        return apsPayload;
-    }
     private void swForEachFunction(Member member, BindingResult result, JsonResponse res) {
 
         validate(member, result, res);
