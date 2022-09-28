@@ -1,17 +1,23 @@
 package com.example.mybatistest.mybatisinsert;
 
 import com.example.mybatistest.mybatisinsert.util.JsonResponse;
+import com.google.auth.oauth2.GoogleCredentials;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,14 +29,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class MemberController {
+    public final static String AUTH_KEY_FCM = "src/main/resources/google/google-services.json";
 
+    public final static String API_URL_FCM = "https://fcm.googleapis.com/fcm/send";
     public static final String PARAMETER_SW_ONE = "1";
     public static final String PARAMETER_SW_TWO = "2";
     public static final String PARAMETER_SW_THREE = "3";
     public static final String REGULAR_EXPRESSION = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
     public static final String PUSH_EXPRESSION = "\\^";
     public static final int ZERO = 0;
-
+    private final static String[] SCOPES = { "https://www.googleapis.com/auth/firebase.remoteconfig" };
     @Autowired
     private MybatisInsertService mybatisInsertService;
 
@@ -112,11 +120,26 @@ public class MemberController {
     }
 
     @RequestMapping(value = "/fcmPush")
-    public String fcmPush(Model model, HttpServletRequest request, HttpSession session, Member member) throws Exception {
-        List<Member> pushList = mybatisInsertService.fcmPushList(member);
-        String pushToken = pushList.get(2).getMbr_token();
-        final String apiKey = "BA4rnPloioiY_DpRWDi4-MafWxSGVM_X5u7YZKGQ1zkwwXnMWV5AutmBD8BvCoqQeXBlNv84ClfeQNvsF7L6aIY";
-        URL url = new URL("https://fcm.googleapis.com/v1/projects/deduapptest/messages:send");
+    public void fcmPush(Model model, HttpServletRequest request, HttpSession session, Member member) throws Exception {
+        List<Member> tokenList = mybatisInsertService.fcmPushList(member);
+        ;
+
+        String token = tokenList.get(0).getMbr_token();
+        System.out.println("token = " + token);
+
+        //String token = tokenList.get(count).getDEVICE_ID();
+       String tokenValue =  getAccessToken();
+        String _title = "앱 알림";
+        String _body = "푸쉬메시지가 도착했습니다.";
+        String _actionType = "new";
+        String _code = "test";
+        //String _token = "/topics/ALL"; // 전체
+
+        // 모바일기기에서 얻음
+        String _token = token; // 개인
+
+        final String apiKey = tokenValue;
+        URL url = new URL("https://fcm.googleapis.com/fcm/send");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
@@ -125,16 +148,27 @@ public class MemberController {
 
         conn.setDoOutput(true);
 
-        String input = "{\"notification\":{\"title\":\"FCM Message\",\"body\":\"This is an FCM Message\"},\"to\":\"" + pushToken + "\"}";
+        JSONObject json = new JSONObject();
+        JSONObject notification = new JSONObject();
+
+        notification.put("title", _title);
+        notification.put("body", _body);
+
+        json.put("notification", notification);
+        json.put("to", _token);
+
+        String sendMsg = json.toString();
 
         OutputStream os = conn.getOutputStream();
-        os.write(input.getBytes("UTF-8"));
+
+        // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
+        //os.write(input.getBytes("UTF-8"));
+        os.write(sendMsg.getBytes("UTF-8"));
         os.flush();
         os.close();
 
         int responseCode = conn.getResponseCode();
         System.out.println("\nSending 'POST' request to URL : " + url);
-        System.out.println("Post parameters : " + input);
         System.out.println("Response Code : " + responseCode);
 
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -145,9 +179,11 @@ public class MemberController {
             response.append(inputLine);
         }
         in.close();
+        // print result
         System.out.println(response.toString());
-        return "jsonView";
+
     }
+
 
     @RequestMapping(value="/sendFCM")
     public String index(Model model, HttpServletRequest request, HttpSession session,Member member)throws Exception{
@@ -157,7 +193,7 @@ public class MemberController {
         String token = tokenList.get(0).getMbr_token();
         System.out.println("token = " + token);
 
-        final String apiKey = "f914979500fadd83cd6f64671698435afd6b78af";
+        final String apiKey = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
 //        final String apiKey = "1";
         URL url = new URL("https://fcm.googleapis.com/fcm/send");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -202,33 +238,23 @@ public class MemberController {
 
         return "jsonView";
     }
-
-
-
-//    @RequestMapping(value = "/redirect", method = {RequestMethod.POST})
-//    public @ResponseBody JsonResponse token(@RequestBody String Param, Member member, BindingResult result, HttpServletRequest request) {
-//        JsonResponse res = new JsonResponse(request);
-//
-//        member.setSys_nm(Param);
-//
-//        if (!result.hasErrors()) {
-//            List<Member> fcmSelectSys = mybatisInsertService.fcmSelectSys(member);
-//            restSetOkMessage(res);
-//            res.setData(fcmSelectSys);
-//
-//        } else {
-//            res.setValid(false);
-//            res.setMessage("Fault");
-//            res.setResult(result.getAllErrors());
-//        }
-//        return res;
-//    }
-
-
-//    @RequestMapping(value = "/sendFCM")
-//    public String index(Model model, HttpServletRequest request, HttpSession session, Member member) {
-//        List<Member> tokenList = my
-//    }
+//    @RequestMapping(value = "/fcmPushList")
+        private String getAccessToken() throws IOException {
+            String firebaseConfigPath = "/google/serviceAccountKey.json";
+            GoogleCredentials googleCredentials = GoogleCredentials
+                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
+                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+            googleCredentials.refreshIfExpired();
+//        System.out.println(googleCredentials.getAccessToken().getTokenValue());
+//        System.out.println("sdfsdafasdfasdf"+googleCredentials.getAccessToken().getTokenValue());
+            return googleCredentials.getAccessToken().getTokenValue();
+        }
+//    private static String getAccessToken() throws IOException {
+//        GoogleCredentials googleCredentials = GoogleCredentials
+//            .fromStream(new FileInputStream("src/main/resources/google/serviceAccountKey.json"))
+//            .createScoped(Arrays.asList(SCOPES));
+//        googleCredentials.refreshAccessToken();
+//        return googleCredentials.getAccessToken().getTokenValue();
 
 
     private void swForEachFunction(Member member, BindingResult result, JsonResponse res) {
