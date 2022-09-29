@@ -32,6 +32,7 @@ public class MemberController {
     public static final String REGULAR_EXPRESSION = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
     public static final String PUSH_EXPRESSION = "\\^";
     public static final int ZERO = 0;
+    public static final int THREAD_COUNT = 8;
     @Autowired
     private MybatisInsertService mybatisInsertService;
 
@@ -92,72 +93,31 @@ public class MemberController {
 
     @RequestMapping(value = "/sendFCM")
     public String index(Member member) throws Exception {
-        final ExecutorService executor = Executors.newFixedThreadPool(8);
+        final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Member> tokenList = mybatisInsertService.fcmPushList(member);
-        System.out.println("tokenList.size() = " + tokenList.size());
-        if (tokenList.size() < 8) {
-            for (int i = 0; i < tokenList.size(); i++) {
-                String token = tokenList.get(i).getMbr_token();
-                String push_sj = tokenList.get(i).getPush_sj();
-                String push_nm = tokenList.get(i).getPush_nm();
-                String link = tokenList.get(i).getLink();
-
-                final String apiKey = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
-                URL url = new URL("https://fcm.googleapis.com/fcm/send");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setDoOutput(true);
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("Authorization", "key=" + apiKey);
-
-                conn.setDoOutput(true);
-
-                // 이걸로 보내면 특정 토큰을 가지고있는 어플에만 알림을 날려준다  위에 둘중에 한개 골라서 날려주자
-                String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
-
-                OutputStream os = conn.getOutputStream();
-
-                // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
-                os.write(input.getBytes("UTF-8"));
-                os.flush();
-                os.close();
-
-                int responseCode = conn.getResponseCode();
-                System.out.println("\nSending 'POST' request to URL : " + url);
-                System.out.println("Post parameters : " + input);
-                System.out.println("Response Code : " + responseCode);
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String inputLine;
-                StringBuffer response = new StringBuffer();
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-                // print result
-                System.out.println(response.toString());
-            }
+        if (tokenList.size() < THREAD_COUNT) {
+            pushInsert(tokenList);
         }else {
-            List<List<Member>> listByGuava = Lists.partition(tokenList, tokenList.size() / 8);
-            for (List<Member> list : listByGuava) {
-                executor.execute(() -> {
-
-                    try {
-                        pushInsert(list);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            }
+            multiThreadPush(executor, tokenList);
             executor.shutdown();
-
             while (!executor.awaitTermination(1, TimeUnit.SECONDS));
-
             executor.shutdownNow();
         }
 
         return "jsonView";
+    }
+
+    private void multiThreadPush(ExecutorService executor, List<Member> tokenList) {
+        List<List<Member>> listByGuava = Lists.partition(tokenList, tokenList.size() / THREAD_COUNT);
+        for (List<Member> list : listByGuava) {
+            executor.execute(() -> {
+                try {
+                    pushInsert(list);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
     }
 
     private void pushInsert(List<Member> list) throws IOException {
@@ -179,7 +139,7 @@ public class MemberController {
             conn.setDoOutput(true);
 
             // 이걸로 보내면 특정 토큰을 가지고있는 어플에만 알림을 날려준다  위에 둘중에 한개 골라서 날려주자
-            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
+            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"url\":\""+link+"\"},\"to\":\"" + token + "\"}";
 
             OutputStream os = conn.getOutputStream();
 
