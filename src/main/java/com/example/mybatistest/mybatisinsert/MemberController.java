@@ -139,7 +139,12 @@ public class MemberController {
             conn.setDoOutput(true);
 
             // 이걸로 보내면 특정 토큰을 가지고있는 어플에만 알림을 날려준다  위에 둘중에 한개 골라서 날려주자
-            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"url\":\""+link+"\"},\"to\":\"" + token + "\"}";
+            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"link\":\""+link+"\"},\"to\":\"" + token + "\"}";
+            //input custom data
+//            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"custom_data\":{\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
+//            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"data\":{\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
+//            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"custom\":\""+link+"\"},\"to\":\"/topics/all\"}";
+//            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"to\":\"\" + token + \"\"}";
 
             OutputStream os = conn.getOutputStream();
 
