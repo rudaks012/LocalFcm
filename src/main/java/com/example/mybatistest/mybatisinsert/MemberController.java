@@ -81,13 +81,25 @@ public class MemberController {
     }
 
     @GetMapping(value = "/fcmTest")
-    public List<Member> fcmSelect(Member member) {
+    public String fcmSelect(Member member) throws Exception {
+        final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Member> fcmListMember = mybatisInsertService.fcmListMember(member); // 여기에서 push를 보낼 글과 인원을 구함
         System.out.println("fcmListMember = " + fcmListMember);
-        int a = mybatisInsertService.realInsert(fcmListMember);
-        System.out.println("a = " + a);
+        mybatisInsertService.realInsert(fcmListMember);
 
-        return fcmListMember;
+        List<Member> tokenList = mybatisInsertService.fcmPushList(member);
+        if (tokenList.size() < THREAD_COUNT) {
+            pushInsert(tokenList);
+        }else {
+            multiThreadPush(executor, tokenList);
+            executor.shutdown();
+            while (!executor.awaitTermination(1, TimeUnit.SECONDS));
+            executor.shutdownNow();
+
+        }
+
+        return "jsonView";
+
     }
 
 
@@ -139,9 +151,11 @@ public class MemberController {
             conn.setDoOutput(true);
 
             // 이걸로 보내면 특정 토큰을 가지고있는 어플에만 알림을 날려준다  위에 둘중에 한개 골라서 날려주자
-            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"link\":\""+link+"\"},\"to\":\"" + token + "\"}";
+            String input = "{\"notification\" : {\"title\" : \""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"},\"to\" : \"" + token + "\"}";
+//            String input = "{\"notification\" : {\"title\" : \""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"},\"to\" : \"" + token + "\"}";
             //input custom data
-//            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"custom_data\":{\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
+
+//            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"link\":\""+link+"\",\"link\":\"\"+link+\"\"},\"custom_data\":{\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
 //            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"data\":{\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
 //            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"custom\":\""+link+"\"},\"to\":\"/topics/all\"}";
 //            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"to\":\"\" + token + \"\"}";
@@ -168,6 +182,9 @@ public class MemberController {
             in.close();
             // print result
             System.out.println(response.toString());
+           int check = mybatisInsertService.deleteFcmPushList(token);
+//            System.out.println("check = " + check);
+
         }
     }
 

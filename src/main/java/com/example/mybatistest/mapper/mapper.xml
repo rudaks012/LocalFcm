@@ -198,4 +198,11 @@
   FROM
       tap_mn_fcm
   </select>
+
+  <delete id="deleteFcmPushList" parameterType="String">
+    DELETE FROM
+        tap_mn_fcm
+    WHERE
+        mbr_token = #{mbr_token}
+  </delete>
 </mapper>

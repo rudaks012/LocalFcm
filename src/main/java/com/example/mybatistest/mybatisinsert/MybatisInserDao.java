@@ -41,4 +41,6 @@ public interface MybatisInserDao {
     List<Member> fcmSelectSys(Member member);
 
     List<Member> fcmPushList(Member member);
+
+    int deleteFcmPushList(String member);
 }

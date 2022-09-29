@@ -79,4 +79,8 @@ public class MybatisInsertService {
     public List<Member> fcmPushList(Member member) {
         return mybatisInserDao.fcmPushList(member);
     }
+
+    public int deleteFcmPushList(String token) {
+        return mybatisInserDao.deleteFcmPushList(token);
+    }
 }
