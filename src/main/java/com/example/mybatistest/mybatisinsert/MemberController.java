@@ -80,7 +80,7 @@ public class MemberController {
         return res;
     }
 
-    @GetMapping(value = "/fcmTest")
+    @GetMapping(value = "/send")
     public String fcmSelect(Member member) throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Member> fcmListMember = mybatisInsertService.fcmListMember(member); // 여기에서 push를 보낼 글과 인원을 구함
@@ -94,7 +94,7 @@ public class MemberController {
             multiThreadPush(executor, tokenList);
             executor.shutdown();
             while (!executor.awaitTermination(1, TimeUnit.SECONDS));
-            executor.shutdownNow();
+//            executor.shutdown();
 
         }
 
@@ -103,29 +103,32 @@ public class MemberController {
     }
 
 
-    @RequestMapping(value = "/sendFCM")
-    public String index(Member member) throws Exception {
-        final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
-        List<Member> tokenList = mybatisInsertService.fcmPushList(member);
-        if (tokenList.size() < THREAD_COUNT) {
-            pushInsert(tokenList);
-        }else {
-            multiThreadPush(executor, tokenList);
-            executor.shutdown();
-            while (!executor.awaitTermination(1, TimeUnit.SECONDS));
-            executor.shutdownNow();
-        }
-
-        return "jsonView";
-    }
+//    @RequestMapping(value = "/sendFCM")
+//    public String index(Member member) throws Exception {
+//        final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+//        List<Member> tokenList = mybatisInsertService.fcmPushList(member);
+//        if (tokenList.size() < THREAD_COUNT) {
+//            pushInsert(tokenList);
+//        }else {
+//            multiThreadPush(executor, tokenList);
+//            executor.shutdown();
+//            while (!executor.awaitTermination(1, TimeUnit.SECONDS));
+//            executor.shutdownNow();
+//        }
+//
+//        return "jsonView";
+//    }
 
     private void multiThreadPush(ExecutorService executor, List<Member> tokenList) {
         List<List<Member>> listByGuava = Lists.partition(tokenList, tokenList.size() / THREAD_COUNT);
         for (List<Member> list : listByGuava) {
             executor.execute(() -> {
+                //1초후 실행
                 try {
+                    Thread.sleep(1000);
+                    System.out.println("ThreadName() = " + Thread.currentThread().getName());
                     pushInsert(list);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -134,7 +137,6 @@ public class MemberController {
 
     private void pushInsert(List<Member> list) throws IOException {
         for (int i = 0; i < list.size(); i++) {
-            System.out.println(i+"번째");
             String token = list.get(i).getMbr_token();
             String push_sj = list.get(i).getPush_sj();
             String push_nm = list.get(i).getPush_nm();
@@ -182,7 +184,7 @@ public class MemberController {
             in.close();
             // print result
             System.out.println(response.toString());
-           int check = mybatisInsertService.deleteFcmPushList(token);
+//           int check = mybatisInsertService.deleteFcmPushList(token);
 //            System.out.println("check = " + check);
 
         }
