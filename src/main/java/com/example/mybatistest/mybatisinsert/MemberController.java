@@ -95,11 +95,8 @@ public class MemberController {
             executor.shutdown();
             while (!executor.awaitTermination(1, TimeUnit.SECONDS));
 //            executor.shutdown();
-
         }
-
         return "jsonView";
-
     }
 
 
@@ -186,10 +183,8 @@ public class MemberController {
             System.out.println(response.toString());
 //           int check = mybatisInsertService.deleteFcmPushList(token);
 //            System.out.println("check = " + check);
-
         }
     }
-
 
     private void swForEachFunction(Member member, BindingResult result, JsonResponse res) {
 
@@ -226,7 +221,6 @@ public class MemberController {
     private boolean isSwEmptyAndNull(Member member) {
         return member.getSw().isEmpty() && member.getSw() == null;
     }
-
 
     private void setMemberStatus(Map<String, String> param, Member member) {
         member.setMbr_id(param.get("mbr_id"));
