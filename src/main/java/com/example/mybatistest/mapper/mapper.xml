@@ -48,11 +48,11 @@
           </if>
     </select>
 
-  <select id="listToJson" resultType="com.example.mybatistest.mybatisinsert.Member" parameterType="com.example.mybatistest.mybatisinsert.Allim">
-    select
-        *
-    from testtable
-  </select>
+<!--  <select id="listToJson" resultType="com.example.mybatistest.mybatisinsert.Member" parameterType="com.example.mybatistest.mybatisinsert.Allim">-->
+<!--    select-->
+<!--        *-->
+<!--    from testtable-->
+<!--  </select>-->
 
   <insert id="fcmJsonInsertGubun" parameterType="map">
         insert into TAP_MN_PUSH_GUBUN(

@@ -59,7 +59,7 @@ public class MybatisInsertController {
 
         rtnObj.put("Select ", selectTest);
 
-        mybatisInsertService.delete();
+//        mybatisInsertService.delete();
 
         return rtnObj;
     }

@@ -99,23 +99,6 @@ public class MemberController {
         return "jsonView";
     }
 
-
-//    @RequestMapping(value = "/sendFCM")
-//    public String index(Member member) throws Exception {
-//        final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
-//        List<Member> tokenList = mybatisInsertService.fcmPushList(member);
-//        if (tokenList.size() < THREAD_COUNT) {
-//            pushInsert(tokenList);
-//        }else {
-//            multiThreadPush(executor, tokenList);
-//            executor.shutdown();
-//            while (!executor.awaitTermination(1, TimeUnit.SECONDS));
-//            executor.shutdownNow();
-//        }
-//
-//        return "jsonView";
-//    }
-
     private void multiThreadPush(ExecutorService executor, List<Member> tokenList) {
         List<List<Member>> listByGuava = Lists.partition(tokenList, tokenList.size() / THREAD_COUNT);
         for (List<Member> list : listByGuava) {
@@ -134,7 +117,7 @@ public class MemberController {
 
     private void pushInsert(List<Member> list) throws IOException {
         for (int i = 0; i < list.size(); i++) {
-            String token = list.get(i).getMbr_token();
+//            String token = list.get(i).getMbr_token();
             String push_sj = list.get(i).getPush_sj();
             String push_nm = list.get(i).getPush_nm();
             String link = list.get(i).getLink();
@@ -151,15 +134,15 @@ public class MemberController {
 
             // 이걸로 보내면 특정 토큰을 가지고있는 어플에만 알림을 날려준다  위에 둘중에 한개 골라서 날려주자
 //            String input = "{\"notification\" : {\"title\" : \""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"},\"to\" : \"" + token + "\"}";
-            String input = "{\"notification\" : {\"title\" : \""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"},\"to\" : \"" + token + "\"}";
+//            String input = "{\"notification\" : {\"title\" : \""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"},\"to\" : \"" + token + "\"}";
             //input custom data
 //            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"link\":\""+link+"\",\"link\":\"\"+link+\"\"},\"custom_data\":{\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
 //            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"data\":{\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
 //            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"custom\":\""+link+"\"},\"to\":\"/topics/all\"}";
 //            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"to\":\"\" + token + \"\"}";
-//            String token = "c2TrrYzmTi6wta0lDUOsI-:APA91bEbBAVVfNykQrrLPoa7KwmMHFUPLjJ2xAgT5_bxi1D3byCyCS3uslisNfdrfCfLxTmB1hbd7mR2mtur-BfSPaECynWtzAPNHOqL_B_BiV7SWi6TqWunAOykZrTu6E7LWwvpHYQk";
+            String token = "c2TrrYzmTi6wta0lDUOsI-:APA91bEbBAVVfNykQrrLPoa7KwmMHFUPLjJ2xAgT5_bxi1D3byCyCS3uslisNfdrfCfLxTmB1hbd7mR2mtur-BfSPaECynWtzAPNHOqL_B_BiV7SWi6TqWunAOykZrTu6E7LWwvpHYQk";
 
-//            String input = "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"}}";
+            String input = "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"}}";
 
             OutputStream os = conn.getOutputStream();
 
