@@ -83,4 +83,12 @@ public class MybatisInsertService {
     public int deleteFcmPushList(String token) {
         return mybatisInserDao.deleteFcmPushList(token);
     }
+
+    public List<Allim> selectArcTarget(Allim allim) {
+        return mybatisInserDao.selectArcTarget(allim);
+    }
+
+    public int updateNtcnSttus(Allim allim) {
+        return mybatisInserDao.updateNtcnSttus(allim);
+    }
 }

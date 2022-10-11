@@ -3,25 +3,24 @@
 <mapper namespace="com.example.mybatistest.mybatisinsert.MybatisInserDao">
 
     <insert id="insertInfoTarget" parameterType="java.util.List">
-      insert into
-      TAP_NS_NTCN_SE
-      (
-      mbr_id,
-      ntcn_seq,
-      sys_id,
-      bbs_id,
-      administ_code,
-      chnnl_sn,
-      link_info,
-      bbs_sj,
-      ntcn_at,
-      creat_dt
-      )
-        values
+
+      INSERT INTO TAP_NS_NTCN_SE
+        (
+          mbr_id, ntcn_seq, sys_id, bbs_id, administ_code,
+          chnnl_sn, link_info, bbs_sj, ntcn_at, creat_dt
+        )
+        VALUES
             <foreach collection="list" item="receiver" separator=",">
                 (
                     #{receiver.mbr_id},
-                    #{receiver.ntcn_seq},
+                  (
+                  SELECT
+                     NVL(MAX(ntcn_seq),0)+1
+                  FROM
+                    TAP_NS_NTCN_SE
+                  where
+                     mbr_id = #{receiver.mbr_id}
+                  ),
                     #{receiver.sys_id},
                     #{receiver.bbs_id},
                     #{receiver.administ_code},
@@ -54,7 +53,7 @@
       WHERE ntcn_sttus = 'Y'
     </select>
 
-    <select id="findMembers" resultType="com.example.mybatistest.mybatisinsert.Allim" parameterType="com.example.mybatistest.mybatisinsert.Allim">
+    <select id="selectInfoTarget" resultType="com.example.mybatistest.mybatisinsert.Allim" parameterType="com.example.mybatistest.mybatisinsert.Allim">
       select a.mber_id as mbr_id,
              a.administ_code,
              b.sys_id,
@@ -71,6 +70,44 @@
         and b.bbs_id = #{bbs_id}
         and a.administ_code = b.administ_code
     </select>
+
+  <select id="selectArcTarget" resultType="com.example.mybatistest.mybatisinsert.Allim" parameterType="com.example.mybatistest.mybatisinsert.Allim">
+    select a.chnnl_sn,
+           a.sbscr_sn,
+           a.reg_id as mbr_id,
+           a.reg_dt,
+           a.reg_ip,
+           b.sys_id,
+           b.ntcn_sj,
+           b.ntcn_cn,
+           b.link_info,
+           b.bbs_sn
+    from
+      TAD_AR_CS_CHNNL_SBSCR a inner join TAP_NM_NTCN_MANAGE b
+    where a.chnnl_sn = #{chnnl_sn}
+      and a.chnnl_sn = b.chnnl_sn
+  </select>
+
+  <update id="updateNtcnSttus" parameterType="com.example.mybatistest.mybatisinsert.Allim">
+    UPDATE
+    TAP_NM_NTCN_MANAGE
+    SET
+    ntcn_sttus = 'N'
+    WHERE
+    sys_id = #{sys_id}
+    <if test="bbs_id != null">
+      AND bbs_id = #{bbs_id}
+    </if>
+    <if test="administ_code != null">
+      AND administ_code = #{administ_code}
+    </if>
+    <if test="chnnl_sn != null">
+      AND chnnl_sn = #{chnnl_sn}
+    </if>
+  </update>
+
+
+<!--  여기 까지 알림-->
 
   <insert id="fcmInsertPost" parameterType="com.example.mybatistest.mybatisinsert.Member">
     insert into TAP_MN_PUSH_USER(

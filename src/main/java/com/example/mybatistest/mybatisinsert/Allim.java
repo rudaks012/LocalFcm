@@ -15,6 +15,8 @@ public class Allim {
 
     private String bbs_id;
 
+    private String sys_id;
+
     private String bbs_sn;
 
     private String chnnl_sn;
@@ -36,6 +38,8 @@ public class Allim {
     private String mbr_nm;
 
     private String usage_at;
+
+    private String bbs_sj;
 
     public Long getIdx() {
         return idx;
@@ -75,6 +79,14 @@ public class Allim {
 
     public void setBbs_id(String bbs_id) {
         this.bbs_id = bbs_id;
+    }
+
+    public String getSys_id() {
+        return sys_id;
+    }
+
+    public void setSys_id(String sys_id) {
+        this.sys_id = sys_id;
     }
 
     public String getBbs_sn() {
@@ -163,5 +175,13 @@ public class Allim {
 
     public void setUsage_at(String usage_at) {
         this.usage_at = usage_at;
+    }
+
+    public String getBbs_sj() {
+        return bbs_sj;
+    }
+
+    public void setBbs_sj(String bbs_sj) {
+        this.bbs_sj = bbs_sj;
     }
 }

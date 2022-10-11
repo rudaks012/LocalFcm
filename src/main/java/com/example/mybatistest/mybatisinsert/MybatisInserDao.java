@@ -43,4 +43,8 @@ public interface MybatisInserDao {
     List<Member> fcmPushList(Member member);
 
     int deleteFcmPushList(String member);
+
+    List<Allim> selectArcTarget(Allim allim);
+
+    int updateNtcnSttus(Allim allim);
 }

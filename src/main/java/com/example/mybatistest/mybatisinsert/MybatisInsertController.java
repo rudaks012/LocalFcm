@@ -59,24 +59,38 @@ public class MybatisInsertController {
 
         rtnObj.put("Select ", selectRegisteredPost);
 
-
-        mybatisInsertService.informDelete();
+//        mybatisInsertService.informDelete();
+        updateNtcnSttus(selectRegisteredPost);
 
         return rtnObj;
     }
 
-    private List<List<Allim>> findMembers(List<Allim> selectTest) {
+    private void updateNtcnSttus(List<Allim> selectRegisteredPost) {
+        for (Allim allim : selectRegisteredPost) {
+            mybatisInsertService.updateNtcnSttus(allim);
+        }
+    }
+
+    private List<List<Allim>> findMembers(List<Allim> targetList) {
 
         Allim allim = new Allim();
 
         List<List<Allim>> insertList = new ArrayList<>();
+        List<Allim> memberList = new ArrayList<>();
 
         long totalMembers = 0;
-        for (Allim members : selectTest) {
-            allim.setOrg_code(members.getOrg_code());
-            allim.setNotice_code(members.getNotice_code());
+        for (Allim members : targetList) {
+            allim.setAdminist_code(members.getAdminist_code());
+            allim.setSys_id(members.getSys_id());
+            allim.setBbs_id(members.getBbs_id());
+            allim.setChnnl_sn(members.getChnnl_sn());
 
-            List<Allim> memberList = mybatisInsertService.selectInfoTarget(allim);
+            if (allim.getSys_id().equals("arc")) {
+                memberList = mybatisInsertService.selectArcTarget(allim);
+            } else { // 포탈일 경우
+                memberList = mybatisInsertService.selectInfoTarget(allim);
+            }
+
             for (Allim value : memberList) {
                 value.setIdx(idx++);
             }
@@ -90,24 +104,33 @@ public class MybatisInsertController {
 
     private void allimInsertForPortal(List<Allim> insertList) throws InterruptedException {
 
-        final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+        if (insertList.size() < THREAD_COUNT) {
+            allimInsert(insertList);
+        } else {
+            final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
 
-        List<List<Allim>> listByGuava = Lists.partition(insertList, insertList.size() / THREAD_COUNT);
+            List<List<Allim>> listByGuava = Lists.partition(insertList, insertList.size() / THREAD_COUNT);
 
             for (List<Allim> standard : listByGuava) {
                 executor.execute(() -> allimInsert(standard));
             }
             executor.shutdown();
 
-        while (!executor.awaitTermination(1, TimeUnit.SECONDS));
+            while (!executor.awaitTermination(1, TimeUnit.SECONDS));
 
-        executor.shutdownNow();
+            executor.shutdownNow();
+        }
+
     }
 
     private void allimInsert(List<Allim> standard) {
-        List<List<Allim>> insertsList = Lists.partition(standard, standard.size() / 100);
-        for (List<Allim> allims : insertsList) {
-            mybatisInsertService.insertInfoTarget(allims);
+        if (standard.size() < 100) {
+            mybatisInsertService.insertInfoTarget(standard);
+        } else {
+            List<List<Allim>> insertsList = Lists.partition(standard, standard.size() / 100);
+            for (List<Allim> allims : insertsList) {
+                mybatisInsertService.insertInfoTarget(allims);
+            }
         }
     }
 }
