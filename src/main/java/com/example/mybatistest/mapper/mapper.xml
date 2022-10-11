@@ -54,36 +54,36 @@
 <!--    from testtable-->
 <!--  </select>-->
 
-  <insert id="fcmJsonInsertGubun" parameterType="map">
-        insert into TAP_MN_PUSH_GUBUN(
-                mbr_id, push_seq, sys_nm, sys_id, bbs_id, push_yn, creat_dt
-                )
-        values
-            (
-                #{mbr_id},
-                #{push_seq},
-                #{sys_nm},
-                #{sys_id},
-                #{bbs_id},
-                'N',
-                sysdate
-            )
+<!--  <insert id="fcmJsonInsertGubun" parameterType="map">-->
+<!--        insert into TAP_MN_PUSH_GUBUN(-->
+<!--                mbr_id, push_seq, sys_nm, sys_id, bbs_id, push_yn, creat_dt-->
+<!--                )-->
+<!--        values-->
+<!--            (-->
+<!--                #{mbr_id},-->
+<!--                #{push_seq},-->
+<!--                #{sys_nm},-->
+<!--                #{sys_id},-->
+<!--                #{bbs_id},-->
+<!--                'N',-->
+<!--                sysdate-->
+<!--            )-->
 
-  </insert>
+<!--  </insert>-->
 
-  <insert id="fcmInsertUser" parameterType="map">
-    insert into TAP_MN_PUSH_USER(
-      mbr_token, mbr_id, mbr_nm, creat_dt
-    )
-    values
-      (
-        #{mbr_token},
-        #{mbr_id},
-        #{mbr_nm},
-        '1'
-      )
+<!--  <insert id="fcmInsertUser" parameterType="map">-->
+<!--    insert into TAP_MN_PUSH_USER(-->
+<!--      mbr_token, mbr_id, mbr_nm, creat_dt-->
+<!--    )-->
+<!--    values-->
+<!--      (-->
+<!--        #{mbr_token},-->
+<!--        #{mbr_id},-->
+<!--        #{mbr_nm},-->
+<!--        '1'-->
+<!--      )-->
 
-  </insert>
+<!--  </insert>-->
 
   <insert id="fcmInsertPost" parameterType="com.example.mybatistest.mybatisinsert.Member">
     insert into TAP_MN_PUSH_USER(
@@ -106,6 +106,7 @@
         mbr_id = #{mbr_id}, mbr_nm =#{mbr_nm}
     WHERE
         mbr_token = #{mbr_token}
+
   </update>
   
   <update id="fcmDuplicatedTokenUpdate" parameterType="com.example.mybatistest.mybatisinsert.Member">
