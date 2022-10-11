@@ -36,7 +36,7 @@ public class MemberController {
     @Autowired
     private MybatisInsertService mybatisInsertService;
 
-    @RequestMapping(value = {"/token"}, method = {RequestMethod.POST})
+    @RequestMapping(value = {"/push/edunavi/am/token.do"}, method = {RequestMethod.POST})
     public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member,
         BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
@@ -58,7 +58,7 @@ public class MemberController {
     }
 
 
-    @RequestMapping(value = "/gubun", method = {RequestMethod.POST})
+    @RequestMapping(value = "/push/edunavi/am/gubun.do", method = {RequestMethod.POST})
     public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member,
         BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
@@ -80,7 +80,7 @@ public class MemberController {
         return res;
     }
 
-    @GetMapping(value = "/send")
+    @GetMapping(value = "/push/edunavi/am/send.do")
     public String fcmSelect(Member member) throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Member> fcmListMember = mybatisInsertService.fcmListMember(member); // 여기에서 push를 보낼 글과 인원을 구함

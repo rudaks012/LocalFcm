@@ -22,7 +22,7 @@ public class MybatisInsertController {
     @Autowired
     private MybatisInsertService mybatisInsertService;
 
-    @RequestMapping("/select")
+    @RequestMapping("/alrim/ad/edunavi/alrim/informForPortal.do")
     public @ResponseBody Map<String, Object> select() throws InterruptedException {
         Map<String, Object> rtnObj = new HashMap<>();
 
