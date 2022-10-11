@@ -29,9 +29,9 @@ public class MybatisInsertController {
         StopWatch beforeStopWatch = new YongjuStopWatch();
         beforeStopWatch.start("before");
 
-        List<Allim> selectTest = mybatisInsertService.select();
+        List<Allim> selectRegisteredPost = mybatisInsertService.selectRegisteredPost();
 
-        List<List<Allim>> targets = findMembers(selectTest);
+        List<List<Allim>> targets = findMembers(selectRegisteredPost);
         beforeStopWatch.stop();
         System.out.println(beforeStopWatch.prettyPrint());
 
@@ -57,10 +57,10 @@ public class MybatisInsertController {
         System.out.println("============== 종료 되었습니다 ================");
         System.out.println("=============================================");
 
-        rtnObj.put("Select ", selectTest);
+        rtnObj.put("Select ", selectRegisteredPost);
 
 
-//        mybatisInsertService.delete();
+        mybatisInsertService.informDelete();
 
         return rtnObj;
     }
@@ -76,7 +76,7 @@ public class MybatisInsertController {
             allim.setOrg_code(members.getOrg_code());
             allim.setNotice_code(members.getNotice_code());
 
-            List<Allim> memberList = mybatisInsertService.findMembers(allim);
+            List<Allim> memberList = mybatisInsertService.selectInfoTarget(allim);
             for (Allim value : memberList) {
                 value.setIdx(idx++);
             }
@@ -107,7 +107,7 @@ public class MybatisInsertController {
     private void allimInsert(List<Allim> standard) {
         List<List<Allim>> insertsList = Lists.partition(standard, standard.size() / 100);
         for (List<Allim> allims : insertsList) {
-            mybatisInsertService.insert(allims);
+            mybatisInsertService.insertInfoTarget(allims);
         }
     }
 }

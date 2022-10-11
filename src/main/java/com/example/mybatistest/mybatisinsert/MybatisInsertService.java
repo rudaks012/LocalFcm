@@ -14,20 +14,20 @@ public class MybatisInsertService {
     @Autowired
     private MybatisInserDao mybatisInserDao;
 
-    public int insert(List<Allim> allim) {
-        return mybatisInserDao.insert(allim);
+    public int insertInfoTarget(List<Allim> allim) {
+        return mybatisInserDao.insertInfoTarget(allim);
     }
 
-    public int delete() {
-        return mybatisInserDao.delete();
+    public int informDelete() {
+        return mybatisInserDao.informDelete();
     }
 
-    public List<Allim> select() {
-        return mybatisInserDao.select();
+    public List<Allim> selectRegisteredPost() {
+        return mybatisInserDao.selectRegisteredPost();
     }
 
-    public List<Allim> findMembers(Allim allim) {
-        return mybatisInserDao.findMembers(allim);
+    public List<Allim> selectInfoTarget(Allim allim) {
+        return mybatisInserDao.selectInfoTarget(allim);
     }
 
     public List<Member> listToJson(Member member) {

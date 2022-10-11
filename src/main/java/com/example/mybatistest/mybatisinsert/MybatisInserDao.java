@@ -10,13 +10,13 @@ import java.util.List;
 @Mapper
 public interface MybatisInserDao {
 
-    int insert(List<Allim> allim);
+    int insertInfoTarget(List<Allim> allim);
 
-    int delete();
+    int informDelete();
 
-    List<Allim> select();
+    List<Allim> selectRegisteredPost();
 
-    List<Allim> findMembers(Allim allim);
+    List<Allim> selectInfoTarget(Allim allim);
 
     List<Member> listToJson(Member member);
 

@@ -2,88 +2,75 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mybatistest.mybatisinsert.MybatisInserDao">
 
-    <insert id="insert" parameterType="java.util.List">
-        insert into
-            fcmtest(
-                    idx, content, link_addr, member_id, org_code, notice_code, title, service_key
-                    )
+    <insert id="insertInfoTarget" parameterType="java.util.List">
+      insert into
+      TAP_NS_NTCN_SE
+      (
+      mbr_id,
+      ntcn_seq,
+      sys_id,
+      bbs_id,
+      administ_code,
+      chnnl_sn,
+      link_info,
+      bbs_sj,
+      ntcn_at,
+      creat_dt
+      )
         values
             <foreach collection="list" item="receiver" separator=",">
                 (
-                    #{receiver.idx},
-                    #{receiver.content},
-                    #{receiver.member_id},
-                    #{receiver.link_addr},
-                    #{receiver.org_code},
-                    #{receiver.notice_code},
-                    #{receiver.title},
-                    #{receiver.service_key}
+                    #{receiver.mbr_id},
+                    #{receiver.ntcn_seq},
+                    #{receiver.sys_id},
+                    #{receiver.bbs_id},
+                    #{receiver.administ_code},
+                    #{receiver.chnnl_sn},
+                    #{receiver.link_info},
+                    #{receiver.bbs_sj},
+                    'Y',
+                    sysdate
                 )
             </foreach>
     </insert>
 
-    <delete id="delete" >
-        delete from fcmtest
+    <delete id="informDelete" >
+      DELETE
+      FROM TAP_NS_NTCN_SE
     </delete>
 
-    <select id="select" resultType="com.example.mybatistest.mybatisinsert.Allim">
-        SELECT
-                notice_code, org_code, title, content,
-                add_date, receive_agree
-        FROM
-                notice
+    <select id="selectRegisteredPost" resultType="com.example.mybatistest.mybatisinsert.Allim">
+      SELECT sys_id,
+             administ_code,
+             bbs_id,
+             chnnl_sn,
+             ntcn_sj,
+             ntcn_cn,
+             link_info,
+             ntcn_sttus,
+             ntcn_creat_dt,
+             creat_mbr_ip
+      FROM TAP_NM_NTCN_MANAGE
+      WHERE ntcn_sttus = 'Y'
     </select>
 
     <select id="findMembers" resultType="com.example.mybatistest.mybatisinsert.Allim" parameterType="com.example.mybatistest.mybatisinsert.Allim">
-      SELECT
-            a.title, a.content, a.add_date, a.receive_agree,
-            b.member_id, b.device_code, b.token, b.member_name, b.link_addr, b.org_code, b.notice_code
-        FROM
-            notice a INNER JOIN member b
-        WHERE
-            a.org_code = b.org_code
-          AND b.org_code = #{org_code}
-          <if test="notice_code != null">
-          AND b.notice_code = #{notice_code}
-          </if>
+      select a.mber_id as mbr_id,
+             a.administ_code,
+             b.sys_id,
+             b.bbs_id,
+             b.ntcn_sj,
+             b.ntcn_cn,
+             b.link_info,
+             b.bbs_sj
+      from po_user.tap_mm_mber a,
+           po_user.tap_nm_ntcn_manage b
+      where a.administ_code = #{administ_code}
+        and a.mber_sttus != 'D'
+      and b.sys_id = #{sys_id}
+        and b.bbs_id = #{bbs_id}
+        and a.administ_code = b.administ_code
     </select>
-
-<!--  <select id="listToJson" resultType="com.example.mybatistest.mybatisinsert.Member" parameterType="com.example.mybatistest.mybatisinsert.Allim">-->
-<!--    select-->
-<!--        *-->
-<!--    from testtable-->
-<!--  </select>-->
-
-<!--  <insert id="fcmJsonInsertGubun" parameterType="map">-->
-<!--        insert into TAP_MN_PUSH_GUBUN(-->
-<!--                mbr_id, push_seq, sys_nm, sys_id, bbs_id, push_yn, creat_dt-->
-<!--                )-->
-<!--        values-->
-<!--            (-->
-<!--                #{mbr_id},-->
-<!--                #{push_seq},-->
-<!--                #{sys_nm},-->
-<!--                #{sys_id},-->
-<!--                #{bbs_id},-->
-<!--                'N',-->
-<!--                sysdate-->
-<!--            )-->
-
-<!--  </insert>-->
-
-<!--  <insert id="fcmInsertUser" parameterType="map">-->
-<!--    insert into TAP_MN_PUSH_USER(-->
-<!--      mbr_token, mbr_id, mbr_nm, creat_dt-->
-<!--    )-->
-<!--    values-->
-<!--      (-->
-<!--        #{mbr_token},-->
-<!--        #{mbr_id},-->
-<!--        #{mbr_nm},-->
-<!--        '1'-->
-<!--      )-->
-
-<!--  </insert>-->
 
   <insert id="fcmInsertPost" parameterType="com.example.mybatistest.mybatisinsert.Member">
     insert into TAP_MN_PUSH_USER(
@@ -180,18 +167,6 @@
         mbr_token = #{mbr_token}
   </delete>
   
-  <select id="fcmSelectSys" resultType="com.example.mybatistest.mybatisinsert.Member">
-    SELECT
-        a.sys_id, a.sys_nm, b.bbs_sj, b.bbs_id
-    FROM
-         dgedu_user.tap_sm_sys_manage a, dgedu_user.tap_bm_bbs_manage b
-    WHERE
-        a.sys_ty = 'INSTT'
-      AND a.sys_id = b.sys_id
-      AND a.sys_nm LIKE CONCAT('%',#{sys_nm},'%')
-      AND b.bbs_sj LIKE '알림마당-공지사항%'
-    ORDER BY b.bbs_id
-  </select>
 
   <select id="fcmPushList" parameterType="com.example.mybatistest.mybatisinsert.Member" resultType="com.example.mybatistest.mybatisinsert.Member">
   SELECT
