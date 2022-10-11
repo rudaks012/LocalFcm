@@ -109,71 +109,74 @@
 
 <!--  여기 까지 알림-->
 
-  <insert id="fcmInsertPost" parameterType="com.example.mybatistest.mybatisinsert.Member">
-    insert into TAP_MN_PUSH_USER(
-      mbr_token, mbr_id, mbr_nm, creat_dt
+  <insert id="insertMberTkn" parameterType="com.example.mybatistest.mybatisinsert.Member">
+    insert into TAD_MN_PUSH_USER(
+      mbr_tkn_value,
+      mbr_id,
+      mbr_nm,
+      push_creat_dt,
+      usage_at
     )
     VALUES
       (
-        #{mbr_token},
+        #{mbr_tkn_value},
         #{mbr_id},
         #{mbr_nm},
-        sysdate()
+        sysdate,
+        'Y'
       )
 
   </insert>
 
-  <update id="fcmUpdatePost" parameterType="com.example.mybatistest.mybatisinsert.Member">
+  <update id="updateMberTkn" parameterType="com.example.mybatistest.mybatisinsert.Member">
     UPDATE
-        TAP_MN_PUSH_USER
+      TAD_MN_PUSH_USER
     SET
-        mbr_id = #{mbr_id}, mbr_nm =#{mbr_nm}
+      mbr_id = #{mbr_id}, mbr_nm =#{mbr_nm}
     WHERE
-        mbr_token = #{mbr_token}
-
+      mbr_tkn_value = #{mbr_tkn_value}
   </update>
   
-  <update id="fcmDuplicatedTokenUpdate" parameterType="com.example.mybatistest.mybatisinsert.Member">
+  <update id="updateDplcteMberTkn" parameterType="com.example.mybatistest.mybatisinsert.Member">
     UPDATE
-      TAP_MN_PUSH_USER
+      TAD_MN_PUSH_USER
     SET
-       creat_dt = sysdate(), usage_status = 'N'
+      push_creat_dt = sysdate, usage_at = 'N'
     WHERE
-      mbr_token = #{old_token}
+      mbr_tkn_value = #{old_token}
   </update>
 
   <insert id="fcmGubunInsert" parameterType="com.example.mybatistest.mybatisinsert.Member">
 
     <selectKey resultType="int" keyProperty="push_seq" order="BEFORE">
       SELECT
-         IFNULL(MAX(push_seq),0)+1
---       Oracle -  NVL(MAX(push_seq),0)+1
+         NVL(MAX(push_seq),0)+1
       FROM
-          tap_mn_push_gubun
-      where mbr_token = #{mbr_token}
+      TAD_MN_PUSH_GUBUN
+      where mbr_tkn_value = #{mbr_tkn_value}
     </selectKey>
 
     insert into
-        TAP_MN_PUSH_GUBUN
-        (mbr_token, push_seq, sys_id, bbs_id, push_yn, creat_dt)
+    TAD_MN_PUSH_GUBUN
+        (mbr_tkn_value, push_seq, sys_id, bbs_id, push_at, creat_dt)
     VALUES
       (
-        #{mbr_token},
+        #{mbr_tkn_value},
         #{push_seq},
         #{sys_id},
         #{bbs_id},
-        #{push_yn},
-        sysdate()
+        #{push_at},
+        sysdate
       )
   </insert>
 
   <select id="fcmListMember" resultType="com.example.mybatistest.mybatisinsert.Member">
     SELECT
-      a.mbr_token,c.push_sj, c.push_nm, c.link, c.push_sttus
+      a.mbr_tkn_value,c.push_sj, c.push_nm, c.link, c.push_sttus
     FROM
-      tap_mn_push_user a, tap_mn_push_gubun b, tap_mn_push_manage c
+      TAD_MN_PUSH_USER a, TAD_MN_PUSH_GUBUN b, TAD_MN_PUSH_MANAGE c
     WHERE
-      a.mbr_token = b.mbr_token
+      a.mbr_tkn_value = b.mbr_tkn_value
       AND b.sys_id = c.sys_id
       AND b.bbs_id = c.bbs_id
       AND b.push_yn = 'Y'
@@ -182,13 +185,13 @@
 
   <insert id="realInsert" parameterType="java.util.List">
     INSERT INTO
-         TAP_MN_FCM(
-                    mbr_token, push_sj, push_nm, link, push_sttus
+    TAD_MN_FCM(
+    mbr_tkn_value, push_sj, push_nm, link, push_sttus
                     )
     VALUES
         <foreach collection="list" item="item" separator=",">
           (
-            #{item.mbr_token},
+            #{item.mbr_tkn_value},
             #{item.push_sj},
             #{item.push_nm},
             #{item.link},
@@ -197,11 +200,11 @@
     </foreach>
   </insert>
 
-  <delete id="fcmDeleteGubun" parameterType="com.example.mybatistest.mybatisinsert.Member">
+  <delete id="deleteGubunMember" parameterType="com.example.mybatistest.mybatisinsert.Member">
     DELETE FROM
-        TAP_MN_PUSH_GUBUN
+      TAD_MN_PUSH_GUBUN
     WHERE
-        mbr_token = #{mbr_token}
+      mbr_tkn_value = #{mbr_tkn_value}
   </delete>
   
 
@@ -209,12 +212,12 @@
   SELECT
       *
   FROM
-      tap_mn_fcm
+    TAD_MN_FCM
   </select>
 
   <delete id="deleteFcmPushList" parameterType="String">
     DELETE FROM
-        tap_mn_fcm
+      TAD_MN_FCM
     WHERE
         mbr_token = #{mbr_token}
   </delete>

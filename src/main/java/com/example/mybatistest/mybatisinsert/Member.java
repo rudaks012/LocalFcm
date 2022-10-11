@@ -6,28 +6,26 @@ public class Member {
 
     private String mbr_id; // 회원아이디
     private String mbr_nm; //회원명
-    private String mbr_token; //단말 토큰
+    private String mbr_tkn_value; //단말 토큰
+    private String push_tkn_value; //초등 돌봄용 토큰
     private String sw; // 멤버 상태 구분 기호 1: 신규 , 2: 업데이트 , 3: 업데이트된 상태
     private String old_token; //오래된 토큰
-    private LocalDateTime creat_dt; // 등록일시
-
+    private LocalDateTime push_creat_dt; // 등록일시
 
     private String push; // 해당 기관 코드 묶음
     private int push_seq; //알람 순번
     private String sys_id; //시스템아이디
     private String bbs_id; //게시판 아이디
-    private String push_yn;
+    private String push_at; //알림 전송 여부
 
     private String push_sj; //알람 제목
     private String push_nm; //알람 내용
-    private String link; //링크
+    private String link_info; //링크
 
-    //임시테이블
-    private String member_id;
+    private String usage_at; //사용여부
+
     private String sys_nm; // 시스템 이름
     private String bbs_sj; // 게시판 제목
-
-
 
     public String getMbr_id() {
         return mbr_id;
@@ -45,12 +43,20 @@ public class Member {
         this.mbr_nm = mbr_nm;
     }
 
-    public String getMbr_token() {
-        return mbr_token;
+    public String getMbr_tkn_value() {
+        return mbr_tkn_value;
     }
 
-    public void setMbr_token(String mbr_token) {
-        this.mbr_token = mbr_token;
+    public void setMbr_tkn_value(String mbr_tkn_value) {
+        this.mbr_tkn_value = mbr_tkn_value;
+    }
+
+    public String getPush_tkn_value() {
+        return push_tkn_value;
+    }
+
+    public void setPush_tkn_value(String push_tkn_value) {
+        this.push_tkn_value = push_tkn_value;
     }
 
     public String getSw() {
@@ -69,12 +75,12 @@ public class Member {
         this.old_token = old_token;
     }
 
-    public LocalDateTime getCreat_dt() {
-        return creat_dt;
+    public LocalDateTime getPush_creat_dt() {
+        return push_creat_dt;
     }
 
-    public void setCreat_dt(LocalDateTime creat_dt) {
-        this.creat_dt = creat_dt;
+    public void setPush_creat_dt(LocalDateTime push_creat_dt) {
+        this.push_creat_dt = push_creat_dt;
     }
 
     public String getPush() {
@@ -109,12 +115,12 @@ public class Member {
         this.bbs_id = bbs_id;
     }
 
-    public String getPush_yn() {
-        return push_yn;
+    public String getPush_at() {
+        return push_at;
     }
 
-    public void setPush_yn(String push_yn) {
-        this.push_yn = push_yn;
+    public void setPush_at(String push_at) {
+        this.push_at = push_at;
     }
 
     public String getPush_sj() {
@@ -133,20 +139,20 @@ public class Member {
         this.push_nm = push_nm;
     }
 
-    public String getLink() {
-        return link;
+    public String getLink_info() {
+        return link_info;
     }
 
-    public void setLink(String link) {
-        this.link = link;
+    public void setLink_info(String link_info) {
+        this.link_info = link_info;
     }
 
-    public String getMember_id() {
-        return member_id;
+    public String getUsage_at() {
+        return usage_at;
     }
 
-    public void setMember_id(String member_id) {
-        this.member_id = member_id;
+    public void setUsage_at(String usage_at) {
+        this.usage_at = usage_at;
     }
 
     public String getSys_nm() {

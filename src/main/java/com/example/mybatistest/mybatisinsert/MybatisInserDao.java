@@ -24,11 +24,11 @@ public interface MybatisInserDao {
 
     int fcmInsertUser(Map<String, String> stringStringMap);
 
-    int fcmInsertPost(Member member); // 로그인 시 빈 토큰이 들어와 data insert
+    int insertMberTkn(Member member); // 로그인 시 빈 토큰이 들어와 data insert
 
-    int fcmUpdatePost(Member member); // 로그인 후 name,
+    int updateMberTkn(Member member); // 로그인 후 name,
 
-    int fcmDuplicatedTokenUpdate(Member member);
+    int updateDplcteMberTkn(Member member);
 
     int fcmGubunInsert(Member member);
 
@@ -36,7 +36,7 @@ public interface MybatisInserDao {
 
     int realInsert(List<Member> fcmListMember);
 
-    int fcmDeleteGubun(Member member);
+    int deleteGubunMember(Member member);
 
     List<Member> fcmSelectSys(Member member);
 

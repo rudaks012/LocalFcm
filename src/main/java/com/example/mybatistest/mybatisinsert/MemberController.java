@@ -45,7 +45,7 @@ public class MemberController {
             if (!result.hasErrors()) {
                 setMemberStatus(param, member);
                 swForEachFunction(member, result, res);// sw값에 따른 분기처리 sw = 1 : 신규, sw = 2 : 업데이트, sw = 3 : 신규(토큰값 있는데 변경된 경우)
-                res.setUrl(member.getMbr_token());
+                res.setUrl(member.getPush_tkn_value());
                 restSetOkMessage(res);
             } else {
                 restSetFalseMessage(result, res);
@@ -65,14 +65,14 @@ public class MemberController {
 
         if (!result.hasErrors()) {
             gubunMemberStatus(param, member);
-            mybatisInsertService.fcmDeleteGubun(member); //등록하기전 삭제 후 등록
+            mybatisInsertService.deleteGubunMember(member); //등록하기전 삭제 후 등록
 
             String[] splitRegular = member.getPush().split(PUSH_EXPRESSION);
             for (String value : splitRegular) {
                 String[] push = value.split(REGULAR_EXPRESSION);
                 splitGubunMemberStatusInsert(member, result, res, push); // 구분자로 구분 후 insert
             }
-            res.setUrl(member.getMbr_token());
+            res.setUrl(member.getPush_tkn_value());
             restSetOkMessage(res);
         } else {
             restSetFalseMessage(result, res);
@@ -117,10 +117,10 @@ public class MemberController {
 
     private void pushInsert(List<Member> list) throws IOException {
         for (int i = 0; i < list.size(); i++) {
-//            String token = list.get(i).getMbr_token();
+            String token = list.get(i).getPush_tkn_value();
             String push_sj = list.get(i).getPush_sj();
             String push_nm = list.get(i).getPush_nm();
-            String link = list.get(i).getLink();
+            String link = list.get(i).getLink_info();
 
             final String apiKey = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
             URL url = new URL("https://fcm.googleapis.com/fcm/send");
@@ -140,7 +140,7 @@ public class MemberController {
 //            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"data\":{\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
 //            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"custom\":\""+link+"\"},\"to\":\"/topics/all\"}";
 //            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"to\":\"\" + token + \"\"}";
-            String token = "c2TrrYzmTi6wta0lDUOsI-:APA91bEbBAVVfNykQrrLPoa7KwmMHFUPLjJ2xAgT5_bxi1D3byCyCS3uslisNfdrfCfLxTmB1hbd7mR2mtur-BfSPaECynWtzAPNHOqL_B_BiV7SWi6TqWunAOykZrTu6E7LWwvpHYQk";
+//            String token = "c2TrrYzmTi6wta0lDUOsI-:APA91bEbBAVVfNykQrrLPoa7KwmMHFUPLjJ2xAgT5_bxi1D3byCyCS3uslisNfdrfCfLxTmB1hbd7mR2mtur-BfSPaECynWtzAPNHOqL_B_BiV7SWi6TqWunAOykZrTu6E7LWwvpHYQk";
 
             String input = "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"}}";
 
@@ -176,16 +176,16 @@ public class MemberController {
         validate(member, result, res);
 
         if (PARAMETER_SW_ONE.equals(member.getSw())) {
-            int worksNormally = mybatisInsertService.fcmInsertPost(member);
+            int worksNormally = mybatisInsertService.insertMberTkn(member);
             checkWorksStatus(result, res, worksNormally);
         }
         if (PARAMETER_SW_TWO.equals(member.getSw())) {
-            int worksNormally = mybatisInsertService.fcmUpdatePost(member);
+            int worksNormally = mybatisInsertService.updateMberTkn(member);
             checkWorksStatus(result, res, worksNormally);
         }
         if (PARAMETER_SW_THREE.equals(member.getSw()) && isTokenCheck(member)) {
-            int worksNormally = mybatisInsertService.fcmDuplicatedTokenUpdate(member);
-            int duplicateInsert = mybatisInsertService.fcmInsertPost(member);
+            int worksNormally = mybatisInsertService.updateDplcteMberTkn(member);
+            int duplicateInsert = mybatisInsertService.insertMberTkn(member);
             checkWorksStatus(result, res, worksNormally, duplicateInsert);
         }
     }
@@ -200,7 +200,7 @@ public class MemberController {
     }
 
     private boolean isTokenEmptyAndNull(Member member) {
-        return Objects.isNull(member.getMbr_token()) || member.getMbr_token().isEmpty();
+        return Objects.isNull(member.getPush_tkn_value()) || member.getPush_tkn_value().isEmpty();
     }
 
     private boolean isSwEmptyAndNull(Member member) {
@@ -210,7 +210,7 @@ public class MemberController {
     private void setMemberStatus(Map<String, String> param, Member member) {
         member.setMbr_id(param.get("mbr_id"));
         member.setMbr_nm(param.get("mbr_nm"));
-        member.setMbr_token(param.get("mbr_token"));
+        member.setMbr_tkn_value(param.get("mbr_token"));
         member.setOld_token(param.get("old_token"));
         member.setSw(param.get("sw"));
     }
@@ -246,7 +246,7 @@ public class MemberController {
             } else if (isEven(j)) {
                 member.setBbs_id(push[j]);
             } else {
-                member.setPush_yn(push[j]);
+                member.setPush_at(push[j]);
                 int worksNormally = mybatisInsertService.fcmGubunInsert(member);
                 checkWorksStatus(result, res, worksNormally);
             }
@@ -258,8 +258,8 @@ public class MemberController {
     }
 
     private void gubunMemberStatus(Map<String, String> param, Member member) {
-        member.setMbr_token(param.get("mbr_token"));
-        System.out.println("member.getMbr_token() = " + member.getMbr_token());
+        member.setMbr_tkn_value(param.get("mbr_token"));
+        System.out.println("member.getMbr_token() = " + member.getPush_tkn_value());
         member.setPush(param.get("push"));
         System.out.println("member.getPush() = " + member.getPush());
         member.setSw(param.get("sw"));

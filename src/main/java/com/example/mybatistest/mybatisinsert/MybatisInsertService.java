@@ -43,17 +43,16 @@ public class MybatisInsertService {
         return mybatisInserDao.fcmInsertUser(stringStringMap);
     }
 
-    public int fcmInsertPost(Member member) {
-
-        return mybatisInserDao.fcmInsertPost(member);
+    public int insertMberTkn(Member member) {
+        return mybatisInserDao.insertMberTkn(member);
     }
 
-    public int fcmUpdatePost(Member member) {
-        return mybatisInserDao.fcmUpdatePost(member);
+    public int updateMberTkn(Member member) {
+        return mybatisInserDao.updateMberTkn(member);
     }
 
-    public int fcmDuplicatedTokenUpdate(Member member) {
-        return mybatisInserDao.fcmDuplicatedTokenUpdate(member);
+    public int updateDplcteMberTkn(Member member) {
+        return mybatisInserDao.updateDplcteMberTkn(member);
     }
 
     public int fcmGubunInsert(Member member) {
@@ -68,8 +67,8 @@ public class MybatisInsertService {
         return mybatisInserDao.realInsert(fcmListMember);
     }
 
-    public int fcmDeleteGubun(Member member) {
-        return mybatisInserDao.fcmDeleteGubun(member);
+    public int deleteGubunMember(Member member) {
+        return mybatisInserDao.deleteGubunMember(member);
     }
 
     public List<Member> fcmSelectSys(Member member) {
