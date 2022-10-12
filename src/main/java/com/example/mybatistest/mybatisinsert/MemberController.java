@@ -117,7 +117,7 @@ public class MemberController {
 
     private void pushInsert(List<Member> list) throws IOException {
         for (int i = 0; i < list.size(); i++) {
-            String token = list.get(i).getPush_tkn_value();
+            String token = list.get(i).getMbr_tkn_value();
             String push_sj = list.get(i).getPush_sj();
             String push_nm = list.get(i).getPush_nm();
             String link = list.get(i).getLink_info();

@@ -172,29 +172,36 @@
 
   <select id="fcmListMember" resultType="com.example.mybatistest.mybatisinsert.Member">
     SELECT
-      a.mbr_tkn_value,c.push_sj, c.push_nm, c.link, c.push_sttus
+      a.mbr_tkn_value,c.push_sj, c.push_nm, c.link_info, c.push_sttus
     FROM
       TAD_MN_PUSH_USER a, TAD_MN_PUSH_GUBUN b, TAD_MN_PUSH_MANAGE c
     WHERE
       a.mbr_tkn_value = b.mbr_tkn_value
       AND b.sys_id = c.sys_id
       AND b.bbs_id = c.bbs_id
-      AND b.push_yn = 'Y'
+      AND b.push_at = 'Y'
 
   </select>
 
   <insert id="realInsert" parameterType="java.util.List">
+
     INSERT INTO
-    TAD_MN_FCM(
-    mbr_tkn_value, push_sj, push_nm, link, push_sttus
+    TAD_MN_PUSH_FCM(
+    fcm_sn, mbr_tkn_value, push_sj, push_nm, link_info, push_sttus
                     )
     VALUES
         <foreach collection="list" item="item" separator=",">
           (
+            (
+              SELECT
+                  NVL(MAX(fcm_sn),0)+1
+              FROM
+                  TAD_MN_PUSH_FCM
+            ),
             #{item.mbr_tkn_value},
             #{item.push_sj},
             #{item.push_nm},
-            #{item.link},
+            #{item.link_info},
            'N'
           )
     </foreach>
@@ -212,7 +219,7 @@
   SELECT
       *
   FROM
-    TAD_MN_FCM
+    TAD_MN_PUSH_FCM
   </select>
 
   <delete id="deleteFcmPushList" parameterType="String">
