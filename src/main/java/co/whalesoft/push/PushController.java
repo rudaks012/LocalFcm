@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class PushController {
+
     public static final String PARAMETER_SW_ONE = "1";
     public static final String PARAMETER_SW_TWO = "2";
     public static final String PARAMETER_SW_THREE = "3";
@@ -39,14 +40,16 @@ public class PushController {
     private PushService pushService;
 
     @RequestMapping(value = {"/push/edunavi/am/token.do"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Push push, BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Push push,
+        BindingResult result, HttpServletRequest request) {
 
         JsonResponse res = new JsonResponse(request);
 
         try {
             if (!result.hasErrors()) {
                 setMemberStatus(param, push);
-                swForEachFunction(push, result, res);// sw값에 따른 분기처리 sw = 1 : 신규, sw = 2 : 업데이트, sw = 3 : 신규(토큰값 있는데 변경된 경우)
+                swForEachFunction(push, result,
+                    res);// sw값에 따른 분기처리 sw = 1 : 신규, sw = 2 : 업데이트, sw = 3 : 신규(토큰값 있는데 변경된 경우)
                 res.setUrl(push.getPush_tkn_value());
                 restSetOkMessage(res);
             } else {
@@ -61,7 +64,8 @@ public class PushController {
 
 
     @RequestMapping(value = "/push/edunavi/am/gubun.do", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Push member, BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Push member,
+        BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
@@ -90,7 +94,7 @@ public class PushController {
         List<Push> tokenList = pushService.fcmPushList(push);
         if (tokenList.size() < THREAD_COUNT) {
             pushInsert(tokenList);
-        }else {
+        } else {
             multiThreadPush(executor, tokenList);
             executor.shutdown();
             while (!executor.awaitTermination(1, TimeUnit.SECONDS));
@@ -141,7 +145,9 @@ public class PushController {
 
             conn.setDoOutput(true);
 
-            String PushMessage = "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"}}";
+            String PushMessage =
+                "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\""
+                    + push_sj + "\",\"body\" : \"" + push_nm + "\",\"link\" : \"" + link + "\"}}";
 
             OutputStream os = conn.getOutputStream();
 
