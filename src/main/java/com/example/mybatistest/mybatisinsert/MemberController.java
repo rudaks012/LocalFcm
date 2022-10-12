@@ -31,14 +31,16 @@ public class MemberController {
     public static final String PARAMETER_SW_THREE = "3";
     public static final String REGULAR_EXPRESSION = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
     public static final String PUSH_EXPRESSION = "\\^";
+    public static final String API_KEY = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
+    public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     public static final int ZERO = 0;
     public static final int THREAD_COUNT = 8;
     @Autowired
     private MybatisInsertService mybatisInsertService;
 
     @RequestMapping(value = {"/push/edunavi/am/token.do"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member,
-        BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Member member, BindingResult result, HttpServletRequest request) {
+
         JsonResponse res = new JsonResponse(request);
 
         try {
@@ -59,8 +61,7 @@ public class MemberController {
 
 
     @RequestMapping(value = "/push/edunavi/am/gubun.do", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member,
-        BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Member member, BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
@@ -100,6 +101,7 @@ public class MemberController {
     }
 
     private void multiThreadPush(ExecutorService executor, List<Member> tokenList) {
+
         List<List<Member>> listByGuava = Lists.partition(tokenList, tokenList.size() / THREAD_COUNT);
         for (List<Member> list : listByGuava) {
             executor.execute(() -> {
@@ -122,38 +124,27 @@ public class MemberController {
             String push_nm = list.get(i).getPush_nm();
             String link = list.get(i).getLink_info();
 
-            final String apiKey = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
-            URL url = new URL("https://fcm.googleapis.com/fcm/send");
+            URL url = new URL(FCM_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Authorization", "key=" + apiKey);
+            conn.setRequestProperty("Authorization", "key=" + API_KEY);
 
             conn.setDoOutput(true);
 
-            // 이걸로 보내면 특정 토큰을 가지고있는 어플에만 알림을 날려준다  위에 둘중에 한개 골라서 날려주자
-//            String input = "{\"notification\" : {\"title\" : \""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"},\"to\" : \"" + token + "\"}";
-//            String input = "{\"notification\" : {\"title\" : \""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"},\"to\" : \"" + token + "\"}";
-            //input custom data
-//            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"link\":\""+link+"\",\"link\":\"\"+link+\"\"},\"custom_data\":{\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
-//            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"data\":{\"click_action\":\""+link+"\"},\"to\":\"" + token + "\"}";
-//            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"custom\":\""+link+"\"},\"to\":\"/topics/all\"}";
-//            String input = "{\"notification\":{\"title\":\""+push_sj+"\",\"body\":\""+push_nm+"\",\"click_action\":\""+link+"\"},\"to\":\"\" + token + \"\"}";
-//            String token = "c2TrrYzmTi6wta0lDUOsI-:APA91bEbBAVVfNykQrrLPoa7KwmMHFUPLjJ2xAgT5_bxi1D3byCyCS3uslisNfdrfCfLxTmB1hbd7mR2mtur-BfSPaECynWtzAPNHOqL_B_BiV7SWi6TqWunAOykZrTu6E7LWwvpHYQk";
-
-            String input = "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"}}";
+            String PushMessage = "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\""+push_sj+"\",\"body\" : \""+push_nm+"\",\"link\" : \""+link+"\"}}";
 
             OutputStream os = conn.getOutputStream();
 
             // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
-            os.write(input.getBytes("UTF-8"));
+            os.write(PushMessage.getBytes("UTF-8"));
             os.flush();
             os.close();
 
             int responseCode = conn.getResponseCode();
             System.out.println("\nSending 'POST' request to URL : " + url);
-            System.out.println("Post parameters : " + input);
+            System.out.println("Post parameters : " + PushMessage);
             System.out.println("Response Code : " + responseCode);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -166,8 +157,6 @@ public class MemberController {
             in.close();
             // print result
             System.out.println(response.toString());
-//           int check = mybatisInsertService.deleteFcmPushList(token);
-//            System.out.println("check = " + check);
         }
     }
 
@@ -259,11 +248,8 @@ public class MemberController {
 
     private void gubunMemberStatus(Map<String, String> param, Member member) {
         member.setMbr_tkn_value(param.get("mbr_token"));
-        System.out.println("member.getMbr_token() = " + member.getPush_tkn_value());
         member.setPush(param.get("push"));
-        System.out.println("member.getPush() = " + member.getPush());
         member.setSw(param.get("sw"));
-        System.out.println("member.getSw() = " + member.getSw());
     }
 
     private void restSetOkMessage(JsonResponse res) {
