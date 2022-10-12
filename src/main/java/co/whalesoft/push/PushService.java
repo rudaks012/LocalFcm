@@ -52,4 +52,7 @@ public class PushService {
         return pushDao.deleteFcmPushList(token);
     }
 
+    public int updatePushSttus(Push sentPushList) {
+        return pushDao.updatePushSttus(sentPushList);
+    }
 }

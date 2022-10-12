@@ -85,7 +85,6 @@ public class PushController {
     public String fcmSelect(Push push) throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Push> fcmListPush = pushService.fcmListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
-        System.out.println("fcmListMember = " + fcmListPush);
         pushService.realInsert(fcmListPush);
 
         List<Push> tokenList = pushService.fcmPushList(push);
@@ -97,7 +96,16 @@ public class PushController {
             while (!executor.awaitTermination(1, TimeUnit.SECONDS));
 //            executor.shutdown();
         }
+
+        updatePushSttus(fcmListPush);
+
         return "jsonView";
+    }
+
+    private void updatePushSttus(List<Push> fcmListPush) {
+        for (Push sentPushList : fcmListPush) {
+            pushService.updatePushSttus(sentPushList);
+        }
     }
 
     private void multiThreadPush(ExecutorService executor, List<Push> tokenList) {

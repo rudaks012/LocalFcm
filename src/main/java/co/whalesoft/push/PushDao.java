@@ -33,4 +33,5 @@ public interface PushDao {
 
     int deleteFcmPushList(String member);
 
+    int updatePushSttus(Push push);
 }

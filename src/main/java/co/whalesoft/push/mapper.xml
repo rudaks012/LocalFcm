@@ -124,7 +124,8 @@
 
   <select id="fcmListMember" resultType="co.whalesoft.push.Push">
     SELECT
-      a.mbr_tkn_value,c.push_sj, c.push_nm, c.link_info, c.push_sttus
+      a.mbr_tkn_value,c.push_sj, c.push_nm, c.link_info, c.push_sttus,
+      c.sys_id, c.bbs_id
     FROM
       TAD_MN_PUSH_USER a, TAD_MN_PUSH_GUBUN b, TAD_MN_PUSH_MANAGE c
     WHERE
@@ -132,6 +133,19 @@
       AND b.sys_id = c.sys_id
       AND b.bbs_id = c.bbs_id
       AND b.push_at = 'Y'
+      AND c.push_sttus = 'Y'
 
   </select>
+
+  <update id="updatePushSttus" parameterType="co.whalesoft.push.Push">
+    UPDATE
+    TAD_MN_PUSH_MANAGE
+    SET
+    push_sttus = 'N'
+    WHERE
+    sys_id = #{sys_id}
+    <if test="bbs_id != null">
+      AND bbs_id = #{bbs_id}
+    </if>
+  </update>
 </mapper>
