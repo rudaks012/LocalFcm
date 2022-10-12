@@ -39,49 +39,32 @@
     </delete>
 
     <select id="selectRegisteredPost" resultType="com.example.mybatistest.mybatisinsert.Allim">
-      SELECT sys_id,
-             administ_code,
-             bbs_id,
-             chnnl_sn,
-             ntcn_sj,
-             ntcn_cn,
-             link_info,
-             ntcn_sttus,
-             ntcn_creat_dt,
-             creat_mbr_ip
-      FROM TAP_NM_NTCN_MANAGE
-      WHERE ntcn_sttus = 'Y'
+      SELECT
+             sys_id, administ_code, bbs_id, chnnl_sn, ntcn_sj,
+             ntcn_cn, link_info, ntcn_sttus, ntcn_creat_dt, creat_mbr_ip
+      FROM
+             TAP_NM_NTCN_MANAGE
+      WHERE
+             ntcn_sttus = 'Y'
     </select>
 
     <select id="selectInfoTarget" resultType="com.example.mybatistest.mybatisinsert.Allim" parameterType="com.example.mybatistest.mybatisinsert.Allim">
-      select a.mber_id as mbr_id,
-             a.administ_code,
-             b.sys_id,
-             b.bbs_id,
-             b.ntcn_sj,
-             b.ntcn_cn,
-             b.link_info,
-             b.bbs_sj
-      from po_user.tap_mm_mber a,
-           po_user.tap_nm_ntcn_manage b
-      where a.administ_code = #{administ_code}
-        and a.mber_sttus != 'D'
-      and b.sys_id = #{sys_id}
-        and b.bbs_id = #{bbs_id}
-        and a.administ_code = b.administ_code
+      SELECT
+             a.mber_id as mbr_id, a.administ_code, b.sys_id, b.bbs_id, b.ntcn_sj,
+             b.ntcn_cn, b.link_info, b.bbs_sj
+      FROM
+             po_user.tap_mm_mber a, po_user.tap_nm_ntcn_manage b
+      WHERE
+             a.administ_code = #{administ_code}
+             AND a.mber_sttus != 'D'
+             AND b.sys_id = #{sys_id}
+             AND b.bbs_id = #{bbs_id}
+             AND a.administ_code = b.administ_code
     </select>
 
   <select id="selectArcTarget" resultType="com.example.mybatistest.mybatisinsert.Allim" parameterType="com.example.mybatistest.mybatisinsert.Allim">
-    select a.chnnl_sn,
-           a.sbscr_sn,
-           a.reg_id as mbr_id,
-           a.reg_dt,
-           a.reg_ip,
-           b.sys_id,
-           b.ntcn_sj,
-           b.ntcn_cn,
-           b.link_info,
-           b.bbs_sn
+    select a.chnnl_sn, a.sbscr_sn, a.reg_id as mbr_id, a.reg_dt, a.reg_ip,
+           b.sys_id, b.ntcn_sj, b.ntcn_cn, b.link_info, b.bbs_sn
     from
       TAD_AR_CS_CHNNL_SBSCR a inner join TAP_NM_NTCN_MANAGE b
     where a.chnnl_sn = #{chnnl_sn}
@@ -90,11 +73,11 @@
 
   <update id="updateNtcnSttus" parameterType="com.example.mybatistest.mybatisinsert.Allim">
     UPDATE
-    TAP_NM_NTCN_MANAGE
+        TAP_NM_NTCN_MANAGE
     SET
-    ntcn_sttus = 'N'
+        ntcn_sttus = 'N'
     WHERE
-    sys_id = #{sys_id}
+        sys_id = #{sys_id}
     <if test="bbs_id != null">
       AND bbs_id = #{bbs_id}
     </if>
@@ -110,12 +93,9 @@
 <!--  여기 까지 알림-->
 
   <insert id="insertMberTkn" parameterType="com.example.mybatistest.mybatisinsert.Member">
-    insert into TAD_MN_PUSH_USER(
-      mbr_tkn_value,
-      mbr_id,
-      mbr_nm,
-      push_creat_dt,
-      usage_at
+    INSERT INTO TAD_MN_PUSH_USER
+    (
+     mbr_tkn_value, mbr_id, mbr_nm, push_creat_dt, usage_at
     )
     VALUES
       (
@@ -153,12 +133,13 @@
          NVL(MAX(push_seq),0)+1
       FROM
       TAD_MN_PUSH_GUBUN
-      where mbr_tkn_value = #{mbr_tkn_value}
+      WHERE mbr_tkn_value = #{mbr_tkn_value}
     </selectKey>
 
-    insert into
-    TAD_MN_PUSH_GUBUN
-        (mbr_tkn_value, push_seq, sys_id, bbs_id, push_at, creat_dt)
+    INSERT INTO TAD_MN_PUSH_GUBUN
+        (
+         mbr_tkn_value, push_seq, sys_id, bbs_id, push_at, creat_dt
+         )
     VALUES
       (
         #{mbr_tkn_value},
@@ -185,10 +166,10 @@
 
   <insert id="realInsert" parameterType="java.util.List">
 
-    INSERT INTO
-    TAD_MN_PUSH_FCM(
-    fcm_sn, mbr_tkn_value, push_sj, push_nm, link_info, push_sttus
-                    )
+    INSERT INTO TAD_MN_PUSH_FCM
+        (
+         fcm_sn, mbr_tkn_value, push_sj, push_nm, link_info, push_sttus
+        )
     VALUES
         <foreach collection="list" item="item" separator=",">
           (
@@ -217,7 +198,7 @@
 
   <select id="fcmPushList" parameterType="com.example.mybatistest.mybatisinsert.Member" resultType="com.example.mybatistest.mybatisinsert.Member">
   SELECT
-      *
+      fcm_sn, mbr_tkn_value, push_sj, push_nm, link_info, push_sttus
   FROM
     TAD_MN_PUSH_FCM
   </select>
