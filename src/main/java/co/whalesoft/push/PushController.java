@@ -101,7 +101,7 @@ public class PushController {
 //            executor.shutdown();
         }
 
-        updatePushSttus(fcmListPush);
+//        updatePushSttus(fcmListPush);
 
         return "jsonView";
     }
