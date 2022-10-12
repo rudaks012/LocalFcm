@@ -1,5 +1,6 @@
-package com.example.mybatistest.mybatisinsert;
+package co.whalesoft.alrim;
 
+import co.whalesoft.YongjuStopWatch;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class MybatisInsertController {
+public class AlrimController {
 
     private static Long idx = 1L;
     private static final int THREAD_COUNT = 8;
     @Autowired
-    private MybatisInsertService mybatisInsertService;
+    private AlrimService alrimService;
 
     @RequestMapping("/alrim/ad/edunavi/alrim/informForPortal.do")
     public @ResponseBody Map<String, Object> select() throws InterruptedException {
@@ -29,9 +30,9 @@ public class MybatisInsertController {
         StopWatch beforeStopWatch = new YongjuStopWatch();
         beforeStopWatch.start("before");
 
-        List<Allim> selectRegisteredPost = mybatisInsertService.selectRegisteredPost();
+        List<Alrim> selectRegisteredPost = alrimService.selectRegisteredPost();
 
-        List<List<Allim>> targets = findMembers(selectRegisteredPost);
+        List<List<Alrim>> targets = findMembers(selectRegisteredPost);
         beforeStopWatch.stop();
         System.out.println(beforeStopWatch.prettyPrint());
 
@@ -43,7 +44,7 @@ public class MybatisInsertController {
 
         int i = 1;
 
-        for (List<Allim> target : targets) {
+        for (List<Alrim> target : targets) {
             stopWatch.start((i++) + "번째");
 
             allimInsertForPortal(target);
@@ -65,33 +66,33 @@ public class MybatisInsertController {
         return rtnObj;
     }
 
-    private void updateNtcnSttus(List<Allim> selectRegisteredPost) {
-        for (Allim allim : selectRegisteredPost) {
-            mybatisInsertService.updateNtcnSttus(allim);
+    private void updateNtcnSttus(List<Alrim> selectRegisteredPost) {
+        for (Alrim alrim : selectRegisteredPost) {
+            alrimService.updateNtcnSttus(alrim);
         }
     }
 
-    private List<List<Allim>> findMembers(List<Allim> targetList) {
+    private List<List<Alrim>> findMembers(List<Alrim> targetList) {
 
-        Allim allim = new Allim();
+        Alrim alrim = new Alrim();
 
-        List<List<Allim>> insertList = new ArrayList<>();
-        List<Allim> memberList = new ArrayList<>();
+        List<List<Alrim>> insertList = new ArrayList<>();
+        List<Alrim> memberList = new ArrayList<>();
 
         long totalMembers = 0;
-        for (Allim members : targetList) {
-            allim.setAdminist_code(members.getAdminist_code());
-            allim.setSys_id(members.getSys_id());
-            allim.setBbs_id(members.getBbs_id());
-            allim.setChnnl_sn(members.getChnnl_sn());
+        for (Alrim members : targetList) {
+            alrim.setAdminist_code(members.getAdminist_code());
+            alrim.setSys_id(members.getSys_id());
+            alrim.setBbs_id(members.getBbs_id());
+            alrim.setChnnl_sn(members.getChnnl_sn());
 
-            if (allim.getSys_id().equals("arc")) {
-                memberList = mybatisInsertService.selectArcTarget(allim);
+            if (alrim.getSys_id().equals("arc")) {
+                memberList = alrimService.selectArcTarget(alrim);
             } else { // 포탈일 경우
-                memberList = mybatisInsertService.selectInfoTarget(allim);
+                memberList = alrimService.selectInfoTarget(alrim);
             }
 
-            for (Allim value : memberList) {
+            for (Alrim value : memberList) {
                 value.setIdx(idx++);
             }
 
@@ -102,16 +103,16 @@ public class MybatisInsertController {
         return insertList;
     }
 
-    private void allimInsertForPortal(List<Allim> insertList) throws InterruptedException {
+    private void allimInsertForPortal(List<Alrim> insertList) throws InterruptedException {
 
         if (insertList.size() < THREAD_COUNT) {
             allimInsert(insertList);
         } else {
             final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
 
-            List<List<Allim>> listByGuava = Lists.partition(insertList, insertList.size() / THREAD_COUNT);
+            List<List<Alrim>> listByGuava = Lists.partition(insertList, insertList.size() / THREAD_COUNT);
 
-            for (List<Allim> standard : listByGuava) {
+            for (List<Alrim> standard : listByGuava) {
                 executor.execute(() -> allimInsert(standard));
             }
             executor.shutdown();
@@ -123,13 +124,13 @@ public class MybatisInsertController {
 
     }
 
-    private void allimInsert(List<Allim> standard) {
+    private void allimInsert(List<Alrim> standard) {
         if (standard.size() < 100) {
-            mybatisInsertService.insertInfoTarget(standard);
+            alrimService.insertInfoTarget(standard);
         } else {
-            List<List<Allim>> insertsList = Lists.partition(standard, standard.size() / 100);
-            for (List<Allim> allims : insertsList) {
-                mybatisInsertService.insertInfoTarget(allims);
+            List<List<Alrim>> insertsList = Lists.partition(standard, standard.size() / 100);
+            for (List<Alrim> alrims : insertsList) {
+                alrimService.insertInfoTarget(alrims);
             }
         }
     }

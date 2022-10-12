@@ -1,5 +1,6 @@
-package com.example.mybatistest.config;
+package co.whalesoft.util.config;
 
+import javax.sql.DataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -10,10 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import javax.sql.DataSource;
-
 @Configuration
-@MapperScan(basePackages = "com.example.mybatistest")
+@MapperScan(basePackages = "co.whalesoft")
 public class MybatisConfig {
 
     @Value("${mybatis.mapper-locations}")
@@ -23,7 +22,7 @@ public class MybatisConfig {
     public SqlSessionFactory sqlSessionFactory(DataSource datasource, ApplicationContext applicationContext) throws Exception {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(datasource);
-        sqlSessionFactory.setTypeAliasesPackage("com.example.mybatistest");
+        sqlSessionFactory.setTypeAliasesPackage("co.whalesoft/*");
         sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(mapperLocations));
 //        sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:mybatis-config.xml"));
         return sqlSessionFactory.getObject();

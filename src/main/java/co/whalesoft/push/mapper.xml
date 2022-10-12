@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.whalesoft.push.PushDao">
+
+<!--  여기 까지 알림-->
+
+  <insert id="insertMberTkn" parameterType="co.whalesoft.push.Push">
+    INSERT INTO TAD_MN_PUSH_USER
+    (
+     mbr_tkn_value, mbr_id, mbr_nm, push_creat_dt, usage_at
+    )
+    VALUES
+      (
+        #{mbr_tkn_value},
+        #{mbr_id},
+        #{mbr_nm},
+        sysdate,
+        'Y'
+      )
+
+  </insert>
+
+  <update id="updateMberTkn" parameterType="co.whalesoft.push.Push">
+    UPDATE
+      TAD_MN_PUSH_USER
+    SET
+      mbr_id = #{mbr_id}, mbr_nm =#{mbr_nm}
+    WHERE
+      mbr_tkn_value = #{mbr_tkn_value}
+  </update>
+  
+  <update id="updateDplcteMberTkn" parameterType="co.whalesoft.push.Push">
+    UPDATE
+      TAD_MN_PUSH_USER
+    SET
+      push_creat_dt = sysdate, usage_at = 'N'
+    WHERE
+      mbr_tkn_value = #{old_token}
+  </update>
+
+  <insert id="fcmGubunInsert" parameterType="co.whalesoft.push.Push">
+
+    <selectKey resultType="int" keyProperty="push_seq" order="BEFORE">
+      SELECT
+         NVL(MAX(push_seq),0)+1
+      FROM
+      TAD_MN_PUSH_GUBUN
+      WHERE mbr_tkn_value = #{mbr_tkn_value}
+    </selectKey>
+
+    INSERT INTO TAD_MN_PUSH_GUBUN
+        (
+         mbr_tkn_value, push_seq, sys_id, bbs_id, push_at, creat_dt
+         )
+    VALUES
+      (
+        #{mbr_tkn_value},
+        #{push_seq},
+        #{sys_id},
+        #{bbs_id},
+        #{push_at},
+        sysdate
+      )
+  </insert>
+
+  <select id="fcmListPush" resultType="co.whalesoft.push.Push">
+    SELECT
+      a.mbr_tkn_value,c.push_sj, c.push_nm, c.link_info, c.push_sttus
+    FROM
+      TAD_MN_PUSH_USER a, TAD_MN_PUSH_GUBUN b, TAD_MN_PUSH_MANAGE c
+    WHERE
+      a.mbr_tkn_value = b.mbr_tkn_value
+      AND b.sys_id = c.sys_id
+      AND b.bbs_id = c.bbs_id
+      AND b.push_at = 'Y'
+
+  </select>
+
+  <insert id="realInsert" parameterType="java.util.List">
+
+    INSERT INTO TAD_MN_PUSH_FCM
+        (
+         fcm_sn, mbr_tkn_value, push_sj, push_nm, link_info, push_sttus
+        )
+    VALUES
+        <foreach collection="list" item="item" separator=",">
+          (
+            (
+              SELECT
+                  NVL(MAX(fcm_sn),0)+1
+              FROM
+                  TAD_MN_PUSH_FCM
+            ),
+            #{item.mbr_tkn_value},
+            #{item.push_sj},
+            #{item.push_nm},
+            #{item.link_info},
+           'N'
+          )
+    </foreach>
+  </insert>
+
+  <delete id="deleteGubunMember" parameterType="co.whalesoft.push.Push">
+    DELETE FROM
+      TAD_MN_PUSH_GUBUN
+    WHERE
+      mbr_tkn_value = #{mbr_tkn_value}
+  </delete>
+  
+
+  <select id="fcmPushList" parameterType="co.whalesoft.push.Push" resultType="co.whalesoft.push.Push">
+  SELECT
+      fcm_sn, mbr_tkn_value, push_sj, push_nm, link_info, push_sttus
+  FROM
+    TAD_MN_PUSH_FCM
+  </select>
+
+  <delete id="deleteFcmPushList" parameterType="String">
+    DELETE FROM
+      TAD_MN_FCM
+    WHERE
+        mbr_token = #{mbr_token}
+  </delete>
+
+  <select id="fcmListMember" resultType="co.whalesoft.push.Push">
+    SELECT
+      a.mbr_tkn_value,c.push_sj, c.push_nm, c.link_info, c.push_sttus
+    FROM
+      TAD_MN_PUSH_USER a, TAD_MN_PUSH_GUBUN b, TAD_MN_PUSH_MANAGE c
+    WHERE
+      a.mbr_tkn_value = b.mbr_tkn_value
+      AND b.sys_id = c.sys_id
+      AND b.bbs_id = c.bbs_id
+      AND b.push_at = 'Y'
+
+  </select>
+</mapper>

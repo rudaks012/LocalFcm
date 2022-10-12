@@ -1,4 +1,4 @@
-package com.example.mybatistest.mybatisinsert.util;
+package co.whalesoft.util;
 
 import javax.servlet.http.HttpServletRequest;
 

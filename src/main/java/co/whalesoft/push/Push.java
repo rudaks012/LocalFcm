@@ -1,8 +1,8 @@
-package com.example.mybatistest.mybatisinsert;
+package co.whalesoft.push;
 
 import java.time.LocalDateTime;
 
-public class Member {
+public class Push {
 
     private String mbr_id; // 회원아이디
     private String mbr_nm; //회원명

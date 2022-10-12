@@ -1,4 +1,4 @@
-package com.example.mybatistest.mybatisinsert;
+package co.whalesoft;
 
 import java.text.NumberFormat;
 import org.springframework.util.StopWatch;

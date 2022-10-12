@@ -1,9 +1,7 @@
-package com.example.mybatistest.mybatisinsert;
+package co.whalesoft.alrim;
 
 
-import java.time.LocalDateTime;
-
-public class Allim {
+public class Alrim {
 
     private Long idx;
 
