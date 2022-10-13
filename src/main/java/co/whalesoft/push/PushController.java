@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class PushController {
@@ -37,6 +39,8 @@ public class PushController {
     public static final int ZERO = 0;
     public static final int THREAD_COUNT = 8;
 
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private PushService pushService;
 
@@ -86,16 +90,20 @@ public class PushController {
     public String fcmSelect(Push push) throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Push> fcmListPush = pushService.fcmListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
-        pushService.realInsert(fcmListPush);
 
-        List<Push> tokenList = pushService.fcmPushList(push);
-        if (tokenList.size() < THREAD_COUNT) {
-            pushInsert(tokenList);
+        if (fcmListPush.size() > 0) {
+            pushService.realInsert(fcmListPush);
+
+            List<Push> tokenList = pushService.fcmPushList(push);
+            if (tokenList.size() < THREAD_COUNT) {
+                pushInsert(tokenList);
+            } else {
+                multiThreadPush(executor, tokenList);
+                executor.shutdown();
+                while (!executor.awaitTermination(1, TimeUnit.SECONDS));
+            }
         } else {
-            multiThreadPush(executor, tokenList);
-            executor.shutdown();
-            while (!executor.awaitTermination(1, TimeUnit.SECONDS));
-//            executor.shutdown();
+            logger.info("푸시할 글이 없습니다.");
         }
 //        updatePushSttus(fcmListPush);
 
