@@ -40,16 +40,14 @@ public class PushController {
     private PushService pushService;
 
     @RequestMapping(value = {"/push/edunavi/am/token.do"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Push push,
-        BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Push push, BindingResult result, HttpServletRequest request) {
 
         JsonResponse res = new JsonResponse(request);
 
         try {
             if (!result.hasErrors()) {
                 setMemberStatus(param, push);
-                swForEachFunction(push, result,
-                    res);// sw값에 따른 분기처리 sw = 1 : 신규, sw = 2 : 업데이트, sw = 3 : 신규(토큰값 있는데 변경된 경우)
+                swForEachFunction(push, result, res);// sw값에 따른 분기처리 sw = 1 : 신규, sw = 2 : 업데이트, sw = 3 : 신규(토큰값 있는데 변경된 경우)
                 res.setUrl(push.getPush_tkn_value());
                 restSetOkMessage(res);
             } else {
@@ -64,8 +62,7 @@ public class PushController {
 
 
     @RequestMapping(value = "/push/edunavi/am/gubun.do", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Push member,
-        BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Push member, BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
@@ -74,8 +71,8 @@ public class PushController {
 
             String[] splitRegular = member.getPush().split(PUSH_EXPRESSION);
             for (String value : splitRegular) {
-                String[] push = value.split(REGULAR_EXPRESSION);
-                splitGubunMemberStatusInsert(member, result, res, push); // 구분자로 구분 후 insert
+                String[] splitPush = value.split(REGULAR_EXPRESSION);
+                splitGubunMemberStatusInsert(member, splitPush, result, res ); // 구분자로 구분 후 insert
             }
             res.setUrl(member.getPush_tkn_value());
             restSetOkMessage(res);
@@ -115,13 +112,13 @@ public class PushController {
     private void multiThreadPush(ExecutorService executor, List<Push> tokenList) {
 
         List<List<Push>> listByGuava = Lists.partition(tokenList, tokenList.size() / THREAD_COUNT);
-        for (List<Push> list : listByGuava) {
+        for (List<Push> subLists : listByGuava) {
             executor.execute(() -> {
                 //1초후 실행
                 try {
                     Thread.sleep(1000);
                     System.out.println("ThreadName() = " + Thread.currentThread().getName());
-                    pushInsert(list);
+                    pushInsert(subLists);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -129,12 +126,12 @@ public class PushController {
         }
     }
 
-    private void pushInsert(List<Push> list) throws IOException {
-        for (int i = 0; i < list.size(); i++) {
-            String token = list.get(i).getMbr_tkn_value();
-            String push_sj = list.get(i).getPush_sj();
-            String push_nm = list.get(i).getPush_nm();
-            String link = list.get(i).getLink_info();
+    private void pushInsert(List<Push> pushDataLists) throws IOException {
+        for (int i = 0; i < pushDataLists.size(); i++) {
+            String token = pushDataLists.get(i).getMbr_tkn_value();
+            String push_sj = pushDataLists.get(i).getPush_sj();
+            String push_nm = pushDataLists.get(i).getPush_nm();
+            String link = pushDataLists.get(i).getLink_info();
 
             URL url = new URL(FCM_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -146,8 +143,7 @@ public class PushController {
             conn.setDoOutput(true);
 
             String PushMessage =
-                "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\""
-                    + push_sj + "\",\"body\" : \"" + push_nm + "\",\"link\" : \"" + link + "\"}}";
+                "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\"" + push_sj + "\",\"body\" : \"" + push_nm + "\",\"link\" : \"" + link + "\"}}";
 
             OutputStream os = conn.getOutputStream();
 
@@ -239,17 +235,16 @@ public class PushController {
         return push.getOld_token() != null && !Objects.equals(push.getOld_token(), "");
     }
 
-    private void splitGubunMemberStatusInsert(Push member, BindingResult result, JsonResponse res,
-        String[] push) {
-        for (int j = ZERO; j < push.length; j++) {
+    private void splitGubunMemberStatusInsert(Push member, String[] splitPush, BindingResult result, JsonResponse res) {
+        for (int j = ZERO; j < splitPush.length; j++) {
             if (j == ZERO) {
-                member.setSys_id(push[j]);
+                member.setSys_id(splitPush[j]);
             } else if (j == 1) {
                 continue;
             } else if (isEven(j)) {
-                member.setBbs_id(push[j]);
+                member.setBbs_id(splitPush[j]);
             } else {
-                member.setPush_at(push[j]);
+                member.setPush_at(splitPush[j]);
                 int worksNormally = pushService.fcmGubunInsert(member);
                 checkWorksStatus(result, res, worksNormally);
             }
