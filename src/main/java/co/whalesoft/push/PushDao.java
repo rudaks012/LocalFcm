@@ -9,10 +9,6 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface PushDao {
 
-    int fcmJsonInsertGubun(Map<String, String> stringStringMap);
-
-    int fcmInsertUser(Map<String, String> stringStringMap);
-
     int insertMberTkn(Push push); // 로그인 시 빈 토큰이 들어와 data insert
 
     int updateMberTkn(Push push); // 로그인 후 name,
@@ -27,11 +23,7 @@ public interface PushDao {
 
     int deleteGubunMember(Push push);
 
-    List<Push> fcmSelectSys(Push push);
-
     List<Push> fcmPushList(Push push);
-
-    int deleteFcmPushList(String member);
 
     int updatePushSttus(Push push);
 }

@@ -40,16 +40,8 @@ public class PushService {
         return pushDao.deleteGubunMember(push);
     }
 
-    public List<Push> fcmSelectSys(Push push) {
-        return pushDao.fcmSelectSys(push);
-    }
-
     public List<Push> fcmPushList(Push push) {
         return pushDao.fcmPushList(push);
-    }
-
-    public int deleteFcmPushList(String token) {
-        return pushDao.deleteFcmPushList(token);
     }
 
     public int updatePushSttus(Push sentPushList) {

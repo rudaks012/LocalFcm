@@ -38,9 +38,8 @@ public class PushController {
     public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     public static final int ZERO = 0;
     public static final int THREAD_COUNT = 8;
-
-
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private PushService pushService;
 
@@ -134,11 +133,11 @@ public class PushController {
     }
 
     private void pushInsert(List<Push> pushDataLists) throws IOException {
-        for (int i = 0; i < pushDataLists.size(); i++) {
-            String token = pushDataLists.get(i).getMbr_tkn_value();
-            String push_sj = pushDataLists.get(i).getPush_sj();
-            String push_nm = pushDataLists.get(i).getPush_nm();
-            String link = pushDataLists.get(i).getLink_info();
+        for (Push pushDataList : pushDataLists) {
+            String token = pushDataList.getMbr_tkn_value();
+            String push_sj = pushDataList.getPush_sj();
+            String push_nm = pushDataList.getPush_nm();
+            String link = pushDataList.getLink_info();
 
             URL url = new URL(FCM_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
