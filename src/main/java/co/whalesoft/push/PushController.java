@@ -36,6 +36,7 @@ public class PushController {
     public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     public static final int ZERO = 0;
     public static final int THREAD_COUNT = 8;
+
     @Autowired
     private PushService pushService;
 
@@ -59,7 +60,6 @@ public class PushController {
 
         return res;
     }
-
 
     @RequestMapping(value = "/push/edunavi/am/gubun.do", method = {RequestMethod.POST})
     public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Push member, BindingResult result, HttpServletRequest request) {
@@ -97,7 +97,6 @@ public class PushController {
             while (!executor.awaitTermination(1, TimeUnit.SECONDS));
 //            executor.shutdown();
         }
-
 //        updatePushSttus(fcmListPush);
 
         return "jsonView";
