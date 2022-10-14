@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,7 +45,7 @@ public class PushController {
     private PushService pushService;
 
     @RequestMapping(value = {"/push/edunavi/am/token.do"}, method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse token(@RequestBody Map<String, String> param, Push push, BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse insertToken(@RequestBody Map<String, String> param, Push push, BindingResult result, HttpServletRequest request) {
 
         JsonResponse res = new JsonResponse(request);
 
@@ -65,7 +66,7 @@ public class PushController {
     }
 
     @RequestMapping(value = "/push/edunavi/am/gubun.do", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Push push, BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse insertCheckGubun(@RequestBody Map<String, String> param, Push push, BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
@@ -86,7 +87,7 @@ public class PushController {
     }
 
     @GetMapping(value = "/push/edunavi/am/send.do")
-    public String fcmSelect(Push push) throws Exception {
+    public String fcmPushServer(Push push) throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Push> fcmListPush = pushService.fcmListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
 
@@ -154,7 +155,7 @@ public class PushController {
             OutputStream os = conn.getOutputStream();
 
             // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
-            os.write(PushMessage.getBytes("UTF-8"));
+            os.write(PushMessage.getBytes(StandardCharsets.UTF_8));
             os.flush();
             os.close();
 
@@ -172,7 +173,7 @@ public class PushController {
             }
             in.close();
             // print result
-            System.out.println(response.toString());
+            System.out.println(response);
         }
     }
 
