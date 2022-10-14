@@ -65,19 +65,19 @@ public class PushController {
     }
 
     @RequestMapping(value = "/push/edunavi/am/gubun.do", method = {RequestMethod.POST})
-    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Push member, BindingResult result, HttpServletRequest request) {
+    public @ResponseBody JsonResponse gubun(@RequestBody Map<String, String> param, Push push, BindingResult result, HttpServletRequest request) {
         JsonResponse res = new JsonResponse(request);
 
         if (!result.hasErrors()) {
-            gubunMemberStatus(param, member);
-            pushService.deleteGubunMember(member); //등록하기전 삭제 후 등록
+            gubunMemberStatus(param, push);
+            pushService.deleteGubunMember(push); //등록하기전 삭제 후 등록
 
-            String[] splitRegular = member.getPush().split(PUSH_EXPRESSION);
+            String[] splitRegular = push.getPush().split(PUSH_EXPRESSION);
             for (String value : splitRegular) {
                 String[] splitPush = value.split(REGULAR_EXPRESSION);
-                splitGubunMemberStatusInsert(member, splitPush, result, res ); // 구분자로 구분 후 insert
+                splitGubunMemberStatusInsert(push, splitPush, result, res ); // 구분자로 구분 후 insert
             }
-            res.setUrl(member.getPush_tkn_value());
+            res.setUrl(push.getPush_tkn_value());
             restSetOkMessage(res);
         } else {
             restSetFalseMessage(result, res);
