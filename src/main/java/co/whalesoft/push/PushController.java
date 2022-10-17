@@ -2,13 +2,16 @@ package co.whalesoft.push;
 
 import co.whalesoft.util.JsonResponse;
 import com.google.common.collect.Lists;
+import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -155,32 +158,58 @@ public class PushController {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Authorization", "key=" + API_KEY);
-
             conn.setDoOutput(true);
 
-            String PushMessage =
-                "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\"" + push_sj + "\",\"body\" : \"" + push_nm + "\",\"link\" : \"" + link + "\"}}";
+//            String PushMessage =
+//                "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\"" + push_sj + "\",\"body\" : \"" + push_nm + "\",\"link\" : \"" + link + "\"}}";
+            Map<String, Object> pushMessage = new HashMap<>();
+            pushMessage.put("to", token);
+            pushMessage.put("priority", "high");
+            Map<String, Object> data = new HashMap<>();
+            data.put("title", push_sj);
+            data.put("body", push_nm);
+            data.put("link", link);
+            pushMessage.put("data", data);
 
-            OutputStream os = conn.getOutputStream();
-
-            // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
-            os.write(PushMessage.getBytes(StandardCharsets.UTF_8));
-            os.flush();
-            os.close();
+            String pushMessageJson = new Gson().toJson(pushMessage);
+            System.out.println("json = " + pushMessageJson);
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(pushMessageJson);
+            wr.flush();
+            wr.close();
 
             int responseCode = conn.getResponseCode();
-            System.out.println("\nSending 'POST' request to URL : " + url);
-            System.out.println("Post parameters : " + PushMessage);
-            System.out.println("Response Code : " + responseCode);
-
+            System.out.println("responseCode = " + responseCode);
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String inputLine;
             StringBuffer response = new StringBuffer();
-
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
             in.close();
+            System.out.println("response = " + response.toString());
+
+//
+//            OutputStream os = conn.getOutputStream();
+//
+//            // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
+//            os.write(PushMessage.getBytes(StandardCharsets.UTF_8));
+//            os.flush();
+//            os.close();
+
+//            int responseCode = conn.getResponseCode();
+//            System.out.println("\nSending 'POST' request to URL : " + url);
+//            System.out.println("Post parameters : " + PushMessage);
+//            System.out.println("Response Code : " + responseCode);
+//
+//            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//            String inputLine;
+//            StringBuffer response = new StringBuffer();
+
+//            while ((inputLine = in.readLine()) != null) {
+//                response.append(inputLine);
+//            }
+//            in.close();
             // print result
             System.out.println(response);
         }
