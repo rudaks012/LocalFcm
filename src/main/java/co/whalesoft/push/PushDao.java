@@ -26,4 +26,6 @@ public interface PushDao {
     List<Push> fcmPushList(Push push);
 
     int updatePushSttus(Push push);
+
+    int deleteFcmUsers(Push sentPushList);
 }

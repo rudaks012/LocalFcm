@@ -47,4 +47,8 @@ public class PushService {
     public int updatePushSttus(Push sentPushList) {
         return pushDao.updatePushSttus(sentPushList);
     }
+
+    public int deleteFcmUsers(Push sentPushList) {
+        return pushDao.deleteFcmUsers(sentPushList);
+    }
 }

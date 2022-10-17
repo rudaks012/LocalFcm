@@ -148,4 +148,13 @@
       AND bbs_id = #{bbs_id}
     </if>
   </update>
+
+  <delete id="deleteFcmUsers" parameterType="co.whalesoft.push.Push">
+    DELETE FROM
+      TAD_MN_PUSH_FCM
+    WHERE
+      mbr_tkn_value = #{mbr_tkn_value}
+      and push_sj = #{push_sj}
+      and push_nm = #{push_nm}
+  </delete>
 </mapper>

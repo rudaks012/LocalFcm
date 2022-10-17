@@ -102,17 +102,26 @@ public class PushController {
                 executor.shutdown();
                 while (!executor.awaitTermination(1, TimeUnit.SECONDS));
             }
+            deletePushUsers(tokenList);
         } else {
             logger.info("푸시할 글이 없습니다.");
         }
 //        updatePushSttus(fcmListPush);
 
+
         return "jsonView";
+    }
+
+    private void deletePushUsers(List<Push> tokenList) {
+        for (Push deleteList : tokenList) {
+            pushService.deleteFcmUsers(deleteList);
+        }
     }
 
     private void updatePushSttus(List<Push> fcmListPush) {
         for (Push sentPushList : fcmListPush) {
             pushService.updatePushSttus(sentPushList);
+
         }
     }
 
@@ -215,10 +224,15 @@ public class PushController {
 
     private void setMemberStatus(Map<String, String> param, Push push) {
         push.setMbr_id(param.get("mbr_id"));
+        System.out.println("getMbr_id = " + push.getMbr_id());
         push.setMbr_nm(param.get("mbr_nm"));
+        System.out.println("param = " + push.getMbr_nm());
         push.setMbr_tkn_value(param.get("mbr_token"));
+        System.out.println("push.getMbr_tkn_value() = " + push.getMbr_tkn_value());
         push.setOld_token(param.get("old_token"));
+        System.out.println("push.getOld_token() = " + push.getOld_token());
         push.setSw(param.get("sw"));
+        System.out.println("push.getSw() = " + push.getSw());
     }
 
     private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally) {
