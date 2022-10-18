@@ -62,7 +62,6 @@ public class PushController {
         } catch (Exception e) {
             restSetFalseMessage(result, res);
         }
-
         return res;
     }
 
@@ -108,8 +107,6 @@ public class PushController {
             logger.info("푸시할 글이 없습니다.");
         }
 //        updatePushSttus(fcmListPush);
-
-
         return "jsonView";
     }
 
