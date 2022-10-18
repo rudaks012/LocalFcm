@@ -6,11 +6,9 @@ import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +17,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -27,8 +27,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 public class PushController {
@@ -188,7 +186,6 @@ public class PushController {
             }
             in.close();
             System.out.println("response = " + response.toString());
-
 //
 //            OutputStream os = conn.getOutputStream();
 //
@@ -253,9 +250,7 @@ public class PushController {
 
     private void setMemberStatus(Map<String, String> param, Push push) {
         push.setMbr_id(param.get("mbr_id"));
-        System.out.println("getMbr_id = " + push.getMbr_id());
         push.setMbr_nm(param.get("mbr_nm"));
-        System.out.println("param = " + push.getMbr_nm());
         push.setMbr_tkn_value(param.get("mbr_token"));
         System.out.println("push.getMbr_tkn_value() = " + push.getMbr_tkn_value());
         push.setOld_token(param.get("old_token"));
