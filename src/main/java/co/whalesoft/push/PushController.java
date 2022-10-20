@@ -164,7 +164,7 @@ public class PushController {
             data.put("title", push_sj);
             data.put("body", push_nm);
             data.put("link", link);
-            pushMessage.put("notification", data);
+//            pushMessage.put("notification", data);
             pushMessage.put("data", data);
 
             String pushMessageJson = new Gson().toJson(pushMessage);
