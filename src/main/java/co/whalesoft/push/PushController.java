@@ -119,7 +119,6 @@ public class PushController {
     private void updatePushSttus(List<Push> fcmListPush) {
         for (Push sentPushList : fcmListPush) {
             pushService.updatePushSttus(sentPushList);
-
         }
     }
 
@@ -158,13 +157,13 @@ public class PushController {
 //            String PushMessage =
 //                "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\"" + push_sj + "\",\"body\" : \"" + push_nm + "\",\"link\" : \"" + link + "\"}}";
             Map<String, Object> pushMessage = new HashMap<>();
-            pushMessage.put("to", token);
+            pushMessage.put("token", token);
             pushMessage.put("priority", "high");
             Map<String, Object> data = new HashMap<>();
             data.put("title", push_sj);
             data.put("body", push_nm);
             data.put("link", link);
-//            pushMessage.put("notification", data);
+            pushMessage.put("notification", data);
             pushMessage.put("data", data);
 
             String pushMessageJson = new Gson().toJson(pushMessage);
@@ -183,29 +182,6 @@ public class PushController {
                 response.append(inputLine);
             }
             in.close();
-            System.out.println("response = " + response.toString());
-//
-//            OutputStream os = conn.getOutputStream();
-//
-//            // 서버에서 날려서 한글 깨지는 사람은 아래처럼  UTF-8로 인코딩해서 날려주자
-//            os.write(PushMessage.getBytes(StandardCharsets.UTF_8));
-//            os.flush();
-//            os.close();
-
-//            int responseCode = conn.getResponseCode();
-//            System.out.println("\nSending 'POST' request to URL : " + url);
-//            System.out.println("Post parameters : " + PushMessage);
-//            System.out.println("Response Code : " + responseCode);
-//
-//            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//            String inputLine;
-//            StringBuffer response = new StringBuffer();
-
-//            while ((inputLine = in.readLine()) != null) {
-//                response.append(inputLine);
-//            }
-//            in.close();
-            // print result
             System.out.println(response);
         }
     }
