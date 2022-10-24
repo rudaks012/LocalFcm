@@ -18,10 +18,6 @@ public interface AlrimDao {
 
     List<Alrim> selectInfoTarget(Alrim alrim);
 
-    List<Push> listToJson(Push push);
-
-    int fcmJsonInsertGubun(Map<String, String> stringStringMap);
-
     List<Alrim> selectArcTarget(Alrim alrim);
 
     int updateNtcnSttus(Alrim alrim);
