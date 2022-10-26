@@ -157,13 +157,13 @@ public class PushController {
 //            String PushMessage =
 //                "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\"" + push_sj + "\",\"body\" : \"" + push_nm + "\",\"link\" : \"" + link + "\"}}";
             Map<String, Object> pushMessage = new HashMap<>();
-            pushMessage.put("token", token);
+            pushMessage.put("to", token);
             pushMessage.put("priority", "high");
             Map<String, Object> data = new HashMap<>();
             data.put("title", push_sj);
             data.put("body", push_nm);
             data.put("link", link);
-            pushMessage.put("notification", data);
+//            pushMessage.put("notification", data);
             pushMessage.put("data", data);
 
             String pushMessageJson = new Gson().toJson(pushMessage);
