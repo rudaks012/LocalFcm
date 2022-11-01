@@ -10,10 +10,10 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>co.whalesoft</groupId>
-  <artifactId>mybatistest</artifactId>
+  <artifactId>fcmpush</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>mybatistest</name>
-  <description>mybatistest</description>
+  <name>fcmpush</name>
+  <description>fcmpush</description>
   <properties>
     <java.version>11</java.version>
     <webapp.lib>${project.basedir}/src/main/resources/lib</webapp.lib>
