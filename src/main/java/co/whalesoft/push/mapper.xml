@@ -141,7 +141,7 @@
     UPDATE
     TAD_MN_PUSH_MANAGE
     SET
-    push_trnsmis_sttus = 'N'
+    push_trnsmis_sttus = 'Y'
     WHERE
     sys_id = #{sys_id}
     <if test="bbs_id != null">
