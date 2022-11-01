@@ -182,6 +182,11 @@ public class PushController {
                 response.append(inputLine);
             }
             in.close();
+            boolean notRegistered = response.toString().contains("NotRegistered");
+
+            if (notRegistered) {
+                pushService.deleteFcmNotRegistered(pushDataList);
+            }
             System.out.println(response);
         }
     }

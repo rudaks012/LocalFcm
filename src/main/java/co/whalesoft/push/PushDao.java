@@ -28,4 +28,6 @@ public interface PushDao {
     int updatePushSttus(Push push);
 
     int deleteFcmUsers(Push sentPushList);
+
+    int deleteFcmNotRegistered(Push push);
 }

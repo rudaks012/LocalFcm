@@ -51,4 +51,7 @@ public class PushService {
     public int deleteFcmUsers(Push sentPushList) {
         return pushDao.deleteFcmUsers(sentPushList);
     }
+    public int deleteFcmNotRegistered(Push push) {
+        return pushDao.deleteFcmNotRegistered(push);
+    }
 }
