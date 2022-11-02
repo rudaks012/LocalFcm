@@ -295,4 +295,7 @@ public class PushController {
         res.setMessage("Fault");
         res.setResult(result.getAllErrors());
     }
+    public void deleteTwoDayDataSchedule() {
+        pushService.deleteTwoDayData();
+    }
 }

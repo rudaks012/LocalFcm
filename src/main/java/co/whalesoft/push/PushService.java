@@ -54,4 +54,8 @@ public class PushService {
     public int deleteFcmNotRegistered(Push push) {
         return pushDao.deleteFcmNotRegistered(push);
     }
+
+    public int deleteTwoDayData() {
+        return pushDao.deleteTwoDayData();
+    }
 }

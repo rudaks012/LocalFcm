@@ -164,4 +164,11 @@
     WHERE
       mbr_tkn_value = #{mbr_tkn_value}
   </delete>
+
+  <delete id="deleteTwoDayData">
+    DELETE FROM TAD_MN_PUSH_MANAGE
+    WHERE
+      push_trnsmis_sttus = 'Y'
+      AND SYSDATE - TO_DATE(TO_CHAR(creat_dt,'YYYY/MM/DD'),'YYYY/MM/DD') > 2
+  </delete>
 </mapper>
