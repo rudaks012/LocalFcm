@@ -96,7 +96,7 @@ public class PushController {
 
             List<Push> tokenList = pushService.fcmPushList(push);
             if (tokenList.size() < THREAD_COUNT) {
-                pushInsert(tokenList);
+                pushFCMDataInsert(tokenList);
             } else {
                 multiThreadPush(executor, tokenList);
                 executor.shutdown();
@@ -131,7 +131,7 @@ public class PushController {
                 try {
                     Thread.sleep(1000);
                     System.out.println("ThreadName() = " + Thread.currentThread().getName());
-                    pushInsert(subLists);
+                    pushFCMDataInsert(subLists);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -139,7 +139,7 @@ public class PushController {
         }
     }
 
-    private void pushInsert(List<Push> pushDataLists) throws IOException {
+    private void pushFCMDataInsert(List<Push> pushDataLists) throws IOException {
         for (Push pushDataList : pushDataLists) {
             String token = pushDataList.getMbr_tkn_value();
             String push_sj = pushDataList.getPush_sj();
