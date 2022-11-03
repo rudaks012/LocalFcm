@@ -174,14 +174,17 @@ public class PushController {
             wr.close();
 
             int responseCode = conn.getResponseCode();
+
             System.out.println("responseCode = " + responseCode);
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String inputLine;
+
             StringBuffer response = new StringBuffer();
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
             in.close();
+
             boolean notRegistered = response.toString().contains("NotRegistered");
 
             if (notRegistered) {
