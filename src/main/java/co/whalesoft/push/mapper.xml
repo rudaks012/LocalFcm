@@ -182,4 +182,12 @@
       push_trnsmis_sttus = 'Y'
       AND SYSDATE - TO_DATE(TO_CHAR(creat_dt,'YYYY/MM/DD'),'YYYY/MM/DD') > 2
   </delete>
+
+  <update id="resetSerial">
+    ALTER SERIAL [po_user].[SEQ_MN_PUSH_SN]
+    START WITH 1
+    INCREMENT BY 1
+    MINVALUE 1
+    MAXVALUE 9999999999999999999999999999
+  </update>
 </mapper>

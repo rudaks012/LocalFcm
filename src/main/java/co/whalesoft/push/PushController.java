@@ -300,6 +300,8 @@ public class PushController {
     }
     public void deleteTwoDayDataSchedule() {
         List<Push> unsentPushList = pushService.selectUnsentPushList();
+        int resetSerial = pushService.resetSerial();
+
 
         pushService.deleteTwoDayData();
     }

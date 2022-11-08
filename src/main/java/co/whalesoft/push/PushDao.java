@@ -34,4 +34,6 @@ public interface PushDao {
     int deleteTwoDayData();
 
     List<Push> selectUnsentPushList();
+
+    int resetSerial();
 }

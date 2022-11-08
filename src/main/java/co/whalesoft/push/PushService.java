@@ -62,4 +62,8 @@ public class PushService {
     public List<Push> selectUnsentPushList() {
         return pushDao.selectUnsentPushList();
     }
+
+    public int resetSerial() {
+        return pushDao.resetSerial();
+    }
 }
