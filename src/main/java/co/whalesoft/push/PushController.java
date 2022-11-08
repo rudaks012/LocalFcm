@@ -299,6 +299,8 @@ public class PushController {
         res.setResult(result.getAllErrors());
     }
     public void deleteTwoDayDataSchedule() {
+        List<Push> unsentPushList = pushService.selectUnsentPushList();
+
         pushService.deleteTwoDayData();
     }
 }

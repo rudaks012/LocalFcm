@@ -32,4 +32,6 @@ public interface PushDao {
     int deleteFcmNotRegistered(Push push);
 
     int deleteTwoDayData();
+
+    List<Push> selectUnsentPushList();
 }

@@ -165,6 +165,17 @@
       mbr_tkn_value = #{mbr_tkn_value}
   </delete>
 
+  <select id="selectUnsentPushList" resultType="co.whalesoft.push.Push">
+    SELECT
+      push_sn, sys_id, bbs_id, push_sj, push_nm,
+      link_info, push_tkn_value, resve_reqst_sn, resve_reqst_dt, resve_reqst_ty,
+      mber_id, mber_ty, creat_dt, creat_user_ip
+    FROM
+      TAD_MN_PUSH_MANAGE
+    WHERE
+      push_sttus = 'N'
+  </select>
+
   <delete id="deleteTwoDayData">
     DELETE FROM TAD_MN_PUSH_MANAGE
     WHERE

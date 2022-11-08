@@ -58,4 +58,8 @@ public class PushService {
     public int deleteTwoDayData() {
         return pushDao.deleteTwoDayData();
     }
+
+    public List<Push> selectUnsentPushList() {
+        return pushDao.selectUnsentPushList();
+    }
 }
