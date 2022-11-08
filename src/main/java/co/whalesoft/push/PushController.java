@@ -165,7 +165,7 @@ public class PushController {
             Map<String, Object> data = new HashMap<>();
             data.put("title", push_sj);
             data.put("body", push_nm);
-            data.put("url", link);
+            data.put("link", link);
 //            pushMessage.put("notification", data);
             pushMessage.put(dataFormat, data);
 
