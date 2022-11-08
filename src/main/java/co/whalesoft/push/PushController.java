@@ -238,6 +238,8 @@ public class PushController {
         push.setOld_token(param.get("old_token"));
         System.out.println("push.getOld_token() = " + push.getOld_token());
         push.setSw(param.get("sw"));
+        push.setDeviceSE(param.get("gubun"));
+        System.out.println("push.getDeviceSE() = " + push.getDeviceSE());
         System.out.println("push.getSw() = " + push.getSw());
     }
 

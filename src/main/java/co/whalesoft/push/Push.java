@@ -10,6 +10,8 @@ public class Push {
     private String push_tkn_value; //초등 돌봄용 토큰
     private String sw; // 멤버 상태 구분 기호 1: 신규 , 2: 업데이트 , 3: 업데이트된 상태
     private String old_token; //오래된 토큰
+    
+    private String deviceSE; // 핸드폰 구분 A: 안드로이드 I : 아이폰
     private LocalDateTime push_creat_dt; // 등록일시
 
     private String push; // 해당 기관 코드 묶음
@@ -73,6 +75,14 @@ public class Push {
 
     public void setOld_token(String old_token) {
         this.old_token = old_token;
+    }
+
+    public String getDeviceSE() {
+        return deviceSE;
+    }
+
+    public void setDeviceSE(String deviceSE) {
+        this.deviceSE = deviceSE;
     }
 
     public LocalDateTime getPush_creat_dt() {
