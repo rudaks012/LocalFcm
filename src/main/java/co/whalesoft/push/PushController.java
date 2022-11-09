@@ -144,7 +144,7 @@ public class PushController {
         for (Push pushDataList : pushDataLists) {
             String token = pushDataList.getMbr_tkn_value();
             String push_sj = pushDataList.getPush_sj();
-            String push_nm = pushDataList.getPush_nm();
+//            String push_nm = pushDataList.getPush_nm();
             String link = pushDataList.getLink_info();
             String apiKey = pushDataList.getDevice_se().equals("A") ? API_KEY : IOS_API_KEY;
 
@@ -320,25 +320,27 @@ public class PushController {
 
 //    삭제 관련 메서드
 @GetMapping(value = "/push/edunavi/am/send1.do")
-    public void deleteTwoDayDataSchedule() {
+    public void pushInsertAfterDeletion() {
         List<Push> unsentPushList = selectUnsentPushList();
+
         if (unsentPushList.size() > 0) {
-            int resetSerial = getResetSerial();
-            System.out.println("resetSerial = " + resetSerial);
-            pushService.deleteManageTable();
-            int unsentListInsert = pushService.insertUnsentPushList(unsentPushList);
+            getResetSerial();
+            deleteManageTable();
+            pushService.insertUnsentPushList(unsentPushList);
         }else {
             logger.info("등록할 글이 없습니다.");
         }
-
     }
 
-    private int getResetSerial() {
-        return pushService.resetSerial();
+    private void deleteManageTable() {
+        pushService.deleteManageTable();
+    }
+
+    private void getResetSerial() {
+        pushService.resetSerial();
     }
 
     private List<Push> selectUnsentPushList() {
         return pushService.selectUnsentPushList();
     }
-
 }

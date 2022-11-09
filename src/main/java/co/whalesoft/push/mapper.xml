@@ -202,11 +202,12 @@
     SELECT
       push_sn, sys_id, bbs_id, push_sj, push_nm,
       link_info, push_tkn_value, resve_reqst_sn, resve_reqst_dt, resve_reqst_ty,
-      mber_id, mber_ty, creat_dt, creat_user_ip, push_trnsmis_sttus
+      mber_id, mber_ty, TO_DATE(TO_CHAR(creat_dt,'YYYY/MM/DD'),'YYYY/MM/DD') as creat_dt, creat_user_ip, push_trnsmis_sttus
     FROM
       TAD_MN_PUSH_MANAGE
     WHERE
       push_trnsmis_sttus = 'N'
+      and TO_DATE(TO_CHAR(SYS_DATETIME,'YYYY/MM/DD'),'YYYY/MM/DD') <![CDATA[<]]> creat_dt
   </select>
 
   <delete id="deleteTwoDayData">
