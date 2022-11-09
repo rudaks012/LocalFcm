@@ -160,14 +160,27 @@ public class PushController {
 //            String PushMessage =
 //                "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\"" + push_sj + "\",\"body\" : \"" + push_nm + "\",\"link\" : \"" + link + "\"}}";
             Map<String, Object> pushMessage = new HashMap<>();
-            pushMessage.put("to", token);
-            pushMessage.put("priority", "high");
             Map<String, Object> data = new HashMap<>();
-            data.put("title", push_sj);
-            data.put("body", push_nm);
-            data.put("link", link);
+            if (pushDataList.getDevice_se().equals("A")) {
+                pushMessage.put("to", token);
+                pushMessage.put("priority", "high");
+                data.put("title", push_sj);
+                data.put("body", push_nm);
+                data.put("link", link);
 //            pushMessage.put("notification", data);
-            pushMessage.put(dataFormat, data);
+                pushMessage.put("data", data);
+            } else {
+                Map<String, Object> iosData = new HashMap<>();
+                pushMessage.put("to", token);
+                pushMessage.put("priority", "high");
+                data.put("title", push_sj);
+                data.put("body", push_nm);
+                data.put("sound", "default");
+                data.put("content_available", "true");
+                pushMessage.put("notification", data);
+                iosData.put("link", link);
+                pushMessage.put("data", iosData);
+            }
 
             String pushMessageJson = new Gson().toJson(pushMessage);
             System.out.println("json = " + pushMessageJson);
