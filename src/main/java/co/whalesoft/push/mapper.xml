@@ -7,12 +7,12 @@
   <insert id="insertMberTkn" parameterType="co.whalesoft.push.Push">
     INSERT INTO TAD_MN_PUSH_USER
     (
-     mbr_tkn_value, mbr_id, mbr_nm, push_creat_dt, usage_at,device_se
+     mbr_tkn_value, mber_id, mbr_nm, creat_dt, usage_at,device_se
     )
     VALUES
       (
         #{mbr_tkn_value},
-        #{mbr_id},
+        #{mber_id},
         #{mbr_nm},
         SYS_DATETIME,
         'Y',
@@ -25,7 +25,7 @@
     UPDATE
       TAD_MN_PUSH_USER
     SET
-      mbr_id = #{mbr_id}, mbr_nm =#{mbr_nm}
+      mber_id = #{mber_id}, mbr_nm =#{mbr_nm}
     WHERE
       mbr_tkn_value = #{mbr_tkn_value}
   </update>
@@ -34,7 +34,7 @@
     UPDATE
       TAD_MN_PUSH_USER
     SET
-      push_creat_dt = sysdate, usage_at = 'N'
+      creat_dt = sysdate, usage_at = 'N'
     WHERE
       mbr_tkn_value = #{old_token}
   </update>
@@ -100,6 +100,35 @@
             #{item.link_info},
            'N'
           )
+    </foreach>
+  </insert>
+
+  <insert id="insertUnsentPushList" parameterType="java.util.List">
+    INSERT INTO TAD_MN_PUSH_MANAGE
+    (
+      push_sn, sys_id, bbs_id, push_sj, push_nm,
+      link_info, push_trnsmis_sttus, push_tkn_value, resve_reqst_sn, resve_reqst_dt,
+      resve_reqst_ty, mber_id, mber_ty, creat_dt, creat_user_ip
+    )
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+    (
+      SEQ_MN_PUSH_SN.NEXTVAL,
+      #{item.sys_id},
+      #{item.bbs_id},
+      #{item.push_sj},
+      #{item.push_nm},
+      #{item.link_info},
+      #{item.push_trnsmis_sttus},
+      #{item.push_tkn_value},
+      #{item.resve_reqst_sn},
+      #{item.resve_reqst_dt},
+      #{item.resve_reqst_ty},
+      #{item.mber_id},
+      #{item.mber_ty},
+      SYS_DATETIME,
+      #{item.creat_user_ip}
+      )
     </foreach>
   </insert>
 
@@ -173,22 +202,19 @@
     SELECT
       push_sn, sys_id, bbs_id, push_sj, push_nm,
       link_info, push_tkn_value, resve_reqst_sn, resve_reqst_dt, resve_reqst_ty,
-      mber_id, mber_ty, creat_dt, creat_user_ip
+      mber_id, mber_ty, creat_dt, creat_user_ip, push_trnsmis_sttus
     FROM
       TAD_MN_PUSH_MANAGE
     WHERE
-      push_sttus = 'N'
+      push_trnsmis_sttus = 'N'
   </select>
 
   <delete id="deleteTwoDayData">
     DELETE FROM TAD_MN_PUSH_MANAGE
-    WHERE
-      push_trnsmis_sttus = 'Y'
-      AND SYSDATE - TO_DATE(TO_CHAR(creat_dt,'YYYY/MM/DD'),'YYYY/MM/DD') > 2
   </delete>
 
   <update id="resetSerial">
-    ALTER SERIAL [po_user].[SEQ_MN_PUSH_SN]
+    ALTER SERIAL SEQ_MN_PUSH_SN
     START WITH 1
     INCREMENT BY 1
     MINVALUE 1

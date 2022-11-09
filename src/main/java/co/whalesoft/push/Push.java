@@ -1,40 +1,49 @@
 package co.whalesoft.push;
 
 import java.time.LocalDateTime;
+import javax.xml.crypto.Data;
 
 public class Push {
 
-    private String mbr_id; // 회원아이디
+    private String mber_id; // 회원아이디
     private String mbr_nm; //회원명
+    private String mber_ty; //회원 유형
     private String mbr_tkn_value; //단말 토큰
     private String push_tkn_value; //초등 돌봄용 토큰
-    private String sw; // 멤버 상태 구분 기호 1: 신규 , 2: 업데이트 , 3: 업데이트된 상태
     private String old_token; //오래된 토큰
-    
+    private String sw; // 멤버 상태 구분 기호 1: 신규 , 2: 업데이트 , 3: 업데이트된 상태
     private String device_se; // 핸드폰 구분 A: 안드로이드 I : 아이폰
-    private LocalDateTime push_creat_dt; // 등록일시
-
+    private Data creat_dt; // 등록일시
     private String push; // 해당 기관 코드 묶음
     private int push_seq; //알람 순번
     private String sys_id; //시스템아이디
     private String bbs_id; //게시판 아이디
     private String push_at; //알림 전송 여부
-
+    private String push_trnsmis_sttus; //알림 전송 상태
     private String push_sj; //알람 제목
     private String push_nm; //알람 내용
     private String link_info; //링크
 
+    private int resve_reqst_sn; //예약 요청 일련번호
+
+    private String resve_reqst_dt; //예약 요청 일시
+
+    private String resve_reqst_ty; //예약 요청 유형
+
+    private String creat_user_ip; //등록자 IP
+
     private String usage_at; //사용여부
 
+    //알림
     private String sys_nm; // 시스템 이름
     private String bbs_sj; // 게시판 제목
 
-    public String getMbr_id() {
-        return mbr_id;
+    public String getMber_id() {
+        return mber_id;
     }
 
-    public void setMbr_id(String mbr_id) {
-        this.mbr_id = mbr_id;
+    public void setMber_id(String mber_id) {
+        this.mber_id = mber_id;
     }
 
     public String getMbr_nm() {
@@ -43,6 +52,14 @@ public class Push {
 
     public void setMbr_nm(String mbr_nm) {
         this.mbr_nm = mbr_nm;
+    }
+
+    public String getMber_ty() {
+        return mber_ty;
+    }
+
+    public void setMber_ty(String mber_ty) {
+        this.mber_ty = mber_ty;
     }
 
     public String getMbr_tkn_value() {
@@ -61,20 +78,20 @@ public class Push {
         this.push_tkn_value = push_tkn_value;
     }
 
-    public String getSw() {
-        return sw;
-    }
-
-    public void setSw(String sw) {
-        this.sw = sw;
-    }
-
     public String getOld_token() {
         return old_token;
     }
 
     public void setOld_token(String old_token) {
         this.old_token = old_token;
+    }
+
+    public String getSw() {
+        return sw;
+    }
+
+    public void setSw(String sw) {
+        this.sw = sw;
     }
 
     public String getDevice_se() {
@@ -85,12 +102,12 @@ public class Push {
         this.device_se = device_se;
     }
 
-    public LocalDateTime getPush_creat_dt() {
-        return push_creat_dt;
+    public Data getCreat_dt() {
+        return creat_dt;
     }
 
-    public void setPush_creat_dt(LocalDateTime push_creat_dt) {
-        this.push_creat_dt = push_creat_dt;
+    public void setCreat_dt(Data creat_dt) {
+        this.creat_dt = creat_dt;
     }
 
     public String getPush() {
@@ -133,6 +150,14 @@ public class Push {
         this.push_at = push_at;
     }
 
+    public String getPush_trnsmis_sttus() {
+        return push_trnsmis_sttus;
+    }
+
+    public void setPush_trnsmis_sttus(String push_trnsmis_sttus) {
+        this.push_trnsmis_sttus = push_trnsmis_sttus;
+    }
+
     public String getPush_sj() {
         return push_sj;
     }
@@ -157,6 +182,30 @@ public class Push {
         this.link_info = link_info;
     }
 
+    public int getResve_reqst_sn() {
+        return resve_reqst_sn;
+    }
+
+    public void setResve_reqst_sn(int resve_reqst_sn) {
+        this.resve_reqst_sn = resve_reqst_sn;
+    }
+
+    public String getResve_reqst_dt() {
+        return resve_reqst_dt;
+    }
+
+    public void setResve_reqst_dt(String resve_reqst_dt) {
+        this.resve_reqst_dt = resve_reqst_dt;
+    }
+
+    public String getResve_reqst_ty() {
+        return resve_reqst_ty;
+    }
+
+    public void setResve_reqst_ty(String resve_reqst_ty) {
+        this.resve_reqst_ty = resve_reqst_ty;
+    }
+
     public String getUsage_at() {
         return usage_at;
     }
@@ -179,5 +228,13 @@ public class Push {
 
     public void setBbs_sj(String bbs_sj) {
         this.bbs_sj = bbs_sj;
+    }
+
+    public String getCreat_user_ip() {
+        return creat_user_ip;
+    }
+
+    public void setCreat_user_ip(String creat_user_ip) {
+        this.creat_user_ip = creat_user_ip;
     }
 }

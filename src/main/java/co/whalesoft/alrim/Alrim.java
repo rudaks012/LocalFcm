@@ -31,7 +31,7 @@ public class Alrim {
 
     private String creat_mbr_ip;
 
-    private String mbr_id;
+    private String mber_id;
 
     private String mbr_nm;
 
@@ -151,12 +151,12 @@ public class Alrim {
         this.creat_mbr_ip = creat_mbr_ip;
     }
 
-    public String getMbr_id() {
-        return mbr_id;
+    public String getmber_id() {
+        return mber_id;
     }
 
-    public void setMbr_id(String mbr_id) {
-        this.mbr_id = mbr_id;
+    public void setmber_id(String mber_id) {
+        this.mber_id = mber_id;
     }
 
     public String getMbr_nm() {

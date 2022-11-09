@@ -55,7 +55,7 @@ public class PushService {
         return pushDao.deleteFcmNotRegistered(push);
     }
 
-    public int deleteTwoDayData() {
+    public int deleteManageTable() {
         return pushDao.deleteTwoDayData();
     }
 
@@ -65,5 +65,9 @@ public class PushService {
 
     public int resetSerial() {
         return pushDao.resetSerial();
+    }
+
+    public int insertUnsentPushList(List<Push> unsentPushList) {
+        return pushDao.insertUnsentPushList(unsentPushList);
     }
 }

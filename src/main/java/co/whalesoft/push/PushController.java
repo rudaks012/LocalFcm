@@ -147,7 +147,6 @@ public class PushController {
             String push_nm = pushDataList.getPush_nm();
             String link = pushDataList.getLink_info();
             String apiKey = pushDataList.getDevice_se().equals("A") ? API_KEY : IOS_API_KEY;
-            String dataFormat = pushDataList.getDevice_se().equals("A") ? "data" : "notification";
 
             URL url = new URL(FCM_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -165,7 +164,8 @@ public class PushController {
                 pushMessage.put("to", token);
                 pushMessage.put("priority", "high");
                 data.put("title", push_sj);
-                data.put("body", push_nm);
+//                data.put("body", push_nm);
+                data.put("body", "");
                 data.put("link", link);
 //            pushMessage.put("notification", data);
                 pushMessage.put("data", data);
@@ -174,7 +174,8 @@ public class PushController {
                 pushMessage.put("to", token);
                 pushMessage.put("priority", "high");
                 data.put("title", push_sj);
-                data.put("body", push_nm);
+//                data.put("body", push_nm);
+                data.put("body", "");
                 data.put("sound", "default");
                 data.put("content_available", "true");
                 pushMessage.put("notification", data);
@@ -247,7 +248,7 @@ public class PushController {
     }
 
     private void setMemberStatus(Map<String, String> param, Push push) {
-        push.setMbr_id(param.get("mbr_id"));
+        push.setMber_id(param.get("mbr_id"));
         push.setMbr_nm(param.get("mbr_nm"));
         push.setMbr_tkn_value(param.get("mbr_token"));
         System.out.println("push.getMbr_tkn_value() = " + push.getMbr_tkn_value());
@@ -316,11 +317,28 @@ public class PushController {
         res.setMessage("Fault");
         res.setResult(result.getAllErrors());
     }
+
+//    삭제 관련 메서드
+@GetMapping(value = "/push/edunavi/am/send1.do")
     public void deleteTwoDayDataSchedule() {
-        List<Push> unsentPushList = pushService.selectUnsentPushList();
-        int resetSerial = pushService.resetSerial();
+        List<Push> unsentPushList = selectUnsentPushList();
+        if (unsentPushList.size() > 0) {
+            int resetSerial = getResetSerial();
+            System.out.println("resetSerial = " + resetSerial);
+            pushService.deleteManageTable();
+            int unsentListInsert = pushService.insertUnsentPushList(unsentPushList);
+        }else {
+            logger.info("등록할 글이 없습니다.");
+        }
 
-
-        pushService.deleteTwoDayData();
     }
+
+    private int getResetSerial() {
+        return pushService.resetSerial();
+    }
+
+    private List<Push> selectUnsentPushList() {
+        return pushService.selectUnsentPushList();
+    }
+
 }
