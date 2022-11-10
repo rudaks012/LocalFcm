@@ -156,8 +156,6 @@ public class PushController {
             conn.setRequestProperty("Authorization", "key=" + apiKey);
             conn.setDoOutput(true);
 
-//            String PushMessage =
-//                "{\"to\": \"" + token + "\",\"priority\" : \"high\",\"data\" :{\"title\" :\"" + push_sj + "\",\"body\" : \"" + push_nm + "\",\"link\" : \"" + link + "\"}}";
             Map<String, Object> pushMessage = new HashMap<>();
             Map<String, Object> data = new HashMap<>();
             if (pushDataList.getDevice_se().equals("A")) {
@@ -286,7 +284,7 @@ public class PushController {
             if (j == ZERO) {
                 member.setSys_id(splitPush[j]);
             } else if (j == 1) {
-                continue;
+                member.setSys_nm(splitPush[j]);
             } else if (isEven(j)) {
                 member.setBbs_id(splitPush[j]);
             } else {
@@ -324,9 +322,9 @@ public class PushController {
         List<Push> unsentPushList = selectUnsentPushList();
 
         if (unsentPushList.size() > 0) {
-            getResetSerial();
-            deleteManageTable();
-            pushService.insertUnsentPushList(unsentPushList);
+            getResetSerial(); // 시리얼 초기화
+            deleteManageTable(); // 게시판에 존재하는 데이터 모두 삭제
+            pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
         }else {
             logger.info("등록할 글이 없습니다.");
         }

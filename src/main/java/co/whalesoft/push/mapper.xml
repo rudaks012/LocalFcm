@@ -34,7 +34,7 @@
     UPDATE
       TAD_MN_PUSH_USER
     SET
-      creat_dt = sysdate, usage_at = 'N'
+      creat_dt = SYS_DATETIME, usage_at = 'N'
     WHERE
       mbr_tkn_value = #{old_token}
   </update>
@@ -51,7 +51,7 @@
 
     INSERT INTO TAD_MN_PUSH_GUBUN
         (
-         mbr_tkn_value, push_seq, sys_id, bbs_id, push_at, creat_dt
+         mbr_tkn_value, push_seq, sys_id, bbs_id, push_at, creat_dt, sys_nm
          )
     VALUES
       (
@@ -60,7 +60,8 @@
         #{sys_id},
         #{bbs_id},
         #{push_at},
-        sysdate
+        SYS_DATETIME,
+        #{sys_nm}
       )
   </insert>
 
