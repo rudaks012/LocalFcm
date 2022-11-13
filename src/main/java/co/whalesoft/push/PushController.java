@@ -34,7 +34,7 @@ public class PushController {
     public static final String PARAMETER_SW_ONE = "1";
     public static final String PARAMETER_SW_TWO = "2";
     public static final String PARAMETER_SW_THREE = "3";
-    public static final String REGULAR_EXPRESSION = "[^\uAC00-\uD7A30-9a-zA-Z\\s]";
+    public static final String REGULAR_EXPRESSION = "[^\uAC00-\uD7A30-9a-zA-Z()/\\s]";
     public static final String PUSH_EXPRESSION = "\\^";
     public static final String API_KEY = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
     public static final String IOS_API_KEY = "AAAAcWUn1bA:APA91bHgZSuVe9pHZ9N_-wllSjdeJUBe66s8utnELwdvUgg2Vb7N1WMIDL9cGs00nyekYQeVgH5Yqbq3GqLvQAVEA-hjoZWDZLoMm9CmQS5QUtuniYypKCPKAnbqh_nR9mIzc2879Rtc";
@@ -283,10 +283,13 @@ public class PushController {
         for (int j = ZERO; j < splitPush.length; j++) {
             if (j == ZERO) {
                 member.setSys_id(splitPush[j]);
+                System.out.println("member.getSys_id() = " + member.getSys_id());
             } else if (j == 1) {
                 member.setSys_nm(splitPush[j]);
+                System.out.println("member.getSys_nm() = " + member.getSys_nm());
             } else if (isEven(j)) {
                 member.setBbs_id(splitPush[j]);
+                System.out.println("member.getBbs_id() = " + member.getBbs_id());
             } else {
                 member.setPush_at(splitPush[j]);
                 int worksNormally = pushService.fcmGubunInsert(member);
