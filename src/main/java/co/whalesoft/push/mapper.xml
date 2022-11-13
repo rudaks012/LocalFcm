@@ -78,23 +78,31 @@
       AND b.bbs_id = c.bbs_id
 
   </select>
-<!--  오늘 하루날짜 체크해서 해당날짜만 푸시-->
-<!--  SELECT-->
-<!--  a.mbr_tkn_value, a.device_se, c.push_sj, c.push_nm, c.link_info,-->
-<!--  c.push_trnsmis_sttus,to_char(c.creat_dt, 'YYYY-MM-DD') as creat_dt,-->
-<!--  to_char(c.resve_reqst_dt, 'YYYY-MM-DD') as resve_reqst_dt-->
-<!--  FROM-->
-<!--  TAD_MN_PUSH_USER a, TAD_MN_PUSH_GUBUN b, TAD_MN_PUSH_MANAGE c-->
-<!--  WHERE-->
-<!--  b.push_at = 'Y'-->
-<!--  AND a.mbr_tkn_value = b.mbr_tkn_value-->
-<!--  AND b.sys_id = c.sys_id-->
-<!--  AND b.bbs_id = c.bbs_id-->
-<!--  AND-->
-<!--  (-->
-<!--  to_char(c.creat_dt, 'YYYY-MM-DD') = to_char(sys_datetime, 'YYYY-MM-DD')-->
-<!--  OR to_char(c.resve_reqst_dt, 'YYYY-MM-DD') = to_char(sys_datetime, 'YYYY-MM-DD')-->
-<!--  )-->
+<!--  select a.sys_id,
+  b.sys_nm,
+  a.bbs_id,
+  to_date(to_char(a.creat_dt, 'YYYY-MM-DD'), 'YYYY-MM-DD')                                      as creat_dt,
+  to_date(to_char(a.resve_reqst_dt, 'YYYY-MM-DD'), 'YYYY-MM-DD')                                as resve_reqst_dt,
+  a.resve_reqst_ty,
+  DECODE(a.resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS reqst_ty,
+  c.mbr_tkn_value,
+  c.device_se,
+  a.push_sj,
+  a.push_nm,
+  a.link_info,
+  a.push_trnsmis_sttus
+  from po_user.tad_mn_push_manage a,
+  (select sys_id,
+  sys_nm,
+  mbr_tkn_value
+  from po_user.tad_mn_push_gubun
+  group by sys_id, sys_nm) b,
+  po_user.tad_mn_push_user c
+  where a.push_trnsmis_sttus = 'N'
+
+  and a.sys_id = b.sys_id
+  and b.mbr_tkn_value = c.mbr_tkn_value
+  group by a.sys_id, a.resve_reqst_ty;-->
 
   <insert id="realInsert" parameterType="java.util.List">
 
