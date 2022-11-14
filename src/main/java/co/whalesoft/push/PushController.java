@@ -79,6 +79,7 @@ public class PushController {
                 String[] splitPush = value.split(REGULAR_EXPRESSION);
                 splitGubunMemberStatusInsert(push, splitPush, result, res ); // 구분자로 구분 후 insert
             }
+//            res.setUrl(push.getPush_tkn_value());
             restSetOkMessage(res);
         } else {
             restSetFalseMessage(result, res);
@@ -106,7 +107,7 @@ public class PushController {
         } else {
             logger.info("푸시할 글이 없습니다.");
         }
-        updatePushSttus(fcmListPush);
+//        updatePushSttus(fcmListPush);
         return "jsonView";
     }
 
@@ -130,6 +131,7 @@ public class PushController {
                 //1초후 실행
                 try {
                     Thread.sleep(1000);
+                    System.out.println("ThreadName() = " + Thread.currentThread().getName());
                     pushFCMDataInsert(subLists);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -163,6 +165,7 @@ public class PushController {
 //                data.put("body", push_nm);
                 data.put("body", "");
                 data.put("link", link);
+//            pushMessage.put("notification", data);
                 pushMessage.put("data", data);
             } else {
                 Map<String, Object> iosData = new HashMap<>();
@@ -179,12 +182,15 @@ public class PushController {
             }
 
             String pushMessageJson = new Gson().toJson(pushMessage);
+            System.out.println("json = " + pushMessageJson);
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             wr.write(pushMessageJson);
             wr.flush();
             wr.close();
 
+            int responseCode = conn.getResponseCode();
 
+            System.out.println("responseCode = " + responseCode);
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String inputLine;
 
@@ -243,9 +249,13 @@ public class PushController {
         push.setMber_id(param.get("mbr_id"));
         push.setMbr_nm(param.get("mbr_nm"));
         push.setMbr_tkn_value(param.get("mbr_token"));
+        System.out.println("push.getMbr_tkn_value() = " + push.getMbr_tkn_value());
         push.setOld_token(param.get("old_token"));
+        System.out.println("push.getOld_token() = " + push.getOld_token());
         push.setSw(param.get("sw"));
         push.setDevice_se(param.get("gubun"));
+        System.out.println("push.getDeviceSE() = " + push.getDevice_se());
+        System.out.println("push.getSw() = " + push.getSw());
     }
 
     private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally) {
@@ -273,10 +283,13 @@ public class PushController {
         for (int j = ZERO; j < splitPush.length; j++) {
             if (j == ZERO) {
                 member.setSys_id(splitPush[j]);
+                System.out.println("member.getSys_id() = " + member.getSys_id());
             } else if (j == 1) {
                 member.setSys_nm(splitPush[j]);
+                System.out.println("member.getSys_nm() = " + member.getSys_nm());
             } else if (isEven(j)) {
                 member.setBbs_id(splitPush[j]);
+                System.out.println("member.getBbs_id() = " + member.getBbs_id());
             } else {
                 member.setPush_at(splitPush[j]);
                 int worksNormally = pushService.fcmGubunInsert(member);
