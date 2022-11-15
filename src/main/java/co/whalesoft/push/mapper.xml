@@ -51,7 +51,7 @@
 
     INSERT INTO TAD_MN_PUSH_GUBUN
         (
-         mbr_tkn_value, push_seq, sys_id, bbs_id, push_at, creat_dt, sys_nm
+         mbr_tkn_value, push_seq, sys_id, bbs_id, push_at, creat_dt, sys_nm, resve_reqst_ty
          )
     VALUES
       (
@@ -61,7 +61,8 @@
         #{bbs_id},
         #{push_at},
         SYS_DATETIME,
-        #{sys_nm}
+        #{sys_nm},
+        #{resve_reqst_ty}
       )
   </insert>
 
@@ -78,7 +79,7 @@
       AND b.bbs_id = c.bbs_id
 
   </select>
-<!--  select a.sys_id,
+<!-- 통계  select a.sys_id,
   b.sys_nm,
   a.bbs_id,
   to_date(to_char(a.creat_dt, 'YYYY-MM-DD'), 'YYYY-MM-DD')                                      as creat_dt,
@@ -207,6 +208,10 @@ FROM TAD_MN_PUSH_USER a,
      TAD_MN_PUSH_MANAGE c
 WHERE b.push_at = 'Y'
   AND c.push_trnsmis_sttus = 'N'
+  <if test ="mber_id != null">
+      AND c.mber_id = #{mber_id}
+      AND c.resve_reqst_dt <![CDATA[<]]> sys_datetime
+  </if>
   and a.mbr_tkn_value = b.mbr_tkn_value
   AND b.sys_id = c.sys_id
   AND (b.bbs_id = c.bbs_id
