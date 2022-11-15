@@ -12,6 +12,7 @@ public class PushService {
     @Autowired
     private PushDao pushDao;
 
+
     public int insertMberTkn(Push push) {
         return pushDao.insertMberTkn(push);
     }
@@ -70,4 +71,5 @@ public class PushService {
     public int insertUnsentPushList(List<Push> unsentPushList) {
         return pushDao.insertUnsentPushList(unsentPushList);
     }
+
 }

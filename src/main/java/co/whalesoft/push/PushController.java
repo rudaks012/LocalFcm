@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Io;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +51,7 @@ public class PushController {
     public @ResponseBody JsonResponse insertToken(@RequestBody Map<String, String> param, Push push, BindingResult result, HttpServletRequest request) {
 
         JsonResponse res = new JsonResponse(request);
-
+        //IOException 설정
         try {
             if (!result.hasErrors()) {
                 setMemberStatus(param, push);
@@ -60,7 +61,7 @@ public class PushController {
             } else {
                 restSetFalseMessage(result, res);
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             restSetFalseMessage(result, res);
         }
         return res;
@@ -103,7 +104,7 @@ public class PushController {
                 executor.shutdown();
                 while (!executor.awaitTermination(1, TimeUnit.SECONDS));
             }
-            deletePushUsers(tokenList);
+//            deletePushUsers(tokenList);
         } else {
             logger.info("푸시할 글이 없습니다.");
         }
@@ -131,9 +132,8 @@ public class PushController {
                 //1초후 실행
                 try {
                     Thread.sleep(1000);
-                    System.out.println("ThreadName() = " + Thread.currentThread().getName());
                     pushFCMDataInsert(subLists);
-                } catch (Exception e) {
+                } catch (IOException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             });
@@ -182,30 +182,40 @@ public class PushController {
             }
 
             String pushMessageJson = new Gson().toJson(pushMessage);
-            System.out.println("json = " + pushMessageJson);
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             wr.write(pushMessageJson);
             wr.flush();
             wr.close();
 
             int responseCode = conn.getResponseCode();
+            logger.info("Response Code : " + responseCode);
 
-            System.out.println("responseCode = " + responseCode);
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String inputLine;
+            BufferedReader in = null;
+            try {
+                in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String inputLine;
 
-            StringBuffer response = new StringBuffer();
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
+                StringBuffer response = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+
+                boolean notRegistered = response.toString().contains("NotRegistered");
+
+                if (notRegistered) {
+                    pushService.deleteFcmNotRegistered(pushDataList);
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            in.close();
-
-            boolean notRegistered = response.toString().contains("NotRegistered");
-
-            if (notRegistered) {
-                pushService.deleteFcmNotRegistered(pushDataList);
-            }
-            System.out.println(response);
         }
     }
 
@@ -249,13 +259,9 @@ public class PushController {
         push.setMber_id(param.get("mbr_id"));
         push.setMbr_nm(param.get("mbr_nm"));
         push.setMbr_tkn_value(param.get("mbr_token"));
-        System.out.println("push.getMbr_tkn_value() = " + push.getMbr_tkn_value());
         push.setOld_token(param.get("old_token"));
-        System.out.println("push.getOld_token() = " + push.getOld_token());
         push.setSw(param.get("sw"));
         push.setDevice_se(param.get("gubun"));
-        System.out.println("push.getDeviceSE() = " + push.getDevice_se());
-        System.out.println("push.getSw() = " + push.getSw());
     }
 
     private void checkWorksStatus(BindingResult result, JsonResponse res, int worksNormally) {
@@ -283,13 +289,10 @@ public class PushController {
         for (int j = ZERO; j < splitPush.length; j++) {
             if (j == ZERO) {
                 member.setSys_id(splitPush[j]);
-                System.out.println("member.getSys_id() = " + member.getSys_id());
             } else if (j == 1) {
                 member.setSys_nm(splitPush[j]);
-                System.out.println("member.getSys_nm() = " + member.getSys_nm());
             } else if (isEven(j)) {
                 member.setBbs_id(splitPush[j]);
-                System.out.println("member.getBbs_id() = " + member.getBbs_id());
             } else {
                 member.setPush_at(splitPush[j]);
                 int worksNormally = pushService.fcmGubunInsert(member);

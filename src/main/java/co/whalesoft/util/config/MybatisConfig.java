@@ -19,7 +19,7 @@ public class MybatisConfig {
     private String mapperLocations;
 
     @Bean
-    public SqlSessionFactory sqlSessionFactory(DataSource datasource, ApplicationContext applicationContext) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource datasource) throws Exception {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(datasource);
         sqlSessionFactory.setTypeAliasesPackage("co.whalesoft/*");
