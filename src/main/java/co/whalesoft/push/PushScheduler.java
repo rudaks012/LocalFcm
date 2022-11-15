@@ -153,15 +153,14 @@
 //                    pushService.deleteFcmNotRegistered(pushDataList);
 //                }
 //            } catch (NullPointerException e) {
-//                e.printStackTrace();
+//                logger.info("pushFCMDataInsert NullPointerException");
 //            } finally {
 //                try {
 //                    if (in != null) {
 //                        in.close();
 //                    }
 //                } catch (IOException e) {
-//                    e.printStackTrace();
-//
+//                  logger.info("pushFCMDataInsert IOException");
 //                }
 //            }
 //        }
