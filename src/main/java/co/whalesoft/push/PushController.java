@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Io;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -89,7 +88,7 @@ public class PushController {
     }
 
     @GetMapping(value = "/push/edunavi/am/send.do")
-    public String fcmPushServer(Push push) throws Exception {
+    public void fcmPushServer(Push push) throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Push> fcmListPush = pushService.fcmListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
 
@@ -109,7 +108,6 @@ public class PushController {
             logger.info("푸시할 글이 없습니다.");
         }
 //        updatePushSttus(fcmListPush);
-        return "jsonView";
     }
 
     private void deletePushUsers(List<Push> tokenList) {
@@ -182,6 +180,7 @@ public class PushController {
             }
 
             String pushMessageJson = new Gson().toJson(pushMessage);
+            logger.info("json : " + pushMessageJson);
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
             wr.write(pushMessageJson);
             wr.flush();
@@ -205,6 +204,7 @@ public class PushController {
                 if (notRegistered) {
                     pushService.deleteFcmNotRegistered(pushDataList);
                 }
+                logger.info("response : " + response.toString());
             } catch (NullPointerException e) {
                 e.printStackTrace();
             } finally {
@@ -257,7 +257,7 @@ public class PushController {
 
     private void setMemberStatus(Map<String, String> param, Push push) {
         push.setMber_id(param.get("mbr_id"));
-        push.setMbr_nm(param.get("mbr_nm"));
+        push.setMber_nm(param.get("mbr_nm"));
         push.setMbr_tkn_value(param.get("mbr_token"));
         push.setOld_token(param.get("old_token"));
         push.setSw(param.get("sw"));

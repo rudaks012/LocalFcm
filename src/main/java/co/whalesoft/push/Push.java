@@ -6,7 +6,7 @@ import javax.xml.crypto.Data;
 public class Push {
 
     private String mber_id; // 회원아이디
-    private String mbr_nm; //회원명
+    private String mber_nm; //회원명
     private String mber_ty; //회원 유형
     private String mbr_tkn_value; //단말 토큰
     private String push_tkn_value; //초등 돌봄용 토큰
@@ -46,12 +46,12 @@ public class Push {
         this.mber_id = mber_id;
     }
 
-    public String getMbr_nm() {
-        return mbr_nm;
+    public String getMber_nm() {
+        return mber_nm;
     }
 
-    public void setMbr_nm(String mbr_nm) {
-        this.mbr_nm = mbr_nm;
+    public void setMber_nm(String mber_nm) {
+        this.mber_nm = mber_nm;
     }
 
     public String getMber_ty() {
@@ -206,6 +206,14 @@ public class Push {
         this.resve_reqst_ty = resve_reqst_ty;
     }
 
+    public String getCreat_user_ip() {
+        return creat_user_ip;
+    }
+
+    public void setCreat_user_ip(String creat_user_ip) {
+        this.creat_user_ip = creat_user_ip;
+    }
+
     public String getUsage_at() {
         return usage_at;
     }
@@ -228,13 +236,5 @@ public class Push {
 
     public void setBbs_sj(String bbs_sj) {
         this.bbs_sj = bbs_sj;
-    }
-
-    public String getCreat_user_ip() {
-        return creat_user_ip;
-    }
-
-    public void setCreat_user_ip(String creat_user_ip) {
-        this.creat_user_ip = creat_user_ip;
     }
 }
