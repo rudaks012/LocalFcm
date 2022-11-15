@@ -210,7 +210,7 @@ WHERE b.push_at = 'Y'
   AND c.push_trnsmis_sttus = 'N'
   <if test ="mber_id != null">
       AND c.mber_id = #{mber_id}
-      AND c.resve_reqst_dt <![CDATA[<]]> sys_datetime
+      AND c.resve_reqst_dt <![CDATA[<=]]> sys_datetime
   </if>
   and a.mbr_tkn_value = b.mbr_tkn_value
   AND b.sys_id = c.sys_id
@@ -258,7 +258,7 @@ group by b.sys_id, c.resve_reqst_ty
       TAD_MN_PUSH_MANAGE
     WHERE
       push_trnsmis_sttus = 'N'
-      and TO_DATE(TO_CHAR(SYS_DATETIME,'YYYY/MM/DD'),'YYYY/MM/DD') <![CDATA[<]]> creat_dt
+    AND TO_DATE(TO_CHAR(SYS_DATETIME,'YYYY/MM/DD'),'YYYY/MM/DD') <![CDATA[<]]> creat_dt
   </select>
 
   <delete id="deleteTwoDayData">
