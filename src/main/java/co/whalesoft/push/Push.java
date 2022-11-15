@@ -1,6 +1,5 @@
 package co.whalesoft.push;
 
-import java.time.LocalDateTime;
 import javax.xml.crypto.Data;
 
 public class Push {
@@ -16,6 +15,7 @@ public class Push {
     private Data creat_dt; // 등록일시
     private String push; // 해당 기관 코드 묶음
     private int push_seq; //알람 순번
+    private int fcm_sn; // 알람 순번 (FCM)
     private String sys_id; //시스템아이디
     private String bbs_id; //게시판 아이디
     private String push_at; //알림 전송 여부
@@ -236,5 +236,13 @@ public class Push {
 
     public void setBbs_sj(String bbs_sj) {
         this.bbs_sj = bbs_sj;
+    }
+
+    public int getFcm_sn() {
+        return fcm_sn;
+    }
+
+    public void setFcm_sn(int fcm_sn) {
+        this.fcm_sn = fcm_sn;
     }
 }

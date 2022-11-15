@@ -142,6 +142,7 @@ public class PushController {
         for (Push pushDataList : pushDataLists) {
             String token = pushDataList.getMbr_tkn_value();
             String push_sj = pushDataList.getPush_sj();
+            int push_sn = pushDataList.getFcm_sn();
 //            String push_nm = pushDataList.getPush_nm();
             String link = pushDataList.getLink_info();
             String apiKey = pushDataList.getDevice_se().equals("A") ? API_KEY : IOS_API_KEY;
@@ -188,6 +189,9 @@ public class PushController {
 
             int responseCode = conn.getResponseCode();
             logger.info("Response Code : " + responseCode);
+            if (responseCode == 200) {
+                pushService.updateFcmPushSttus(push_sn);
+            }
 
             BufferedReader in = null;
             try {

@@ -37,4 +37,6 @@ public interface PushDao {
     int resetSerial();
 
     int insertUnsentPushList(List<Push> unsentPushList);
+
+    int updateFcmPushSttus(int push_sn);
 }

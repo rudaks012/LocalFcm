@@ -109,7 +109,8 @@
 -- 푸시내용 안보내기로 함 push_nm
     INSERT INTO TAD_MN_PUSH_FCM
         (
-         fcm_sn, mbr_tkn_value, device_se, push_sj, link_info, push_sttus
+         fcm_sn, mbr_tkn_value, sys_id, bbs_id, device_se,
+         push_sj, link_info, resve_reqst_ty, push_sttus, sndng_dt
         )
     VALUES
         <foreach collection="list" item="item" separator=",">
@@ -121,10 +122,14 @@
                   TAD_MN_PUSH_FCM
             ),
             #{item.mbr_tkn_value},
+            #{item.sys_id},
+            #{item.bbs_id},
             #{item.device_se},
             #{item.push_sj},
             #{item.link_info},
-           'N'
+            #{item.resve_reqst_ty},
+           'N',
+           SYS_DATETIME
           )
     </foreach>
   </insert>
@@ -180,6 +185,15 @@
         mbr_token = #{mbr_token}
   </delete>
 
+  <update id="updateFcmPushSttus" parameterType="int" >
+    UPDATE
+      TAD_MN_PUSH_FCM
+    SET
+      push_sttus = 'Y'
+    WHERE
+      fcm_sn = #{push_sn}
+  </update>
+
   <select id="fcmListMember" resultType="co.whalesoft.push.Push">
 --     SELECT
 --       a.mbr_tkn_value, a.device_se, c.push_sj, c.push_nm, c.link_info, c.push_trnsmis_sttus,
@@ -194,6 +208,7 @@
 --       AND b.bbs_id = c.bbs_id
 SELECT a.mbr_tkn_value,
        a.device_se,
+       b.sys_nm,
        c.push_sj,
        c.push_nm,
        c.link_info,
@@ -216,7 +231,7 @@ WHERE b.push_at = 'Y'
   AND b.sys_id = c.sys_id
   AND (b.bbs_id = c.bbs_id
   OR b.bbs_id = '0')
-group by b.sys_id, c.resve_reqst_ty
+group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
 
 
   </select>

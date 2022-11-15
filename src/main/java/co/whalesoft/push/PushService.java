@@ -72,4 +72,7 @@ public class PushService {
         return pushDao.insertUnsentPushList(unsentPushList);
     }
 
+    public int updateFcmPushSttus(int push_sn) {
+        return pushDao.updateFcmPushSttus(push_sn);
+    }
 }
