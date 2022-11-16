@@ -110,7 +110,8 @@
     INSERT INTO TAD_MN_PUSH_FCM
         (
          fcm_sn, mbr_tkn_value, sys_id, bbs_id, device_se,
-         push_sj, link_info, resve_reqst_ty, push_sttus, sndng_dt
+         push_sj, link_info, resve_reqst_ty, push_sttus, sndng_dt,
+         sys_nm
         )
     VALUES
         <foreach collection="list" item="item" separator=",">
@@ -129,7 +130,8 @@
             #{item.link_info},
             #{item.resve_reqst_ty},
            'N',
-           SYS_DATETIME
+           SYS_DATETIME,
+            #{item.sys_nm}
           )
     </foreach>
   </insert>
