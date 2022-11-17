@@ -15,7 +15,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 @MapperScan(basePackages = "co.whalesoft")
 public class MybatisConfig {
 
-    @Value("${mybatis.mapper-locations}")
+    @Value("co/whalesoft/*/*.xml")
     private String mapperLocations;
 
     @Bean

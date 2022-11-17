@@ -1,0 +1,13 @@
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<Context path="/">-->
+<!--  <Resource auth="Container"-->
+<!--    driverClassName="cubrid.jdbc.driver.CUBRIDDriver"-->
+<!--    maxActive="10"-->
+<!--    maxIdle="100"-->
+<!--    name="poJndi"-->
+<!--    type="javax.sql.DataSource"-->
+<!--    url="jdbc:cubrid:61.38.105.242:33000:po:::?charSet=utf-8&amp;zeroDateTimeBehavior=convertToNull"-->
+<!--    username="po_user"-->
+<!--    password="podba!21"-->
+<!--    validationQuery="select 1 from dual" />-->
+<!--</Context>-->
