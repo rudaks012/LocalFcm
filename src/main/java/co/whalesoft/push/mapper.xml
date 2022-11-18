@@ -293,44 +293,68 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
 <!--  통계-->
 <!-- 신청 서비스 통계 -->
   <select id="selectPushRequestList" resultType="co.whalesoft.push.Push">
-    select a.sys_id,
-           b.sys_nm,
-           a.bbs_id,
-           a.resve_reqst_ty,
-           count(a.sys_id)                         as sys_cnt,
-           to_char(a.creat_dt, 'YYYY-MM-DD')       as creat_dt,
-           to_char(a.resve_reqst_dt, 'YYYY-MM-DD') as resve_reqst_dt,
-           count(a.resve_reqst_ty)                 as reqst_cnt,
-           DECODE(a.resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS reqst_ty
-    from po_user.tad_mn_push_manage a,
-         (
-           select
-             sys_id, sys_nm
-           from
-             po_user.tad_mn_push_gubun
-           group by
-             sys_id, sys_nm
-         ) b
-    where a.push_trnsmis_sttus = 'N'
-      and a.sys_id = b.sys_id
-    group by a.sys_id, a.resve_reqst_ty
+--     select a.sys_id,
+--            b.sys_nm,
+--            a.bbs_id,
+--            a.resve_reqst_ty,
+--            count(a.sys_id)                         as sys_cnt,
+--            to_char(a.creat_dt, 'YYYY-MM-DD')       as creat_dt,
+--            to_char(a.resve_reqst_dt, 'YYYY-MM-DD') as resve_reqst_dt,
+--            count(a.resve_reqst_ty)                 as reqst_cnt,
+--            DECODE(a.resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS reqst_ty
+--     from po_user.tad_mn_push_manage a,
+--          (
+--            select
+--              sys_id, sys_nm
+--            from
+--              po_user.tad_mn_push_gubun
+--            group by
+--              sys_id, sys_nm
+--          ) b
+--     where a.push_trnsmis_sttus = 'Y'
+--       and a.sys_id = b.sys_id
+--     group by a.sys_id, a.resve_reqst_ty
+
+      SELECT
+        sys_id, sys_nm, resve_reqst_ty, count(sys_id) as sys_cnt, count(resve_reqst_ty) as reqst_cnt,
+        DECODE(resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS reqst_ty
+      FROM
+        (
+          SELECT a.mbr_tkn_value, a.device_se, b.sys_nm, c.push_sj, c.push_nm,
+                 c.link_info, c.push_trnsmis_sttus, c.sys_id, c.bbs_id, c.resve_reqst_ty,
+                 c.mber_id, c.resve_reqst_dt
+          FROM TAD_MN_PUSH_USER a,
+               TAD_MN_PUSH_GUBUN b,
+               TAD_MN_PUSH_MANAGE c
+          WHERE b.push_at = 'Y'
+            AND c.push_trnsmis_sttus = 'N'
+            and a.mbr_tkn_value = b.mbr_tkn_value
+            AND b.sys_id = c.sys_id
+            AND (b.bbs_id = c.bbs_id
+            OR b.bbs_id = '0'
+            )
+          GROUP BY a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
+        )
+      GROUP BY sys_id
   </select>
 
 <!--  발송 서비스 통계-->
   <select id="selectPushSendList" resultType="co.whalesoft.push.Push">
-    select sys_id, bbs_id, resve_reqst_ty, reqst_cnt, sndng_dt,
-           sys_nm, sum(cnt) as sndng_cnt
-    from (
-        select sys_id, bbs_id, resve_reqst_ty, sys_nm,
-                 count(sys_id)                   as cnt,
-                 count(resve_reqst_ty)           as reqst_cnt,
-                 to_char(sndng_dt, 'YYYY-MM-DD') as sndng_dt
-          from
-              po_user.tad_mn_push_fcm
-          group by
-              sys_id, resve_reqst_ty, sndng_dt
-          )
-    group by sys_id,sndng_dt
+    SELECT sys_id, bbs_id, resve_reqst_ty, reqst_cnt, sndng_dt,
+           sys_nm, sum(cnt) as sndng_cnt, reqst_ty
+    FROM (
+           SELECT sys_id, bbs_id, resve_reqst_ty, sys_nm,
+                  count(sys_id)                   as cnt,
+                  count(resve_reqst_ty)           as reqst_cnt,
+                  to_char(sndng_dt, 'YYYY-MM-DD') as sndng_dt,
+                  DECODE(resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS reqst_ty
+           FROM
+             po_user.tad_mn_push_fcm
+           WHERE  push_sttus = 'Y'
+           GROUP BY
+             sys_id, resve_reqst_ty, sndng_dt
+         )
+    GROUP BY sys_id,sndng_dt
 
   </select>
 
@@ -338,7 +362,7 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
     INSERT INTO tad_mn_push_stats
     (
      push_stats_sn, sys_id, sys_cnt, reqst_cnt, resve_reqst_ty,
-     creat_dt, sys_nm, stats_ty
+     reqst_ty, creat_dt, sys_nm, stats_ty
      )
     VALUES
     <foreach collection="list" item="item" separator=",">
@@ -348,7 +372,8 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
       #{item.sys_cnt},
       #{item.reqst_cnt},
       #{item.resve_reqst_ty},
-      #{item.creat_dt},
+      #{item.reqst_ty},
+        sys_datetime,
       #{item.sys_nm},
       'R'
       )
@@ -359,7 +384,7 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
     INSERT INTO tad_mn_push_stats
     (
     push_stats_sn, sys_id, sndng_cnt, resve_reqst_ty, reqst_cnt,
-    sndng_dt, sys_nm, stats_ty
+    reqst_ty, sndng_dt, sys_nm, stats_ty
     )
     VALUES
     <foreach collection="list" item="item" separator=",">
@@ -369,6 +394,7 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
       #{item.sndng_cnt},
       #{item.resve_reqst_ty},
       #{item.reqst_cnt},
+      #{item.reqst_ty},
       #{item.sndng_dt},
       #{item.sys_nm},
       'S'

@@ -93,6 +93,10 @@ public class PushController {
         List<Push> fcmListPush = pushService.fcmListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
 
         if (fcmListPush.size() > 0) {
+
+            List<Push> pushRequestList = pushService.selectPushRequestList();
+            pushService.insertPushRequestList(pushRequestList);
+
             pushService.realInsert(fcmListPush);
 
             List<Push> tokenList = pushService.fcmPushList(push);
@@ -107,7 +111,7 @@ public class PushController {
         } else {
             logger.info("푸시할 글이 없습니다.");
         }
-//        updatePushSttus(fcmListPush);
+        updatePushSttus(fcmListPush);
     }
 
     private void deletePushUsers(List<Push> tokenList) {
@@ -222,6 +226,7 @@ public class PushController {
     }
 
     private void swForEachFunction(Push push, BindingResult result, JsonResponse res) {
+        System.out.println("push = " + push);
 
         validate(push, result, res);
 
@@ -259,6 +264,7 @@ public class PushController {
 
     private void setMemberStatus(Map<String, String> param, Push push) {
         push.setMber_id(param.get("mbr_id"));
+        System.out.println("param = " + param);
         push.setMber_nm(param.get("mbr_nm"));
         push.setMbr_tkn_value(param.get("mbr_token"));
         push.setOld_token(param.get("old_token"));
@@ -334,8 +340,8 @@ public class PushController {
 @GetMapping(value = "/push/edunavi/am/send1.do")
     public void pushInsertAfterDeletion() {
         List<Push> unsentPushList = selectUnsentPushList();
-        List<Push> pushRequestList = pushService.selectPushRequestList();
-        pushService.insertPushRequestList(pushRequestList);
+//        List<Push> pushRequestList = pushService.selectPushRequestList();
+//        pushService.insertPushRequestList(pushRequestList);
 
         List<Push> pushSendList = pushService.selectPushSendList();
         pushService.insertPushSendList(pushSendList);

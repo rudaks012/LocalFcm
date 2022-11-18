@@ -42,7 +42,9 @@ public class Push {
 
     private String resve_reqst_dt; //예약 요청 일시
 
-    private String resve_reqst_ty; //예약 요청 유형
+    private String resve_reqst_ty; //예약 요청 코드
+    
+    private String reqst_ty; // 예약 요청 분류
 
     private String creat_user_ip; //등록자 IP
 
@@ -282,6 +284,14 @@ public class Push {
 
     public void setResve_reqst_ty(String resve_reqst_ty) {
         this.resve_reqst_ty = resve_reqst_ty;
+    }
+
+    public String getReqst_ty() {
+        return reqst_ty;
+    }
+
+    public void setReqst_ty(String reqst_ty) {
+        this.reqst_ty = reqst_ty;
     }
 
     public String getCreat_user_ip() {
