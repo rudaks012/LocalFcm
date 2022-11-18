@@ -281,7 +281,7 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
   <delete id="deleteTwoDayData">
     DELETE FROM TAD_MN_PUSH_MANAGE
   </delete>
-
+<!--시리얼 초기화-->
   <update id="resetSerial">
     ALTER SERIAL SEQ_MN_PUSH_SN
     START WITH 1
@@ -289,4 +289,47 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
     MINVALUE 1
     MAXVALUE 9999999999999999999999999999
   </update>
+
+<!--  통계-->
+<!-- 신청 서비스 통계 -->
+  <select id="selectPushRequestList" resultType="co.whalesoft.push.Push">
+    select a.sys_id,
+           b.sys_nm,
+           a.bbs_id,
+           count(a.sys_id)                         as sys_cnt,
+           to_char(a.creat_dt, 'YYYY-MM-DD')       as creat_dt,
+           to_char(a.resve_reqst_dt, 'YYYY-MM-DD') as resve_reqst_dt,
+           count(a.resve_reqst_ty)                 as reqst_cnt,
+           DECODE(a.resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS resve_reqst_ty
+    from po_user.tad_mn_push_manage a,
+           (
+             select
+                  sys_id, sys_nm
+              from
+                  po_user.tad_mn_push_gubun
+              group by
+                  sys_id, sys_nm
+            ) b
+    where a.push_trnsmis_sttus = 'N'
+    and a.sys_id = b.sys_id
+    group by a.sys_id, a.resve_reqst_ty
+  </select>
+
+<!--  발송 서비스 통계-->
+  <select id="selectPushSendList" resultType="co.whalesoft.push.Push">
+    select sys_id, bbs_id, resve_reqst_ty, reqst_cnt, sndng_dt,
+           sys_nm, sum(cnt) as sndng_cnt
+    from (
+        select sys_id, bbs_id, resve_reqst_ty, sys_nm,
+                 count(sys_id)                   as cnt,
+                 count(resve_reqst_ty)           as reqst_cnt,
+                 to_char(sndng_dt, 'YYYY-MM-DD') as sndng_dt
+          from
+              po_user.tad_mn_push_fcm
+          group by
+              sys_id, resve_reqst_ty, sndng_dt
+          )
+    group by sys_id,sndng_dt
+
+  </select>
 </mapper>

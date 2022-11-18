@@ -75,4 +75,20 @@ public class PushService {
     public int updateFcmPushSttus(int push_sn) {
         return pushDao.updateFcmPushSttus(push_sn);
     }
+
+    public List<Push> selectPushRequestList() {
+        return pushDao.selectPushRequestList();
+    }
+
+    public List<Push> selectPushSendList() {
+        return pushDao.selectPushSendList();
+    }
+
+    public void insertPushRequestList(List<Push> pushRequestList) {
+        pushDao.insertPushRequestList(pushRequestList);
+    }
+
+    public void insertPushSendList(List<Push> pushSendList) {
+        pushDao.insertPushSendList(pushSendList);
+    }
 }

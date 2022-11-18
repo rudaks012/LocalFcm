@@ -39,4 +39,12 @@ public interface PushDao {
     int insertUnsentPushList(List<Push> unsentPushList);
 
     int updateFcmPushSttus(int push_sn);
+
+    List<Push> selectPushRequestList();
+
+    List<Push> selectPushSendList();
+
+    void insertPushRequestList(List<Push> pushRequestList);
+
+    void insertPushSendList(List<Push> pushSendList);
 }

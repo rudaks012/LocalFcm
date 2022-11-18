@@ -330,14 +330,19 @@ public class PushController {
     }
 
 //    삭제 관련 메서드
+
 @GetMapping(value = "/push/edunavi/am/send1.do")
     public void pushInsertAfterDeletion() {
         List<Push> unsentPushList = selectUnsentPushList();
+        List<Push> pushRequestList = pushService.selectPushRequestList();
+        List<Push> pushSendList = pushService.selectPushSendList();
+        pushService.insertPushRequestList(pushRequestList);
+        pushService.insertPushSendList(pushSendList);
 
         if (unsentPushList.size() > 0) {
-            getResetSerial(); // 시리얼 초기화
-            deleteManageTable(); // 게시판에 존재하는 데이터 모두 삭제
-            pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
+//            getResetSerial(); // 시리얼 초기화
+//            deleteManageTable(); // 게시판에 존재하는 데이터 모두 삭제
+//            pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
         }else {
             logger.info("등록할 글이 없습니다.");
         }

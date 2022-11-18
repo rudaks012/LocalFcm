@@ -24,6 +24,18 @@ public class Push {
     private String push_nm; //알람 내용
     private String link_info; //링크
 
+    private int push_stats_sn; //알람 통계 순번
+
+    private int reqst_cnt; //요청 건수
+
+    private int sndng_cnt; //전송 건수
+
+    private String sndng_dt; //전송 일시
+
+    private String stats_rm; //통계 비고
+
+    private String stats_ty; //통계 유형
+
     private int resve_reqst_sn; //예약 요청 일련번호
 
     private String resve_reqst_dt; //예약 요청 일시
@@ -126,6 +138,14 @@ public class Push {
         this.push_seq = push_seq;
     }
 
+    public int getFcm_sn() {
+        return fcm_sn;
+    }
+
+    public void setFcm_sn(int fcm_sn) {
+        this.fcm_sn = fcm_sn;
+    }
+
     public String getSys_id() {
         return sys_id;
     }
@@ -182,6 +202,54 @@ public class Push {
         this.link_info = link_info;
     }
 
+    public int getPush_stats_sn() {
+        return push_stats_sn;
+    }
+
+    public void setPush_stats_sn(int push_stats_sn) {
+        this.push_stats_sn = push_stats_sn;
+    }
+
+    public int getReqst_cnt() {
+        return reqst_cnt;
+    }
+
+    public void setReqst_cnt(int reqst_cnt) {
+        this.reqst_cnt = reqst_cnt;
+    }
+
+    public int getSndng_cnt() {
+        return sndng_cnt;
+    }
+
+    public void setSndng_cnt(int sndng_cnt) {
+        this.sndng_cnt = sndng_cnt;
+    }
+
+    public String getSndng_dt() {
+        return sndng_dt;
+    }
+
+    public void setSndng_dt(String sndng_dt) {
+        this.sndng_dt = sndng_dt;
+    }
+
+    public String getStats_rm() {
+        return stats_rm;
+    }
+
+    public void setStats_rm(String stats_rm) {
+        this.stats_rm = stats_rm;
+    }
+
+    public String getStats_ty() {
+        return stats_ty;
+    }
+
+    public void setStats_ty(String stats_ty) {
+        this.stats_ty = stats_ty;
+    }
+
     public int getResve_reqst_sn() {
         return resve_reqst_sn;
     }
@@ -236,13 +304,5 @@ public class Push {
 
     public void setBbs_sj(String bbs_sj) {
         this.bbs_sj = bbs_sj;
-    }
-
-    public int getFcm_sn() {
-        return fcm_sn;
-    }
-
-    public void setFcm_sn(int fcm_sn) {
-        this.fcm_sn = fcm_sn;
     }
 }
