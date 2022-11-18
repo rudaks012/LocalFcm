@@ -335,8 +335,9 @@ public class PushController {
     public void pushInsertAfterDeletion() {
         List<Push> unsentPushList = selectUnsentPushList();
         List<Push> pushRequestList = pushService.selectPushRequestList();
-        List<Push> pushSendList = pushService.selectPushSendList();
         pushService.insertPushRequestList(pushRequestList);
+
+        List<Push> pushSendList = pushService.selectPushSendList();
         pushService.insertPushSendList(pushSendList);
 
         if (unsentPushList.size() > 0) {

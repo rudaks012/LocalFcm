@@ -12,7 +12,7 @@ public class Push {
     private String old_token; //오래된 토큰
     private String sw; // 멤버 상태 구분 기호 1: 신규 , 2: 업데이트 , 3: 업데이트된 상태
     private String device_se; // 핸드폰 구분 A: 안드로이드 I : 아이폰
-    private Data creat_dt; // 등록일시
+    private String creat_dt; // 등록일시
     private String push; // 해당 기관 코드 묶음
     private int push_seq; //알람 순번
     private int fcm_sn; // 알람 순번 (FCM)
@@ -26,6 +26,8 @@ public class Push {
 
     private int push_stats_sn; //알람 통계 순번
 
+    private String sys_cnt; //시스템 카운트
+
     private int reqst_cnt; //요청 건수
 
     private int sndng_cnt; //전송 건수
@@ -34,7 +36,7 @@ public class Push {
 
     private String stats_rm; //통계 비고
 
-    private String stats_ty; //통계 유형
+    private String stats_ty; //통계 유형    // R=  요청건수, S= 전송건수
 
     private int resve_reqst_sn; //예약 요청 일련번호
 
@@ -114,11 +116,11 @@ public class Push {
         this.device_se = device_se;
     }
 
-    public Data getCreat_dt() {
+    public String getCreat_dt() {
         return creat_dt;
     }
 
-    public void setCreat_dt(Data creat_dt) {
+    public void setCreat_dt(String creat_dt) {
         this.creat_dt = creat_dt;
     }
 
@@ -208,6 +210,14 @@ public class Push {
 
     public void setPush_stats_sn(int push_stats_sn) {
         this.push_stats_sn = push_stats_sn;
+    }
+
+    public String getSys_cnt() {
+        return sys_cnt;
+    }
+
+    public void setSys_cnt(String sys_cnt) {
+        this.sys_cnt = sys_cnt;
     }
 
     public int getReqst_cnt() {

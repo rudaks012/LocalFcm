@@ -296,22 +296,23 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
     select a.sys_id,
            b.sys_nm,
            a.bbs_id,
+           a.resve_reqst_ty,
            count(a.sys_id)                         as sys_cnt,
            to_char(a.creat_dt, 'YYYY-MM-DD')       as creat_dt,
            to_char(a.resve_reqst_dt, 'YYYY-MM-DD') as resve_reqst_dt,
            count(a.resve_reqst_ty)                 as reqst_cnt,
-           DECODE(a.resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS resve_reqst_ty
+           DECODE(a.resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS reqst_ty
     from po_user.tad_mn_push_manage a,
-           (
-             select
-                  sys_id, sys_nm
-              from
-                  po_user.tad_mn_push_gubun
-              group by
-                  sys_id, sys_nm
-            ) b
+         (
+           select
+             sys_id, sys_nm
+           from
+             po_user.tad_mn_push_gubun
+           group by
+             sys_id, sys_nm
+         ) b
     where a.push_trnsmis_sttus = 'N'
-    and a.sys_id = b.sys_id
+      and a.sys_id = b.sys_id
     group by a.sys_id, a.resve_reqst_ty
   </select>
 
@@ -332,4 +333,47 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
     group by sys_id,sndng_dt
 
   </select>
+
+  <insert id="insertPushRequestList" parameterType="co.whalesoft.push.Push">
+    INSERT INTO tad_mn_push_stats
+    (
+     push_stats_sn, sys_id, sys_cnt, reqst_cnt, resve_reqst_ty,
+     creat_dt, sys_nm, stats_ty
+     )
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (
+      SEQ_MN_PUSH_STATS_SN.NEXTVAL,
+      #{item.sys_id},
+      #{item.sys_cnt},
+      #{item.reqst_cnt},
+      #{item.resve_reqst_ty},
+      #{item.creat_dt},
+      #{item.sys_nm},
+      'R'
+      )
+    </foreach>
+  </insert>
+
+  <insert id="insertPushSendList" parameterType="co.whalesoft.push.Push">
+    INSERT INTO tad_mn_push_stats
+    (
+    push_stats_sn, sys_id, sndng_cnt, resve_reqst_ty, reqst_cnt,
+    sndng_dt, sys_nm, stats_ty
+    )
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (
+      SEQ_MN_PUSH_STATS_SN.NEXTVAL,
+      #{item.sys_id},
+      #{item.sndng_cnt},
+      #{item.resve_reqst_ty},
+      #{item.reqst_cnt},
+      #{item.sndng_dt},
+      #{item.sys_nm},
+      'S'
+      )
+    </foreach>
+  </insert>
+
 </mapper>
