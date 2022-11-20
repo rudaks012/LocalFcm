@@ -342,11 +342,13 @@ public class PushController {
         List<Push> unsentPushList = selectUnsentPushList();
 //        List<Push> pushRequestList = pushService.selectPushRequestList();
 //        pushService.insertPushRequestList(pushRequestList);
+    List<Push> pushSendList = pushService.selectPushSendList();
+    pushService.insertPushSendList(pushSendList);
 
-        List<Push> pushSendList = pushService.selectPushSendList();
-        pushService.insertPushSendList(pushSendList);
 
         if (unsentPushList.size() > 0) {
+//            List<Push> pushSendList = pushService.selectPushSendList();
+//            pushService.insertPushSendList(pushSendList);
 //            getResetSerial(); // 시리얼 초기화
 //            deleteManageTable(); // 게시판에 존재하는 데이터 모두 삭제
 //            pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
