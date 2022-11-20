@@ -342,8 +342,8 @@ public class PushController {
         List<Push> unsentPushList = selectUnsentPushList();
 //        List<Push> pushRequestList = pushService.selectPushRequestList();
 //        pushService.insertPushRequestList(pushRequestList);
-    List<Push> pushSendList = pushService.selectPushSendList();
-    pushService.insertPushSendList(pushSendList);
+        List<Push> pushSendList = pushService.selectPushSendList();
+        pushService.insertPushSendList(pushSendList);
 
 
         if (unsentPushList.size() > 0) {
