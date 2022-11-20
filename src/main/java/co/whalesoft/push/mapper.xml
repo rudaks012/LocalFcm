@@ -250,13 +250,11 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
     </if>
   </update>
 
-  <delete id="deleteFcmUsers" parameterType="co.whalesoft.push.Push">
+  <delete id="deleteFcmUsers" >
     DELETE FROM
       TAD_MN_PUSH_FCM
     WHERE
-      mbr_tkn_value = #{mbr_tkn_value}
-      and push_sj = #{push_sj}
-      and push_nm = #{push_nm}
+      push_sttus = 'Y'
   </delete>
 
   <delete id="deleteFcmNotRegistered" parameterType="co.whalesoft.push.Push">

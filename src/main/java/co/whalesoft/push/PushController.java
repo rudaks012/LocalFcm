@@ -94,9 +94,6 @@ public class PushController {
 
         if (fcmListPush.size() > 0) {
 
-            List<Push> pushRequestList = pushService.selectPushRequestList();
-            pushService.insertPushRequestList(pushRequestList);
-
             pushService.realInsert(fcmListPush);
 
             List<Push> tokenList = pushService.fcmPushList(push);
@@ -107,17 +104,10 @@ public class PushController {
                 executor.shutdown();
                 while (!executor.awaitTermination(1, TimeUnit.SECONDS));
             }
-//            deletePushUsers(tokenList);
         } else {
             logger.info("푸시할 글이 없습니다.");
         }
         updatePushSttus(fcmListPush);
-    }
-
-    private void deletePushUsers(List<Push> tokenList) {
-        for (Push deleteList : tokenList) {
-            pushService.deleteFcmUsers(deleteList);
-        }
     }
 
     private void updatePushSttus(List<Push> fcmListPush) {
@@ -340,21 +330,30 @@ public class PushController {
 @GetMapping(value = "/push/edunavi/am/send1.do")
     public void pushInsertAfterDeletion() {
         List<Push> unsentPushList = selectUnsentPushList();
-//        List<Push> pushRequestList = pushService.selectPushRequestList();
-//        pushService.insertPushRequestList(pushRequestList);
-        List<Push> pushSendList = pushService.selectPushSendList();
-        pushService.insertPushSendList(pushSendList);
+//    selectSendPushList();
+//    selectRequestList();
 
 
         if (unsentPushList.size() > 0) {
-//            List<Push> pushSendList = pushService.selectPushSendList();
-//            pushService.insertPushSendList(pushSendList);
-//            getResetSerial(); // 시리얼 초기화
-//            deleteManageTable(); // 게시판에 존재하는 데이터 모두 삭제
-//            pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
+            selectSendPushListInsert();
+            selectRequestListInsert();
+            deletePushUsers(); // fcm 테이블 초기화
+            getResetSerial(); // 시리얼 초기화
+            deleteManageTable(); // 게시판에 존재하는 데이터 모두 삭제
+            pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
         }else {
             logger.info("등록할 글이 없습니다.");
         }
+    }
+
+    private void selectRequestListInsert() {
+        List<Push> pushRequestList = pushService.selectPushRequestList();
+        pushService.insertPushRequestList(pushRequestList);  // 여기까지 통계 관련 데이터 Insert
+    }
+
+    private void selectSendPushListInsert() {
+        List<Push> pushSendList = pushService.selectPushSendList();
+        pushService.insertPushSendList(pushSendList);
     }
 
     private void deleteManageTable() {
@@ -367,5 +366,9 @@ public class PushController {
 
     private List<Push> selectUnsentPushList() {
         return pushService.selectUnsentPushList();
+    }
+
+    private void deletePushUsers() {
+            pushService.deleteFcmUsers();
     }
 }
