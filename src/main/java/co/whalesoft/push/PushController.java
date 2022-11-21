@@ -135,9 +135,14 @@ public class PushController {
     private void pushFCMDataInsert(List<Push> pushDataLists) throws IOException {
         for (Push pushDataList : pushDataLists) {
             String token = pushDataList.getMbr_tkn_value();
-            String push_sj = pushDataList.getPush_sj();
+            String push_sj = null;
+            if (pushDataList.getBbs_id().equals("InOut")) {
+                push_sj = pushDataList.getPush_nm();
+            }else {
+                push_sj = pushDataList.getBbs_sj();
+            }
             int push_sn = pushDataList.getFcm_sn();
-            String push_nm = pushDataList.getPush_nm();
+//            String push_nm = pushDataList.getPush_nm();
             String link = pushDataList.getLink_info();
             String apiKey = pushDataList.getDevice_se().equals("A") ? API_KEY : IOS_API_KEY;
 
@@ -155,11 +160,8 @@ public class PushController {
                 pushMessage.put("to", token);
                 pushMessage.put("priority", "high");
                 data.put("title", push_sj);
-                if (pushDataList.getBbs_id().equals("Inout")) {
-                    data.put("body", push_nm);
-                }else {
-                    data.put("body", "");
-                }
+//                data.put("body", push_nm);
+                data.put("body", "");
                 data.put("link", link);
 //            pushMessage.put("notification", data);
                 pushMessage.put("data", data);
@@ -168,11 +170,8 @@ public class PushController {
                 pushMessage.put("to", token);
                 pushMessage.put("priority", "high");
                 data.put("title", push_sj);
-                if (pushDataList.getBbs_id().equals("Inout")) {
-                    data.put("body", push_nm);
-                }else {
-                    data.put("body", "");
-                }
+//                data.put("body", push_nm);
+                data.put("body", "");
                 data.put("sound", "default");
                 data.put("content_available", "true");
                 pushMessage.put("notification", data);

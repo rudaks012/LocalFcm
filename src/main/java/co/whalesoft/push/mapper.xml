@@ -109,7 +109,7 @@
 -- 푸시내용 안보내기로 함 push_nm
     INSERT INTO TAD_MN_PUSH_FCM
         (
-         fcm_sn, mbr_tkn_value, sys_id, bbs_id, device_se,
+         fcm_sn, mbr_tkn_value, sys_id, bbs_id, device_se, push_nm,
          push_sj, link_info, resve_reqst_ty, push_sttus, sndng_dt,
          sys_nm
         )
@@ -126,6 +126,7 @@
             #{item.sys_id},
             #{item.bbs_id},
             #{item.device_se},
+            #{item.push_nm},
             #{item.push_sj},
             #{item.link_info},
             #{item.resve_reqst_ty},
@@ -175,7 +176,7 @@
 
   <select id="fcmPushList" parameterType="co.whalesoft.push.Push" resultType="co.whalesoft.push.Push">
     SELECT
-      fcm_sn, device_se, mbr_tkn_value, push_sj, push_nm, link_info, push_sttus
+      fcm_sn, device_se, mbr_tkn_value, push_sj, push_nm, link_info, push_sttus, bbs_id, push_nm
     FROM
       TAD_MN_PUSH_FCM
   </select>
