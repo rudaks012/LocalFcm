@@ -240,7 +240,7 @@ public class PushController {
             if (pushDataList.getBbs_id().equals("InOut")) {
                 push_sj = pushDataList.getPush_nm();
             }else {
-                push_sj = pushDataList.getBbs_sj();
+                push_sj = pushDataList.getPush_sj();
             }
             int push_sn = pushDataList.getFcm_sn();
 //            String push_nm = pushDataList.getPush_nm();
