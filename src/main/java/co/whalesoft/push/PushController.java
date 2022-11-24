@@ -326,37 +326,46 @@ public class PushController {
 //    삭제 관련 메서드
 
 @GetMapping(value = "/push/edunavi/am/send1.do")
-    public void pushInsertAfterDeletion() {
-        List<Push> unsentPushList = selectUnsentPushList();
+public void pushInsertAfterDeletion() {
+    List<Push> unsentPushList = selectUnsentPushList();
 
     selectRequestListInsert();
     selectSendPushListInsert();
-    logger.info("통계 테이블 삽입 완료");
     resetManageTable();
     resetPushUsers(); // fcm 테이블 초기화
-    logger.info("푸시 테이블 초기화 완료");
     getResetSerial(); // 시리얼 초기화
-    logger.info("시리얼 초기화 완료");
-        if (unsentPushList.size() > 0) {
+
+    if (unsentPushList.size() > 0) {
 //            selectRequestListInsert();  // 1. 통계 테이블 삽입(발송)
 //            selectSendPushListInsert();
-             // 게시판에 존재하는 데이터 모두 삭제
-            pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
-        }else {
-            logger.info("등록할 글이 없습니다.");
-        }
+        // 게시판에 존재하는 데이터 모두 삭제
+        pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
+    }else {
+        logger.info("등록할 글이 없습니다.");
+    }
 //        deletePushUsers(); // fcm 테이블 초기화
 //        getResetSerial(); // 시리얼 초기화
-    }
+}
 
     private void selectRequestListInsert() {
         List<Push> pushRequestList = pushService.selectPushRequestList();
-        pushService.insertPushRequestList(pushRequestList);  // 여기까지 통계 관련 데이터 Insert
+        if (pushRequestList.size() > 0) {
+            pushService.insertPushRequestList(pushRequestList);// 여기까지 통계 관련 데이터 Insert
+            logger.info("신청 PUSH 통계 테이블 삽입 완료");
+        } else {
+            logger.info("신청 PUSH 통계 테이블 삽입할 데이터가 없습니다.");
+        }
     }
 
     private void selectSendPushListInsert() {
         List<Push> pushSendList = pushService.selectPushSendList();
-        pushService.insertPushSendList(pushSendList);
+
+        if (pushSendList.size() > 0) {
+            pushService.insertPushSendList(pushSendList);// 여기까지 통계 관련 데이터 Insert
+            logger.info("발송 PUSH 통계 테이블 삽입 완료");
+        } else {
+            logger.info("발송 PUSH 통계 테이블 삽입할 데이터가 없습니다.");
+        }
     }
 
     private void resetManageTable() {
@@ -365,6 +374,7 @@ public class PushController {
 
     private void getResetSerial() {
         pushService.resetSerial();
+        logger.info("시리얼 초기화 완료");
     }
 
     private List<Push> selectUnsentPushList() {
@@ -372,6 +382,6 @@ public class PushController {
     }
 
     private void resetPushUsers() {
-            pushService.deleteFcmUsers();
+        pushService.deleteFcmUsers();
     }
 }
