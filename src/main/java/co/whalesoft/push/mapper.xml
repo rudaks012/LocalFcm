@@ -79,31 +79,6 @@
       AND b.bbs_id = c.bbs_id
 
   </select>
-<!-- 통계  select a.sys_id,
-  b.sys_nm,
-  a.bbs_id,
-  to_date(to_char(a.creat_dt, 'YYYY-MM-DD'), 'YYYY-MM-DD')                                      as creat_dt,
-  to_date(to_char(a.resve_reqst_dt, 'YYYY-MM-DD'), 'YYYY-MM-DD')                                as resve_reqst_dt,
-  a.resve_reqst_ty,
-  DECODE(a.resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS reqst_ty,
-  c.mbr_tkn_value,
-  c.device_se,
-  a.push_sj,
-  a.push_nm,
-  a.link_info,
-  a.push_trnsmis_sttus
-  from po_user.tad_mn_push_manage a,
-  (select sys_id,
-  sys_nm,
-  mbr_tkn_value
-  from po_user.tad_mn_push_gubun
-  group by sys_id, sys_nm) b,
-  po_user.tad_mn_push_user c
-  where a.push_trnsmis_sttus = 'N'
-
-  and a.sys_id = b.sys_id
-  and b.mbr_tkn_value = c.mbr_tkn_value
-  group by a.sys_id, a.resve_reqst_ty;-->
 
   <insert id="realInsert" parameterType="java.util.List">
 -- 푸시내용 안보내기로 함 push_nm
@@ -198,44 +173,22 @@
   </update>
 
   <select id="fcmListMember" resultType="co.whalesoft.push.Push">
---     SELECT
---       a.mbr_tkn_value, a.device_se, c.push_sj, c.push_nm, c.link_info, c.push_trnsmis_sttus,
---       c.sys_id, c.bbs_id
---     FROM
---       TAD_MN_PUSH_USER a, TAD_MN_PUSH_GUBUN b, TAD_MN_PUSH_MANAGE c
---     WHERE
---         b.push_at = 'Y'
---       AND c.push_trnsmis_sttus = 'N'
---       and a.mbr_tkn_value = b.mbr_tkn_value
---       AND b.sys_id = c.sys_id
---       AND b.bbs_id = c.bbs_id
-SELECT a.mbr_tkn_value,
-       a.device_se,
-       b.sys_nm,
-       c.push_sj,
-       c.push_nm,
-       c.link_info,
-       c.push_trnsmis_sttus,
-       c.sys_id,
-       c.bbs_id,
-       c.resve_reqst_ty,
-       c.mber_id,
-       c.resve_reqst_dt
-FROM TAD_MN_PUSH_USER a,
-     TAD_MN_PUSH_GUBUN b,
-     TAD_MN_PUSH_MANAGE c
-WHERE b.push_at = 'Y'
-  AND c.push_trnsmis_sttus = 'N'
-  <if test ="mber_id != null">
-      AND c.mber_id = #{mber_id}
-      AND c.resve_reqst_dt <![CDATA[<=]]> sys_datetime
-  </if>
-  and a.mbr_tkn_value = b.mbr_tkn_value
-  AND b.sys_id = c.sys_id
-  AND (b.bbs_id = c.bbs_id
-  OR b.bbs_id = '0')
-group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
-
+    SELECT
+        a.mbr_tkn_value, a.device_se, b.sys_nm, c.push_sj, c.push_nm,
+        c.link_info, c.push_trnsmis_sttus, c.sys_id, c.bbs_id, c.resve_reqst_ty,
+        c.mber_id, c.resve_reqst_dt, c.creat_dt
+    FROM
+        TAD_MN_PUSH_USER a,
+        TAD_MN_PUSH_GUBUN b,
+        TAD_MN_PUSH_MANAGE c
+    WHERE
+        b.push_at = 'Y'
+    AND c.push_trnsmis_sttus = 'N'
+    AND (to_char(c.creat_dt,'YYYY-MM-DD') = to_char(sys_datetime,'YYYY-MM-DD') OR c.resve_reqst_dt <= sys_datetime)
+    and a.mbr_tkn_value = b.mbr_tkn_value
+    AND b.sys_id = c.sys_id
+    AND (b.bbs_id = c.bbs_id OR b.bbs_id = '0')
+    group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
 
   </select>
 
@@ -292,28 +245,6 @@ group by a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
 <!--  통계-->
 <!-- 신청 서비스 통계 -->
   <select id="selectPushRequestList" resultType="co.whalesoft.push.Push">
---     select a.sys_id,
---            b.sys_nm,
---            a.bbs_id,
---            a.resve_reqst_ty,
---            count(a.sys_id)                         as sys_cnt,
---            to_char(a.creat_dt, 'YYYY-MM-DD')       as creat_dt,
---            to_char(a.resve_reqst_dt, 'YYYY-MM-DD') as resve_reqst_dt,
---            count(a.resve_reqst_ty)                 as reqst_cnt,
---            DECODE(a.resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS reqst_ty
---     from po_user.tad_mn_push_manage a,
---          (
---            select
---              sys_id, sys_nm
---            from
---              po_user.tad_mn_push_gubun
---            group by
---              sys_id, sys_nm
---          ) b
---     where a.push_trnsmis_sttus = 'Y'
---       and a.sys_id = b.sys_id
---     group by a.sys_id, a.resve_reqst_ty
-
       SELECT
         sys_id, sys_nm, resve_reqst_ty, count(sys_id) as sys_cnt, count(resve_reqst_ty) as reqst_cnt,
         DECODE(resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS reqst_ty
