@@ -184,7 +184,7 @@
     WHERE
         b.push_at = 'Y'
     AND c.push_trnsmis_sttus = 'N'
-    AND (to_char(c.creat_dt,'YYYY-MM-DD') = to_char(sys_datetime,'YYYY-MM-DD') OR c.resve_reqst_dt <= sys_datetime)
+    AND (to_char(c.creat_dt,'YYYY-MM-DD') = to_char(sys_datetime,'YYYY-MM-DD') OR c.resve_reqst_dt <![CDATA[<=]]> sys_datetime)
     and a.mbr_tkn_value = b.mbr_tkn_value
     AND b.sys_id = c.sys_id
     AND (b.bbs_id = c.bbs_id OR b.bbs_id = '0')
