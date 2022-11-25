@@ -150,10 +150,12 @@
   
 
   <select id="fcmPushList" parameterType="co.whalesoft.push.Push" resultType="co.whalesoft.push.Push">
-    SELECT
+    select
       fcm_sn, device_se, mbr_tkn_value, push_sj, push_nm, link_info, push_sttus, bbs_id, push_nm
-    FROM
-      TAD_MN_PUSH_FCM
+    from
+      tad_mn_push_fcm
+    WHERE
+        push_sttus = 'N'
   </select>
 
   <delete id="deleteFcmPushList" parameterType="String">
