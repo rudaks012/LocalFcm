@@ -272,21 +272,34 @@
 
 <!--  발송 서비스 통계-->
   <select id="selectPushSendList" resultType="co.whalesoft.push.Push">
-    SELECT sys_id, bbs_id, resve_reqst_ty, reqst_cnt, sndng_dt,
-           sys_nm, sum(cnt) as sndng_cnt, reqst_ty
-    FROM (
-           SELECT sys_id, bbs_id, resve_reqst_ty, sys_nm,
-                  count(sys_id)                   as cnt,
-                  count(resve_reqst_ty)           as reqst_cnt,
-                  to_char(sndng_dt, 'YYYY-MM-DD') as sndng_dt,
-                  DECODE(resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)') AS reqst_ty
+    SELECT a.sys_id, a.bbs_id, a.resve_reqst_ty, a.sndng_dt, b.readng_count,
+           a.sys_nm, a.sndng_cnt, a.reqst_ty
+    from (
+           SELECT sys_id, bbs_id, resve_reqst_ty, reqst_cnt, sndng_dt,
+                  sys_nm, sum(cnt) as sndng_cnt, reqst_ty
+           FROM (
+                  SELECT sys_id, bbs_id, resve_reqst_ty, sys_nm, readng_sttus,
+                         count(sys_id)  as cnt,
+                         count(resve_reqst_ty) as reqst_cnt,
+                         to_char(sndng_dt, 'YYYY-MM-DD') as sndng_dt,
+                         DECODE(resve_reqst_ty, 'EXPRN', '통합예약(체험)', 'PBLPRFR', '통합예약(공연/전시)', 'EDU', '통합예약(교육/강좌)')  AS reqst_ty
+                  FROM
+                    po_user.tad_mn_push_fcm
+                  WHERE
+                    push_sttus = 'Y'
+                    AND to_char(sndng_dt, 'YYYY-MM-DD') = to_char(sys_datetime, 'YYYY-MM-DD')
+                  GROUP BY sys_id, resve_reqst_ty, sndng_dt
+                  ORDER BY sys_id desc)
+           GROUP BY sys_id, sndng_dt) a,
+         (
+           SELECT
+             sys_id,count(readng_sttus) as readng_count
            FROM
              po_user.tad_mn_push_fcm
-           WHERE  push_sttus = 'Y'
-           GROUP BY
-             sys_id, resve_reqst_ty, sndng_dt
-         )
-    GROUP BY sys_id,sndng_dt
+           WHERE
+             readng_sttus = 'Y'
+           GROUP BY sys_id) b
+    where a.sys_id = b.sys_id
 
   </select>
 
@@ -316,7 +329,7 @@
     INSERT INTO tad_mn_push_stats
     (
     push_stats_sn, sys_id, sndng_cnt, resve_reqst_ty, reqst_cnt,
-    reqst_ty, sndng_dt, sys_nm, stats_ty
+    reqst_ty, sndng_dt, sys_nm,readng_count, stats_ty
     )
     VALUES
     <foreach collection="list" item="item" separator=",">
@@ -329,6 +342,7 @@
       #{item.reqst_ty},
       #{item.sndng_dt},
       #{item.sys_nm},
+     #{item.readng_count},
       'S'
       )
     </foreach>

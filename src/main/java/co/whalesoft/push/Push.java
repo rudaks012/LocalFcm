@@ -48,6 +48,8 @@ public class Push {
 
     private String creat_user_ip; //등록자 IP
 
+    private int readng_count; //읽은 건수
+
     private String usage_at; //사용여부
 
     //알림
@@ -56,6 +58,14 @@ public class Push {
 
     public String getMber_id() {
         return mber_id;
+    }
+
+    public int getReadng_count() {
+        return readng_count;
+    }
+
+    public void setReadng_count(int readng_count) {
+        this.readng_count = readng_count;
     }
 
     public void setMber_id(String mber_id) {

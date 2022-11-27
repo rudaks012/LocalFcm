@@ -245,6 +245,7 @@ public class PushController {
             int push_sn = pushDataList.getFcm_sn();
 //            String push_nm = pushDataList.getPush_nm();
             String link = pushDataList.getLink_info();
+            int number = pushDataList.getFcm_sn();
             String apiKey = pushDataList.getDevice_se().equals("A") ? API_KEY : IOS_API_KEY;
 
             URL url = new URL(FCM_URL);
@@ -263,6 +264,7 @@ public class PushController {
                 data.put("title", push_sj);
 //                data.put("body", push_nm);
                 data.put("body", "");
+                data.put("number", number);
                 data.put("link", link);
 //            pushMessage.put("notification", data);
                 pushMessage.put("data", data);
@@ -273,6 +275,7 @@ public class PushController {
                 data.put("title", push_sj);
 //                data.put("body", push_nm);
                 data.put("body", "");
+                data.put("number", number);
                 data.put("sound", "default");
                 data.put("content_available", "true");
                 pushMessage.put("notification", data);
