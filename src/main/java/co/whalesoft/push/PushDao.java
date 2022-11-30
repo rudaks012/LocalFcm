@@ -8,19 +8,9 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface PushDao {
 
-    int insertMberTkn(Push push); // 로그인 시 빈 토큰이 들어와 data insert
-
-    int updateMberTkn(Push push); // 로그인 후 name,
-
-    int updateDplcteMberTkn(Push push);
-
-    int fcmGubunInsert(Push push);
-
     List<Push> fcmListMember(Push push);
 
     int realInsert(List<Push> fcmListPush);
-
-    int deleteGubunMember(Push push);
 
     List<Push> fcmPushList(Push push);
 

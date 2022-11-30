@@ -1,7 +1,5 @@
 package co.whalesoft.push;
 
-import javax.xml.crypto.Data;
-
 public class Push {
 
     private String mber_id; // 회원아이디

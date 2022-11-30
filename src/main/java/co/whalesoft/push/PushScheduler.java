@@ -28,7 +28,6 @@ public class PushScheduler {
     public static final String IOS_API_KEY = "AAAAcWUn1bA:APA91bHgZSuVe9pHZ9N_-wllSjdeJUBe66s8utnELwdvUgg2Vb7N1WMIDL9cGs00nyekYQeVgH5Yqbq3GqLvQAVEA-hjoZWDZLoMm9CmQS5QUtuniYypKCPKAnbqh_nR9mIzc2879Rtc";
     public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     public static final int THREAD_COUNT = 8;
-    public static final int ZERO = 0;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
@@ -182,15 +181,11 @@ public class PushScheduler {
         getResetSerial(); // 시리얼 초기화
 
         if (unsentPushList.size() > 0) {
-//            selectRequestListInsert();  // 1. 통계 테이블 삽입(발송)
-//            selectSendPushListInsert();
             // 게시판에 존재하는 데이터 모두 삭제
             pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
         }else {
             logger.info("등록할 글이 없습니다.");
         }
-//        deletePushUsers(); // fcm 테이블 초기화
-//        getResetSerial(); // 시리얼 초기화
     }
 
     private void selectRequestListInsert() {

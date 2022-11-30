@@ -12,33 +12,12 @@ public class PushService {
     @Autowired
     private PushDao pushDao;
 
-
-    public int insertMberTkn(Push push) {
-        return pushDao.insertMberTkn(push);
-    }
-
-    public int updateMberTkn(Push push) {
-        return pushDao.updateMberTkn(push);
-    }
-
-    public int updateDplcteMberTkn(Push push) {
-        return pushDao.updateDplcteMberTkn(push);
-    }
-
-    public int fcmGubunInsert(Push push) {
-        return pushDao.fcmGubunInsert(push);
-    }
-
     public List<Push> fcmListMember(Push push) {
         return pushDao.fcmListMember(push);
     }
 
     public int realInsert(List<Push> fcmListPush) {
         return pushDao.realInsert(fcmListPush);
-    }
-
-    public int deleteGubunMember(Push push) {
-        return pushDao.deleteGubunMember(push);
     }
 
     public List<Push> fcmPushList(Push push) {
