@@ -74,4 +74,8 @@ public class PushService {
     public List<Push> fcmResveListMember(Push push) {
         return pushDao.fcmResveListMember(push);
     }
+
+    public List<Push> fcmMberTyResveList(String[] push) {
+        return pushDao.fcmMberTyResveList(push);
+    }
 }

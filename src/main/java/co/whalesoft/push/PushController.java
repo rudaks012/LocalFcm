@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,8 +62,19 @@ public class PushController {
         Push push = new Push();
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Push> fcmListPush = pushService.fcmResveListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
+        List<Push> mberTyArrayList = new ArrayList<>();
 
         if (fcmListPush.size() > 0) {
+
+            for (int i = 0; i < fcmListPush.size(); i++) {
+                Push listPush = fcmListPush.get(i);
+                if (!listPush.getMber_ty().equals("") || listPush.getMber_ty() != null) {
+                    String[] mberArray = listPush.getMber_ty().split(",");
+                    mberTyArrayList = pushService.fcmMberTyResveList(mberArray);
+                    fcmListPush.remove(i);
+                }
+            }
+            fcmListPush.addAll(mberTyArrayList);
 
             pushService.realInsert(fcmListPush);
 

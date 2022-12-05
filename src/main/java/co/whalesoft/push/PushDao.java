@@ -39,4 +39,6 @@ public interface PushDao {
     void insertPushSendList(List<Push> pushSendList);
 
     List<Push> fcmResveListMember(Push push);
+
+    List<Push> fcmMberTyResveList(String[] push);
 }

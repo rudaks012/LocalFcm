@@ -212,6 +212,28 @@
       AND (b.bbs_id = c.bbs_id OR b.bbs_id = '0')
   </select>
 
+  <select id="fcmMberTyResveList" resultType="co.whalesoft.push.Push" >
+    SELECT
+      a.mbr_tkn_value, a.device_se, b.sys_nm, c.push_sj, c.push_nm,
+      c.link_info, c.push_trnsmis_sttus, c.sys_id, c.bbs_id, c.resve_reqst_ty,
+      c.mber_id, a.mber_ty, c.resve_reqst_dt, c.creat_dt
+    FROM
+      TAD_MN_PUSH_USER a,
+      TAD_MN_PUSH_GUBUN b,
+      TAD_MN_PUSH_MANAGE c
+    WHERE
+      b.push_at = 'Y'
+      AND c.push_trnsmis_sttus = 'N'
+      AND c.resve_reqst_ty IS NOT NULL
+      AND a.mber_ty in
+    <foreach collection="array" item="arr" open="(" close=")" separator=",">
+      #{arr}
+    </foreach>
+      AND a.mbr_tkn_value = b.mbr_tkn_value
+      AND b.resve_reqst_ty = c.resve_reqst_ty
+      AND (b.bbs_id = c.bbs_id OR b.bbs_id = '0')
+  </select>
+
   <update id="updatePushSttus" parameterType="co.whalesoft.push.Push">
     UPDATE
     TAD_MN_PUSH_MANAGE
