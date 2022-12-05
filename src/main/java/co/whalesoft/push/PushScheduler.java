@@ -185,6 +185,7 @@ public class PushScheduler {
             pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
         }else {
             logger.info("등록할 글이 없습니다.");
+
         }
     }
 

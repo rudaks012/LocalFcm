@@ -50,7 +50,7 @@ public class PushController {
                 while (!executor.awaitTermination(1, TimeUnit.SECONDS));
             }
         } else {
-            logger.info("푸시할 글이 없습니다.");
+//            logger.info("푸시할 글이 없습니다.");
         }
         updatePushSttus(fcmListPush);
     }
