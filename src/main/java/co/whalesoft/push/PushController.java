@@ -33,9 +33,34 @@ public class PushController {
     private PushService pushService;
 
     @GetMapping(value = "/push/edunavi/am/send.do")
-    public void fcmPushServer(Push push) throws Exception {
+    public void fcmPushServer() throws Exception {
+        Push push = new Push();
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Push> fcmListPush = pushService.fcmListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
+
+        if (fcmListPush.size() > 0) {
+
+            pushService.realInsert(fcmListPush);
+
+            List<Push> tokenList = pushService.fcmPushList(push);
+            if (tokenList.size() < THREAD_COUNT) {
+                pushFCMDataInsert(tokenList);
+            } else {
+                multiThreadPush(executor, tokenList);
+                executor.shutdown();
+                while (!executor.awaitTermination(1, TimeUnit.SECONDS));
+            }
+        } else {
+//            logger.info("푸시할 글이 없습니다.");
+        }
+        updatePushSttus(fcmListPush);
+    }
+
+    @GetMapping(value = "/push/edunavi/am/sendResve.do")
+    public void fcmResvePushServer() throws Exception {
+        Push push = new Push();
+        final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+        List<Push> fcmListPush = pushService.fcmResveListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
 
         if (fcmListPush.size() > 0) {
 

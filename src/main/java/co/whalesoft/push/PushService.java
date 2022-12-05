@@ -70,4 +70,8 @@ public class PushService {
     public void insertPushSendList(List<Push> pushSendList) {
         pushDao.insertPushSendList(pushSendList);
     }
+
+    public List<Push> fcmResveListMember(Push push) {
+        return pushDao.fcmResveListMember(push);
+    }
 }
