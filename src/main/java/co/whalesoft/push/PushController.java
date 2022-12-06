@@ -33,6 +33,8 @@ public class PushController {
     @Autowired
     private PushService pushService;
 
+    //통합 예약 아닌 부분 푸시 보내기
+
     @GetMapping(value = "/push/edunavi/am/send.do")
     public void fcmPushServer() throws Exception {
         Push push = new Push();
@@ -57,6 +59,7 @@ public class PushController {
         updatePushSttus(fcmListPush);
     }
 
+    //통합 예약 관련 푸시 보내기
     @GetMapping(value = "/push/edunavi/am/sendResve.do")
     public void fcmResvePushServer() throws Exception {
         Push push = new Push();
