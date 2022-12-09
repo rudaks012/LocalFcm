@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -64,7 +65,7 @@ public class PushController {
     public void fcmResvePushServer() throws Exception {
         Push push = new Push();
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
-        List<Push> fcmListPush = pushService.fcmResveListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
+        List<Push> fcmListPush = nullSafeResveList(push); // 여기에서 push를 보낼 글과 인원을 구함
         List<Push> mberTyArrayList = new ArrayList<>();
 
         if (fcmListPush.size() > 0) {
@@ -87,12 +88,18 @@ public class PushController {
             } else {
                 multiThreadPush(executor, tokenList);
                 executor.shutdown();
-                while (!executor.awaitTermination(1, TimeUnit.SECONDS));
+                while (!executor.awaitTermination(1, TimeUnit.SECONDS))
+                    ;
             }
         } else {
-//            logger.info("푸시할 글이 없습니다.");
+            logger.info("푸시할 글이 없습니다.");
         }
         updatePushSttus(fcmListPush);
+    }
+
+    private List<Push> nullSafeResveList(Push push) {
+        return Optional.ofNullable(pushService.fcmResveListMember(push))
+                       .orElse(Lists.newArrayList());
     }
 
     private void updatePushSttus(List<Push> fcmListPush) {
@@ -123,7 +130,7 @@ public class PushController {
             String push_sj = null;
             if (pushDataList.getBbs_id().equals("InOut")) {
                 push_sj = pushDataList.getPush_nm();
-            }else {
+            } else {
                 push_sj = pushDataList.getPush_sj();
             }
             int push_sn = pushDataList.getFcm_sn();
@@ -208,27 +215,25 @@ public class PushController {
         }
     }
 
-
-
 //    삭제 관련 메서드
 
-@GetMapping(value = "/push/edunavi/am/send1.do")
-public void pushInsertAfterDeletion() {
-    List<Push> unsentPushList = selectUnsentPushList();
+    @GetMapping(value = "/push/edunavi/am/send1.do")
+    public void pushInsertAfterDeletion() {
+        List<Push> unsentPushList = selectUnsentPushList();
 
-    selectRequestListInsert();
-    selectSendPushListInsert();
-    resetManageTable();
-    resetPushUsers(); // fcm 테이블 초기화
-    getResetSerial(); // 시리얼 초기화
+        selectRequestListInsert();
+        selectSendPushListInsert();
+        resetManageTable();
+        resetPushUsers(); // fcm 테이블 초기화
+        getResetSerial(); // 시리얼 초기화
 
-    if (unsentPushList.size() > 0) {
-        // 게시판에 존재하는 데이터 모두 삭제
-        pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
-    }else {
-        logger.info("등록할 글이 없습니다.");
+        if (unsentPushList.size() > 0) {
+            // 게시판에 존재하는 데이터 모두 삭제
+            pushService.insertUnsentPushList(unsentPushList); // 삭제된 데이터 다시 삽입(보내지 않은 데이터)
+        } else {
+            logger.info("등록할 글이 없습니다.");
+        }
     }
-}
 
     private void selectRequestListInsert() {
         List<Push> pushRequestList = pushService.selectPushRequestList();
