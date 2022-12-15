@@ -26,8 +26,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class PushScheduler {
 
-//    public static final String API_KEY = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
-    public static final String API_KEY = "AAAAtdn8QC0:APA91bHKLENdGs362Vnj25UhJP4Jdx_f0EwTcx48uH-BoMv0NGKwTBnW4_qQXK-6lLra-MeeDX4toS_wr1LyphSqPw6vUe5rGJx-VYSxgNxjktw7anqLfJa9lWZXSIwWAJoGUq4UHqJQ";
+    //여기가 실제서버
+//    public static final String API_KEY = "AAAAtdn8QC0:APA91bHKLENdGs362Vnj25UhJP4Jdx_f0EwTcx48uH-BoMv0NGKwTBnW4_qQXK-6lLra-MeeDX4toS_wr1LyphSqPw6vUe5rGJx-VYSxgNxjktw7anqLfJa9lWZXSIwWAJoGUq4UHqJQ";
+    //이부분 내가 만든 소스
+//    public static final String API_KEY = "AAAAFMipbJk:APA91bEZJcACWGE5F4ExeppJQqluNG49kT7felqp9ZSrlkXDZ08HnPWnLqEQEDL2vo7K0mkHOGcQIhxN2B0OU-MspVtNNtBPCo-nxum6F7-GQfssvlrJLP1U5S12bz47Ikk16uEBHVVD";
+    public static final String API_KEY = "AAAAJBqm8-M:APA91bHNeX0CzYebGWFoVrwlFzsDrAaeSf4_9q20fzqQAs0w5-mK09LLVHWmaHlSOGPxsmY4cuiTF_KZLwv--CYZvizTybTVSzqsAfpwYceFDc8AzjsVmG5DLNr-U85d_SOVdaJxiP6H";
 
     public static final String IOS_API_KEY = "AAAAcWUn1bA:APA91bHgZSuVe9pHZ9N_-wllSjdeJUBe66s8utnELwdvUgg2Vb7N1WMIDL9cGs00nyekYQeVgH5Yqbq3GqLvQAVEA-hjoZWDZLoMm9CmQS5QUtuniYypKCPKAnbqh_nR9mIzc2879Rtc";
     public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
@@ -56,6 +59,7 @@ public class PushScheduler {
                 while (!executor.awaitTermination(1, TimeUnit.SECONDS));
             }
         } else {
+//            logger.info("1214반영");
 //            logger.info("푸시할 글이 없습니다.");
         }
         updatePushSttus(fcmListPush);
