@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PushController {
     //전 API_KEY 값
-//    public static final String API_KEY = "AAAADMrXXXE:APA91bEEhyCxwOHeNBLrebLXOUb1keIuuzx_vnnZrVnGreV0JED-vy9A1LT3NALYxcf1t69tS5RgopVcno9U0oUZ9jy5IHfSkMMICo1p73VDoqoI2dq0mUOfc4XDddlk3bVzgwli6kZB";
-//    public static final String API_KEY = "AAAAtdn8QC0:APA91bHKLENdGs362Vnj25UhJP4Jdx_f0EwTcx48uH-BoMv0NGKwTBnW4_qQXK-6lLra-MeeDX4toS_wr1LyphSqPw6vUe5rGJx-VYSxgNxjktw7anqLfJa9lWZXSIwWAJoGUq4UHqJQ";
     public static final String API_KEY = "AAAAtdn8QC0:APA91bHKLENdGs362Vnj25UhJP4Jdx_f0EwTcx48uH-BoMv0NGKwTBnW4_qQXK-6lLra-MeeDX4toS_wr1LyphSqPw6vUe5rGJx-VYSxgNxjktw7anqLfJa9lWZXSIwWAJoGUq4UHqJQ";
     //API KEY 값 받을때까지 FCM push 전송 불가
     public static final String IOS_API_KEY = "AAAAcWUn1bA:APA91bHgZSuVe9pHZ9N_-wllSjdeJUBe66s8utnELwdvUgg2Vb7N1WMIDL9cGs00nyekYQeVgH5Yqbq3GqLvQAVEA-hjoZWDZLoMm9CmQS5QUtuniYypKCPKAnbqh_nR9mIzc2879Rtc";

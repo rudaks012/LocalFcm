@@ -26,12 +26,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PushScheduler {
 
-    //여기가 실제서버
-//    public static final String API_KEY = "AAAAtdn8QC0:APA91bHKLENdGs362Vnj25UhJP4Jdx_f0EwTcx48uH-BoMv0NGKwTBnW4_qQXK-6lLra-MeeDX4toS_wr1LyphSqPw6vUe5rGJx-VYSxgNxjktw7anqLfJa9lWZXSIwWAJoGUq4UHqJQ";
-    //이부분 내가 만든 소스
-//    public static final String API_KEY = "AAAAFMipbJk:APA91bEZJcACWGE5F4ExeppJQqluNG49kT7felqp9ZSrlkXDZ08HnPWnLqEQEDL2vo7K0mkHOGcQIhxN2B0OU-MspVtNNtBPCo-nxum6F7-GQfssvlrJLP1U5S12bz47Ikk16uEBHVVD";
     public static final String API_KEY = "AAAAJBqm8-M:APA91bHNeX0CzYebGWFoVrwlFzsDrAaeSf4_9q20fzqQAs0w5-mK09LLVHWmaHlSOGPxsmY4cuiTF_KZLwv--CYZvizTybTVSzqsAfpwYceFDc8AzjsVmG5DLNr-U85d_SOVdaJxiP6H";
-
     public static final String IOS_API_KEY = "AAAAcWUn1bA:APA91bHgZSuVe9pHZ9N_-wllSjdeJUBe66s8utnELwdvUgg2Vb7N1WMIDL9cGs00nyekYQeVgH5Yqbq3GqLvQAVEA-hjoZWDZLoMm9CmQS5QUtuniYypKCPKAnbqh_nR9mIzc2879Rtc";
     public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     public static final int THREAD_COUNT = 8;
@@ -59,8 +54,6 @@ public class PushScheduler {
                 while (!executor.awaitTermination(1, TimeUnit.SECONDS));
             }
         } else {
-//            logger.info("1214반영");
-//            logger.info("푸시할 글이 없습니다.");
         }
         updatePushSttus(fcmListPush);
     }
@@ -75,7 +68,7 @@ public class PushScheduler {
 
             for (int i = 0; i < fcmListPush.size(); i++) {
                 Push listPush = fcmListPush.get(i);
-                if (!listPush.getMber_ty().equals("") || listPush.getMber_ty() != null) {
+                if (!listPush.getMber_ty().equals("")) {
                     String[] mberArray = listPush.getMber_ty().split(",");
                     mberTyArrayList = pushService.fcmMberTyResveList(mberArray);
                     fcmListPush.remove(i);
