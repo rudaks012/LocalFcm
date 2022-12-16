@@ -1,5 +1,6 @@
 package co.whalesoft.push;
 
+import co.whalesoft.util.config.ApiKey;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
@@ -26,11 +27,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class PushController {
     
     //안드로이드 키값
-    public static final String API_KEY = "AAAAtdn8QC0:APA91bHKLENdGs362Vnj25UhJP4Jdx_f0EwTcx48uH-BoMv0NGKwTBnW4_qQXK-6lLra-MeeDX4toS_wr1LyphSqPw6vUe5rGJx-VYSxgNxjktw7anqLfJa9lWZXSIwWAJoGUq4UHqJQ";
-    // IOS 키값
-    public static final String IOS_API_KEY = "AAAAcWUn1bA:APA91bHgZSuVe9pHZ9N_-wllSjdeJUBe66s8utnELwdvUgg2Vb7N1WMIDL9cGs00nyekYQeVgH5Yqbq3GqLvQAVEA-hjoZWDZLoMm9CmQS5QUtuniYypKCPKAnbqh_nR9mIzc2879Rtc";
+    public static final String FCM_ANDROID_KEY = new ApiKey().getFcm_android_key();
+    public static final String IOS_API_KEY = new ApiKey().getFcm_ios_key();
     //FCM 도메인 주소
-    public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
+    public static final String FCM_URL = new ApiKey().getFcm_url();
+    // IOS 키값
     public static final int THREAD_COUNT = 8;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -138,7 +139,7 @@ public class PushController {
 //            String push_nm = pushDataList.getPush_nm();
             String link = pushDataList.getLink_info();
             int number = pushDataList.getFcm_sn();
-            String apiKey = pushDataList.getDevice_se().equals("A") ? API_KEY : IOS_API_KEY;
+            String apiKey = pushDataList.getDevice_se().equals("A") ? FCM_ANDROID_KEY : IOS_API_KEY;
 
             URL url = new URL(FCM_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
