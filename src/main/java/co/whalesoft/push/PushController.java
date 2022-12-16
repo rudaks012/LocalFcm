@@ -24,10 +24,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class PushController {
-    //전 API_KEY 값
+    
+    //안드로이드 키값
     public static final String API_KEY = "AAAAtdn8QC0:APA91bHKLENdGs362Vnj25UhJP4Jdx_f0EwTcx48uH-BoMv0NGKwTBnW4_qQXK-6lLra-MeeDX4toS_wr1LyphSqPw6vUe5rGJx-VYSxgNxjktw7anqLfJa9lWZXSIwWAJoGUq4UHqJQ";
-    //API KEY 값 받을때까지 FCM push 전송 불가
+    // IOS 키값
     public static final String IOS_API_KEY = "AAAAcWUn1bA:APA91bHgZSuVe9pHZ9N_-wllSjdeJUBe66s8utnELwdvUgg2Vb7N1WMIDL9cGs00nyekYQeVgH5Yqbq3GqLvQAVEA-hjoZWDZLoMm9CmQS5QUtuniYypKCPKAnbqh_nR9mIzc2879Rtc";
+    //FCM 도메인 주소
     public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     public static final int THREAD_COUNT = 8;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -36,7 +38,6 @@ public class PushController {
     private PushService pushService;
 
     //통합 예약 아닌 부분 푸시 보내기
-
     @GetMapping(value = "/push/edunavi/am/send.do")
     public void fcmPushServer() throws Exception {
         Push push = new Push();
@@ -108,9 +109,8 @@ public class PushController {
             pushService.updatePushSttus(sentPushList);
         }
     }
-
+    //고정 멀티 스레드로 PUSH전송
     private void multiThreadPush(ExecutorService executor, List<Push> tokenList) {
-
         List<List<Push>> listByGuava = Lists.partition(tokenList, tokenList.size() / THREAD_COUNT);
         for (List<Push> subLists : listByGuava) {
             executor.execute(() -> {
@@ -124,7 +124,7 @@ public class PushController {
             });
         }
     }
-
+    //멀티스레드를 사용하지 않고 PUSH 전송(List 가 Thread의 갯수보다 작을때)
     private void pushFCMDataInsert(List<Push> pushDataLists) throws IOException {
         for (Push pushDataList : pushDataLists) {
             String token = pushDataList.getMbr_tkn_value();
@@ -217,7 +217,6 @@ public class PushController {
     }
 
 //    삭제 관련 메서드
-
     @GetMapping(value = "/push/edunavi/am/send1.do")
     public void pushInsertAfterDeletion() {
         List<Push> unsentPushList = selectUnsentPushList();
