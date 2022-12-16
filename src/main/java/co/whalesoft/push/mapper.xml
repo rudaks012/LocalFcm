@@ -207,7 +207,7 @@
       b.push_at = 'Y'
       AND c.push_trnsmis_sttus = 'N'
       AND c.resve_reqst_ty IS NOT NULL
-      AND (to_char(c.creat_dt,'YYYY-MM-DD') = to_char(sys_datetime,'YYYY-MM-DD') OR c.resve_reqst_dt <![CDATA[<=]]> sys_datetime)
+      AND c.resve_reqst_dt <![CDATA[<=]]> sys_datetime
       AND a.mbr_tkn_value = b.mbr_tkn_value
       AND b.resve_reqst_ty = c.resve_reqst_ty
       AND (b.bbs_id = c.bbs_id OR b.bbs_id = '0')
