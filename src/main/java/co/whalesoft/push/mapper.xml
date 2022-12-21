@@ -340,7 +340,7 @@
            WHERE
              readng_sttus = 'Y'
            GROUP BY sys_id) b
-    where a.sys_id = b.sys_id
+    where a.sys_id = b.sys_id(+)
 
   </select>
 
@@ -381,6 +381,14 @@
       #{item.resve_reqst_ty},
       #{item.reqst_cnt},
       #{item.reqst_ty},
+      <choose>
+        <when test="item.sndng_dt != null">
+          #{item.sndng_dt}
+        </when>
+        <otherwise>
+          sys_datetime
+        </otherwise>
+      </choose>
       #{item.sndng_dt},
       #{item.sys_nm},
      #{item.readng_count},
