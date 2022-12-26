@@ -37,6 +37,7 @@ public class PushController {
 
     @Autowired
     private PushService pushService;
+    //api키 값을 받기위해 수정
 
     //통합 예약 아닌 부분 푸시 보내기
     @GetMapping(value = "/push/edunavi/am/send.do")
