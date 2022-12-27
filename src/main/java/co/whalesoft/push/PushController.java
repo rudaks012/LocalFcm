@@ -47,9 +47,7 @@ public class PushController {
         List<Push> fcmListPush = pushService.fcmListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
 
         if (fcmListPush.size() > 0) {
-
             pushService.realInsert(fcmListPush);
-
             List<Push> tokenList = pushService.fcmPushList(push);
             if (tokenList.size() < THREAD_COUNT) {
                 pushFCMDataInsert(tokenList);
@@ -59,13 +57,10 @@ public class PushController {
                 while (!executor.awaitTermination(1, TimeUnit.SECONDS));
             }
         } else {
-//            logger.info("푸시할 글이 없습니다.");
         }
         updatePushSttus(fcmListPush);
     }
-
     //통합 예약 관련 푸시 보내기
-    @GetMapping(value = "/push/edunavi/am/sendResve.do")
     public void fcmResvePushServer() throws Exception {
         Push push = new Push();
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
