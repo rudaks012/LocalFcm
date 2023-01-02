@@ -40,6 +40,7 @@ public class PushController {
     //api키 값을 받기위해 수정
 
     //통합 예약 아닌 부분 푸시 보내기
+    //stopWatch 설정
     @GetMapping(value = "/push/edunavi/am/send.do")
     public void fcmPushServer() throws Exception {
         Push push = new Push();
