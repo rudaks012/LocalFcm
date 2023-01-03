@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PushScheduler {
 
-    public static final String API_KEY = "AAAAJBqm8-M:APA91bHNeX0CzYebGWFoVrwlFzsDrAaeSf4_9q20fzqQAs0w5-mK09LLVHWmaHlSOGPxsmY4cuiTF_KZLwv--CYZvizTybTVSzqsAfpwYceFDc8AzjsVmG5DLNr-U85d_SOVdaJxiP6H";
+    public static final String FCM_ANDROID_KEY = "AAAAJBqm8-M:APA91bHNeX0CzYebGWFoVrwlFzsDrAaeSf4_9q20fzqQAs0w5-mK09LLVHWmaHlSOGPxsmY4cuiTF_KZLwv--CYZvizTybTVSzqsAfpwYceFDc8AzjsVmG5DLNr-U85d_SOVdaJxiP6H";
     public static final String IOS_API_KEY = "AAAAcWUn1bA:APA91bHgZSuVe9pHZ9N_-wllSjdeJUBe66s8utnELwdvUgg2Vb7N1WMIDL9cGs00nyekYQeVgH5Yqbq3GqLvQAVEA-hjoZWDZLoMm9CmQS5QUtuniYypKCPKAnbqh_nR9mIzc2879Rtc";
     public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     public static final int THREAD_COUNT = 8;
@@ -133,7 +133,7 @@ public class PushScheduler {
 //            String push_nm = pushDataList.getPush_nm();
             String link = pushDataList.getLink_info();
             int number = pushDataList.getFcm_sn();
-            String apiKey = pushDataList.getDevice_se().equals("A") ? API_KEY : IOS_API_KEY;
+            String apiKey = pushDataList.getDevice_se().equals("A") ? FCM_ANDROID_KEY : IOS_API_KEY;
 
             URL url = new URL(FCM_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
