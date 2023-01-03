@@ -236,7 +236,7 @@ public class PushController {
     private void selectRequestListInsert() {
         List<Push> pushRequestList = pushService.selectPushRequestList();
         if (pushRequestList.size() > 0) {
-            pushService.insertPushRequestList(pushRequestList);// 여기까지 통계 관련 데이터 Insert
+            pushService.insertPushRequestList(pushRequestList);// 여기까지 신청 관련 데이터 Insert
             logger.info("신청 PUSH 통계 테이블 삽입 완료");
         } else {
             logger.info("신청 PUSH 통계 테이블 삽입할 데이터가 없습니다.");
@@ -247,7 +247,7 @@ public class PushController {
         List<Push> pushSendList = pushService.selectPushSendList();
 
         if (pushSendList.size() > 0) {
-            pushService.insertPushSendList(pushSendList);// 여기까지 통계 관련 데이터 Insert
+            pushService.insertPushSendList(pushSendList);// 여기까지 발송 관련 데이터 Insert
             logger.info("발송 PUSH 통계 테이블 삽입 완료");
         } else {
             logger.info("발송 PUSH 통계 테이블 삽입할 데이터가 없습니다.");
