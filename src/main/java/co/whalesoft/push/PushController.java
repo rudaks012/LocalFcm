@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class PushController {
     
     //안드로이드 키값
-    public static final String FCM_ANDROID_KEY = new ApiKey().getFcm_android_key();
+    public static final String FCM_ANDROID_KEY = "AAAAJBqm8-M:APA91bHNeX0CzYebGWFoVrwlFzsDrAaeSf4_9q20fzqQAs0w5-mK09LLVHWmaHlSOGPxsmY4cuiTF_KZLwv--CYZvizTybTVSzqsAfpwYceFDc8AzjsVmG5DLNr-U85d_SOVdaJxiP6H";
     public static final String IOS_API_KEY = new ApiKey().getFcm_ios_key();
     //FCM 도메인 주소
     public static final String FCM_URL = new ApiKey().getFcm_url();
@@ -37,9 +37,7 @@ public class PushController {
 
     @Autowired
     private PushService pushService;
-    //api키 값을 받기위해 수정
 
-    //통합 예약 아닌 부분 푸시 보내기
     //stopWatch 설정
     @GetMapping(value = "/push/edunavi/am/send.do")
     public void fcmPushServer() throws Exception {
