@@ -34,7 +34,6 @@ public class PushController {
     // IOS 키값
     public static final int THREAD_COUNT = 8;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     @Autowired
     private PushService pushService;
 
@@ -90,7 +89,6 @@ public class PushController {
                     ;
             }
         } else {
-            logger.info("푸시할 글이 없습니다.");
         }
         updatePushSttus(fcmListPush);
     }
