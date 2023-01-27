@@ -28,7 +28,7 @@ public class PushController {
     
     //안드로이드 키값
     public static final String FCM_ANDROID_KEY = "AAAAJBqm8-M:APA91bHNeX0CzYebGWFoVrwlFzsDrAaeSf4_9q20fzqQAs0w5-mK09LLVHWmaHlSOGPxsmY4cuiTF_KZLwv--CYZvizTybTVSzqsAfpwYceFDc8AzjsVmG5DLNr-U85d_SOVdaJxiP6H";
-    public static final String IOS_API_KEY = new ApiKey().getFcm_ios_key();
+    public static final String IOS_API_KEY = "AAAAMbL9g6o:APA91bFvhhtFLAs3PduwO54lkrdSeB3IYDkqppnFGNwhgHK1TeXOUH2fcIQtQpEw8RWq2E_otVp2rx1J9S5qT69Vs0zxH7iFvwQEX-zfe9dl7TdUxsGDGn9NAexdefqL8LKiQ3oij4WQ";
     //FCM 도메인 주소
     public static final String FCM_URL = new ApiKey().getFcm_url();
     // IOS 키값
