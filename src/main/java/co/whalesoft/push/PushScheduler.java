@@ -26,8 +26,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PushScheduler {
 
-    public static final String FCM_ANDROID_KEY = "AAAAJBqm8-M:APA91bHNeX0CzYebGWFoVrwlFzsDrAaeSf4_9q20fzqQAs0w5-mK09LLVHWmaHlSOGPxsmY4cuiTF_KZLwv--CYZvizTybTVSzqsAfpwYceFDc8AzjsVmG5DLNr-U85d_SOVdaJxiP6H";
-    public static final String IOS_API_KEY = "AAAAMbL9g6o:APA91bFvhhtFLAs3PduwO54lkrdSeB3IYDkqppnFGNwhgHK1TeXOUH2fcIQtQpEw8RWq2E_otVp2rx1J9S5qT69Vs0zxH7iFvwQEX-zfe9dl7TdUxsGDGn9NAexdefqL8LKiQ3oij4WQ";
+    public static final String FCM_ANDROID_KEY = "AAAAJBqm8-M:APA91bEgVmA6-gxNzbHcr_2ayNmlaI_vG5Qf-3scBe5utL4DZA8BFd0dcKRJQJ635irU3XTzxHQVJxKcYucsTcM_VLkGAhX9aYshr6BIKtYfXWgfvuMj8DPUHjCHWuBOMdx0WChBMbp3";
+    public static final String IOS_API_KEY = "AAAAMbL9g6o:APA91bF72Xq1G1d5rP-sPrezWIxu39t5vHDjhqq36sLlWQz9Rvc5Ww5ODWspvQh2dhvBgswD4J0hStzbmYjQ0tNRMcOUFutunfpcHa7CbM0xpDjw0-Xozte-Oh1O6pWy5JlF1VXb-XQn";
     public static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
     public static final int THREAD_COUNT = 8;
 
