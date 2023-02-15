@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,10 +87,8 @@ public class PushController {
             } else {
                 multiThreadPush(executor, tokenList);
                 executor.shutdown();
-                while (!executor.awaitTermination(1, TimeUnit.SECONDS))
-                    ;
+                while (!executor.awaitTermination(1, TimeUnit.SECONDS));
             }
-        } else {
         }
         updatePushSttus(fcmListPush);
     }
