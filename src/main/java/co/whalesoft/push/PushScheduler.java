@@ -122,11 +122,16 @@ public class PushScheduler {
 
     private void pushFCMDataInsert(List<Push> pushDataLists) throws IOException {
         for (Push pushDataList : pushDataLists) {
+//            if (!pushDataList.getBbs_id().equals("InOut")) {
+
             String token = pushDataList.getMbr_tkn_value();
+
             String push_sj = null;
             if (pushDataList.getBbs_id().equals("InOut")) {
                 push_sj = pushDataList.getPush_nm();
-            }else {
+//                token = pushDataList.getPush_tkn_value();
+                token = "c4uB5wloTueN02oDjjRc3B:APA91bFUUU5f7jmpvsxhUE2XPU0BASKxvAao5ak55fvdjvW8g0s9o1w39V2OJtZInTu-z50ggH5GVNRuVRMLisfcAB1XtZSQ9Ht3xsYAd2jXMdzBuq0sUMChpvuCZPgDo2bIunVmV5u6";
+            } else {
                 push_sj = pushDataList.getPush_sj();
             }
             int push_sn = pushDataList.getFcm_sn();
@@ -209,6 +214,7 @@ public class PushScheduler {
                 }
             }
         }
+//    }
     }
 
     @Scheduled(cron = "0 0 3 * * ?")
