@@ -122,7 +122,7 @@ public class PushScheduler {
 
     private void pushFCMDataInsert(List<Push> pushDataLists) throws IOException {
         for (Push pushDataList : pushDataLists) {
-//            if (!pushDataList.getBbs_id().equals("InOut")) {
+            if (!pushDataList.getBbs_id().equals("InOut")) {
 
             String token = pushDataList.getMbr_tkn_value();
 
@@ -214,7 +214,7 @@ public class PushScheduler {
                 }
             }
         }
-//    }
+    }
     }
 
     @Scheduled(cron = "0 0 3 * * ?")
