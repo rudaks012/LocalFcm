@@ -109,7 +109,7 @@ public class PushScheduler {
         List<List<Push>> listByGuava = Lists.partition(tokenList, tokenList.size() / THREAD_COUNT);
         for (List<Push> subLists : listByGuava) {
             executor.execute(() -> {
-                //1초후 실행
+                //1초후 실행 -> (실서버)
                 try {
                     Thread.sleep(1000);
                     pushFCMDataInsert(subLists);
