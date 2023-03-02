@@ -129,8 +129,9 @@ public class PushScheduler {
             String push_sj = null;
             if (pushDataList.getBbs_id().equals("InOut")) {
                 push_sj = pushDataList.getPush_nm();
-//                token = pushDataList.getPush_tkn_value();
-                token = "c4uB5wloTueN02oDjjRc3B:APA91bFUUU5f7jmpvsxhUE2XPU0BASKxvAao5ak55fvdjvW8g0s9o1w39V2OJtZInTu-z50ggH5GVNRuVRMLisfcAB1XtZSQ9Ht3xsYAd2jXMdzBuq0sUMChpvuCZPgDo2bIunVmV5u6";
+                //초등 돌봄 일 경우 해당 토큰값을 가져온다
+                token = pushDataList.getPush_tkn_value();
+//                token = "c4uB5wloTueN02oDjjRc3B:APA91bFUUU5f7jmpvsxhUE2XPU0BASKxvAao5ak55fvdjvW8g0s9o1w39V2OJtZInTu-z50ggH5GVNRuVRMLisfcAB1XtZSQ9Ht3xsYAd2jXMdzBuq0sUMChpvuCZPgDo2bIunVmV5u6";
             } else {
                 push_sj = pushDataList.getPush_sj();
             }
