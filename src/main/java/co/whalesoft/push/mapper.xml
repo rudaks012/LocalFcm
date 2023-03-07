@@ -91,12 +91,7 @@
     VALUES
         <foreach collection="list" item="item" separator=",">
           (
-            (
-              SELECT
-                  NVL(MAX(fcm_sn),0)+1
-              FROM
-                  TAD_MN_PUSH_FCM
-            ),
+             SEQ_MN_PUSH_FCM_SN.NEXTVAL,
             #{item.mbr_tkn_value},
             #{item.sys_id},
             #{item.bbs_id},
@@ -192,6 +187,7 @@
     AND b.sys_id = c.sys_id
     AND (b.bbs_id = c.bbs_id OR b.bbs_id = '0')
     GROUP BY a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
+    LIMIT 1000;
   </select>
   
   <select id="fcmResveListMember" resultType="co.whalesoft.push.Push">
