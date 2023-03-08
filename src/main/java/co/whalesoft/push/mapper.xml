@@ -183,18 +183,19 @@
     AND c.push_trnsmis_sttus = 'N'
     AND c.resve_reqst_ty IS NULL
     AND (to_char(c.creat_dt,'YYYY-MM-DD') = to_char(sys_datetime,'YYYY-MM-DD') OR c.resve_reqst_dt <![CDATA[<=]]> sys_datetime)
-    and a.mbr_tkn_value = b.mbr_tkn_value
+    AND a.mbr_tkn_value = b.mbr_tkn_value
+    AND c.sys_id <![CDATA[!=]]> 'care'
     AND b.sys_id = c.sys_id
     AND (b.bbs_id = c.bbs_id OR b.bbs_id = '0')
     GROUP BY a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
     LIMIT 1000;
   </select>
-  
-  <select id="fcmResveListMember" resultType="co.whalesoft.push.Push">
+
+  <select id="fcmCareListMember" resultType="co.whalesoft.push.Push">
     SELECT
       a.mbr_tkn_value, a.device_se, b.sys_nm, c.push_sj, c.push_nm,
       c.link_info, c.push_trnsmis_sttus, c.sys_id, c.bbs_id, c.resve_reqst_ty,
-      c.mber_id, c.mber_ty, c.resve_reqst_dt, c.creat_dt
+      c.mber_id, c.resve_reqst_dt, c.creat_dt
     FROM
       TAD_MN_PUSH_USER a,
       TAD_MN_PUSH_GUBUN b,
@@ -202,11 +203,33 @@
     WHERE
       b.push_at = 'Y'
       AND c.push_trnsmis_sttus = 'N'
-      AND c.resve_reqst_ty IS NOT NULL
-      AND c.resve_reqst_dt <![CDATA[<=]]> sys_datetime
+      AND c.resve_reqst_ty IS NULL
+      AND (to_char(c.creat_dt,'YYYY-MM-DD') = to_char(sys_datetime,'YYYY-MM-DD') OR c.resve_reqst_dt <![CDATA[<=]]> sys_datetime)
       AND a.mbr_tkn_value = b.mbr_tkn_value
-      AND b.resve_reqst_ty = c.resve_reqst_ty
-      AND (b.bbs_id = c.bbs_id OR b.bbs_id = '0')
+      AND c.push_tkn_value = b.mbr_tkn_value
+      AND c.sys_id <![CDATA[=]]> 'care'
+    AND b.sys_id = c.sys_id
+    AND (b.bbs_id = c.bbs_id OR b.bbs_id = '0')
+    GROUP BY a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
+      LIMIT 1000;
+  </select>
+  
+  <select id="fcmResveListMember" resultType="co.whalesoft.push.Push">
+    SELECT
+      a.mbr_tkn_value, c.push_tkn_value, a.device_se, b.sys_nm, c.push_sj, c.push_nm,
+      c.link_info, c.push_trnsmis_sttus, c.sys_id, c.bbs_id, c.resve_reqst_ty,
+      c.mber_id, c.resve_reqst_dt, c.creat_dt
+    FROM
+      TAD_MN_PUSH_USER a,
+      TAD_MN_PUSH_GUBUN b,
+      TAD_MN_PUSH_MANAGE c
+    WHERE c.sys_id = 'care'
+      AND c.push_trnsmis_sttus = 'N'
+      AND b.push_at = 'Y'
+      AND a.mbr_tkn_value = b.mbr_tkn_value
+      AND c.push_tkn_value = a.mbr_tkn_value
+      AND b.sys_id = c.sys_id
+    GROUP BY a.mbr_tkn_value, b.sys_id, c.resve_reqst_ty
   </select>
 
   <select id="fcmMberTyResveList" resultType="co.whalesoft.push.Push" >

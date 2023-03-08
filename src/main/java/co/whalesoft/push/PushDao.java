@@ -41,4 +41,6 @@ public interface PushDao {
     List<Push> fcmResveListMember(Push push);
 
     List<Push> fcmMberTyResveList(String[] push);
+
+    List<Push> fcmCareListMember(Push push);
 }

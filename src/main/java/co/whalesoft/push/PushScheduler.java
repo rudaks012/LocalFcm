@@ -35,11 +35,34 @@ public class PushScheduler {
     @Autowired
     private PushService pushService;
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "0/20 * * * * ?")
     public void fcmPushServer() throws Exception {
         Push push = new Push();
         final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
         List<Push> fcmListPush = pushService.fcmListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
+
+        if (fcmListPush.size() > 0) {
+
+            pushService.realInsert(fcmListPush);
+
+            List<Push> tokenList = pushService.fcmPushList(push);
+            if (tokenList.size() < THREAD_COUNT) {
+                pushFCMDataInsert(tokenList);
+            } else {
+                multiThreadPush(executor, tokenList);
+                executor.shutdown();
+                while (!executor.awaitTermination(1, TimeUnit.SECONDS));
+            }
+        } else {
+        }
+        updatePushSttus(fcmListPush);
+    }
+
+    @Scheduled(cron = "0/10 * * * * ?")
+    public void fcmCareServer() throws Exception {
+        Push push = new Push();
+        final ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
+        List<Push> fcmListPush = pushService.fcmCareListMember(push); // 여기에서 push를 보낼 글과 인원을 구함
 
         if (fcmListPush.size() > 0) {
 
@@ -122,7 +145,7 @@ public class PushScheduler {
 
     private void pushFCMDataInsert(List<Push> pushDataLists) throws IOException {
         for (Push pushDataList : pushDataLists) {
-            if (!pushDataList.getBbs_id().equals("InOut")) {
+//            if (!pushDataList.getBbs_id().equals("InOut")) {
 
             String token = pushDataList.getMbr_tkn_value();
 
@@ -130,8 +153,8 @@ public class PushScheduler {
             if (pushDataList.getBbs_id().equals("InOut")) {
                 push_sj = pushDataList.getPush_nm();
                 //초등 돌봄 일 경우 해당 토큰값을 가져온다
-                token = pushDataList.getPush_tkn_value();
-//                token = "c4uB5wloTueN02oDjjRc3B:APA91bFUUU5f7jmpvsxhUE2XPU0BASKxvAao5ak55fvdjvW8g0s9o1w39V2OJtZInTu-z50ggH5GVNRuVRMLisfcAB1XtZSQ9Ht3xsYAd2jXMdzBuq0sUMChpvuCZPgDo2bIunVmV5u6";
+                token = pushDataList.getMbr_tkn_value();
+//                token = "fNvPT2s_TXuYOPo_mKbMUV:APA91bEQWJN9MpmDG6F9qdFAoAqbgxO8T8TNnHj7__2u375ZrnzSmZrd-VpQsI10f76G76HuPbneqmqjUTWa99Gxynz8zkajUf4gXOGHZ03ojFgBo8OJKGH4NbsAr12z9hhl3RQjyC_P";
             } else {
                 push_sj = pushDataList.getPush_sj();
             }
@@ -213,7 +236,7 @@ public class PushScheduler {
                 } catch (IOException e) {
                     logger.info("pushFCMDataInsert IOException");
                 }
-            }
+//            }
         }
     }
     }
